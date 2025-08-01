@@ -1,0 +1,54 @@
+// hexa-hr 프로젝트용 build.gradle 설정 예시
+
+plugins {
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
+    id 'java'
+}
+
+group = 'com.hexa'
+version = '1.0.0'
+sourceCompatibility = '21'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenLocal()  // security-starter 라이브러리를 위해 필요
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot Starters
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    
+    // Hexacore Security Library
+    implementation 'com.dx:security-starter:1.0.0'
+    
+    // Cache (Caffeine - 권장)
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+    
+    // Database
+    runtimeOnly 'com.h2database:h2'  // 개발환경
+    // implementation 'mysql:mysql-connector-java'  // MySQL 사용시
+    // implementation 'org.postgresql:postgresql'   // PostgreSQL 사용시
+    
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

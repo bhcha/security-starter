@@ -1,0 +1,130 @@
+{
+  "groups": [
+    {
+      "name": "hexacore.security",
+      "type": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties",
+      "sourceType": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties",
+      "description": "Hexacore Security의 메인 설정 프로퍼티입니다."
+    },
+    {
+      "name": "hexacore.security.token-provider",
+      "type": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties$TokenProvider",
+      "sourceType": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties",
+      "description": "토큰 제공자 설정입니다."
+    },
+    {
+      "name": "hexacore.security.filter",
+      "type": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties$AuthFilterProperties",
+      "sourceType": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties",
+      "description": "인증 필터 설정입니다."
+    },
+    {
+      "name": "hexacore.security.session",
+      "type": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties$SessionProperties",
+      "sourceType": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties",
+      "description": "세션 관리 설정입니다."
+    },
+    {
+      "name": "hexacore.security.cache",
+      "type": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties$CacheProperties",
+      "sourceType": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties",
+      "description": "캐시 설정입니다."
+    },
+    {
+      "name": "hexacore.security.rate-limit",
+      "type": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties$RateLimitProperties",
+      "sourceType": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties",
+      "description": "Rate Limiting 설정입니다."
+    },
+    {
+      "name": "hexacore.security.ip-restriction",
+      "type": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties$IpRestrictionProperties",
+      "sourceType": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties",
+      "description": "IP 제한 설정입니다."
+    },
+    {
+      "name": "hexacore.security.headers",
+      "type": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties$HeadersProperties",
+      "sourceType": "com.dx.hexacore.security.config.properties.HexacoreSecurityProperties",
+      "description": "보안 헤더 설정입니다."
+    }
+  ],
+  "properties": [
+    {
+      "name": "hexacore.security.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Hexacore Security 기능 활성화 여부입니다."
+    },
+    {
+      "name": "hexacore.security.token-provider.provider",
+      "type": "java.lang.String",
+      "defaultValue": "keycloak",
+      "description": "토큰 제공자 타입을 설정합니다. keycloak 또는 jwt를 선택할 수 있습니다."
+    },
+    {
+      "name": "hexacore.security.filter.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "인증 필터 활성화 여부입니다."
+    },
+    {
+      "name": "hexacore.security.filter.exclude-paths",
+      "type": "java.lang.String[]",
+      "defaultValue": ["/api/health", "/api/docs/**", "/swagger-ui/**", "/v3/api-docs/**"],
+      "description": "인증을 제외할 경로 목록입니다."
+    },
+    {
+      "name": "hexacore.security.cache.type",
+      "type": "java.lang.String",
+      "defaultValue": "caffeine",
+      "description": "캐시 타입을 설정합니다. caffeine 또는 redis를 선택할 수 있습니다."
+    },
+    {
+      "name": "hexacore.security.rate-limit.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": false,
+      "description": "Rate Limiting 활성화 여부입니다."
+    },
+    {
+      "name": "hexacore.security.ip-restriction.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": false,
+      "description": "IP 제한 활성화 여부입니다."
+    },
+    {
+      "name": "hexacore.security.headers.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "보안 헤더 활성화 여부입니다."
+    }
+  ],
+  "hints": [
+    {
+      "name": "hexacore.security.token-provider.provider",
+      "values": [
+        {
+          "value": "keycloak",
+          "description": "Keycloak 서버를 통한 토큰 관리"
+        },
+        {
+          "value": "jwt",
+          "description": "Spring JWT를 통한 자체 토큰 관리"
+        }
+      ]
+    },
+    {
+      "name": "hexacore.security.cache.type",
+      "values": [
+        {
+          "value": "caffeine",
+          "description": "Caffeine 로컬 캐시"
+        },
+        {
+          "value": "redis",
+          "description": "Redis 분산 캐시 (향후 지원 예정)"
+        }
+      ]
+    }
+  ]
+}
