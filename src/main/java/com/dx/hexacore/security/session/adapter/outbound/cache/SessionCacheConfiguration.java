@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.annotation.Order;
 
 import java.time.Duration;
 import java.util.List;
@@ -29,9 +30,11 @@ import java.util.List;
     matchIfMissing = false
 )
 @EnableConfigurationProperties(SessionCacheConfiguration.CacheProperties.class)
+@Order(200)  // JPA 구현체 이후에 캐시 래퍼 등록
 class SessionCacheConfiguration {
     
     @Bean
+    @ConditionalOnProperty(prefix = "hexacore.session.cache", name = "enabled", havingValue = "true")
     public SessionCache<String, SessionStatusProjection> sessionStatusCache(CacheProperties properties) {
         return new CaffeineSessionCache<>(
             "sessionStatus",
@@ -41,6 +44,7 @@ class SessionCacheConfiguration {
     }
     
     @Bean
+    @ConditionalOnProperty(prefix = "hexacore.session.cache", name = "enabled", havingValue = "true")
     public SessionCache<String, List<FailedAttemptProjection>> failedAttemptsCache(CacheProperties properties) {
         return new CaffeineSessionCache<>(
             "failedAttempts",
@@ -49,11 +53,12 @@ class SessionCacheConfiguration {
         );
     }
     
-    @Bean
+    @Bean("sessionCacheAdapter")
     @Primary
-    public SessionCacheAdapter cachedLoadSessionStatusQueryPort(
-            @Qualifier("sessionJpaAdapter") LoadSessionStatusQueryPort delegate,
-            @Qualifier("sessionJpaAdapter") LoadFailedAttemptsQueryPort failedAttemptsDelegate,
+    @ConditionalOnProperty(prefix = "hexacore.session.cache", name = "enabled", havingValue = "true")
+    public SessionCacheAdapter sessionCacheAdapter(
+            @Qualifier("sessionJpaQueryAdapter") LoadSessionStatusQueryPort delegate,
+            @Qualifier("sessionJpaFailedAttemptsAdapter") LoadFailedAttemptsQueryPort failedAttemptsDelegate,
             SessionCache<String, SessionStatusProjection> sessionStatusCache,
             SessionCache<String, List<FailedAttemptProjection>> failedAttemptsCache) {
         return new SessionCacheAdapter(delegate, failedAttemptsDelegate, sessionStatusCache, failedAttemptsCache);
@@ -61,10 +66,20 @@ class SessionCacheConfiguration {
     
     @Bean
     @Primary
-    public LoadFailedAttemptsQueryPort cachedLoadFailedAttemptsQueryPort(
-            SessionCacheAdapter cacheAdapter) {
-        return cacheAdapter;
+    @ConditionalOnProperty(prefix = "hexacore.session.cache", name = "enabled", havingValue = "true")
+    public LoadSessionStatusQueryPort loadSessionStatusQueryPort(SessionCacheAdapter adapter) {
+        return adapter;
     }
+    
+    @Bean
+    @Primary
+    @ConditionalOnProperty(prefix = "hexacore.session.cache", name = "enabled", havingValue = "true")
+    public LoadFailedAttemptsQueryPort loadFailedAttemptsQueryPort(SessionCacheAdapter adapter) {
+        return adapter;
+    }
+    
+    // Cache Configuration에서는 Port Bean을 등록하지 않음
+    // SessionCacheAdapter만 등록하고, JPA Configuration에서 Port Bean을 관리
     
     /**
      * 캐시 설정 프로퍼티

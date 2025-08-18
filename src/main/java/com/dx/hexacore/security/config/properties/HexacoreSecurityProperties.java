@@ -1,9 +1,14 @@
 package com.dx.hexacore.security.config.properties;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -95,14 +100,9 @@ public class HexacoreSecurityProperties {
         private Boolean enabled = true;
         
         /**
-         * 인증 제외 경로 목록
+         * 인증 제외 경로 목록 (설정 파일에서 지정해야 함)
          */
-        private String[] excludePaths = {
-            "/api/health",
-            "/api/docs/**",
-            "/swagger-ui/**",
-            "/v3/api-docs/**"
-        };
+        private String[] excludePaths = {};
     }
     
     @Data
@@ -152,11 +152,11 @@ public class HexacoreSecurityProperties {
     public static class PersistenceProperties {
         /**
          * Persistence type.
-         * Options: jpa, mongodb, redis
-         * Default is jpa.
+         * Options: memory, jpa, mongodb, redis
+         * Default is memory (for easy development/testing).
          */
         @NotNull
-        private PersistenceType type = PersistenceType.JPA;
+        private PersistenceType type = PersistenceType.MEMORY;
         
         /**
          * Command database name (for CQRS write side).
@@ -243,6 +243,7 @@ public class HexacoreSecurityProperties {
          * Persistence type enum.
          */
         public enum PersistenceType {
+            MEMORY,  // In-memory implementation for development/testing
             JPA,
             MONGODB,
             REDIS
@@ -360,16 +361,87 @@ public class HexacoreSecurityProperties {
         private JwtProperties jwt = new JwtProperties();
         
         @Data
+        @Validated
         public static class KeycloakProperties {
             @NotNull
             private Boolean enabled = true;
+            
+            @NotEmpty(message = "Keycloak 서버 URL은 필수입니다")
+            @Pattern(regexp = "^https?://.*", message = "올바른 URL 형식이어야 합니다 (http:// 또는 https://)")
             private String serverUrl;
+            
+            @NotEmpty(message = "Realm 이름은 필수입니다")
+            @Size(min = 1, max = 100, message = "Realm 이름은 1-100자 사이여야 합니다")
             private String realm;
+            
+            @NotEmpty(message = "Client ID는 필수입니다")
+            @Size(min = 1, max = 100, message = "Client ID는 1-100자 사이여야 합니다")
             private String clientId;
+            
+            // Optional for public clients
+            @Size(max = 500, message = "Client Secret은 500자를 초과할 수 없습니다")
             private String clientSecret;
+            
+            /**
+             * Whether this is a public client (no client secret required).
+             * Default is false (confidential client).
+             */
+            @NotNull
+            private Boolean publicClient = false;
+            
+            /**
+             * OAuth2 scopes to request. Default includes openid profile email.
+             */
+            @NotBlank(message = "OAuth2 scopes는 필수입니다")
+            private String scopes = "openid profile email";
+            
+            /**
+             * Grant type for token requests. Default is password.
+             */
+            @NotBlank(message = "Grant type은 필수입니다")
+            @Pattern(regexp = "password|authorization_code|client_credentials", 
+                    message = "지원되는 grant type: password, authorization_code, client_credentials")
+            private String grantType = "password";
+            
+            /**
+             * 프로덕션 환경에서 HTTPS 사용 검증
+             */
+            @AssertTrue(message = "프로덕션 환경에서는 HTTPS를 사용해야 합니다")
+            public boolean isValidServerUrlForProduction() {
+                if (isProductionEnvironment() && serverUrl != null) {
+                    return serverUrl.startsWith("https://") && !serverUrl.contains("localhost");
+                }
+                return true;
+            }
+            
+            /**
+             * 서버 URL이 설정되어 있고 enabled=true인 경우의 일관성 검증
+             */
+            @AssertTrue(message = "Keycloak이 활성화된 경우 모든 필수 설정이 있어야 합니다")
+            public boolean isValidConfiguration() {
+                if (enabled) {
+                    return serverUrl != null && !serverUrl.trim().isEmpty() &&
+                           realm != null && !realm.trim().isEmpty() &&
+                           clientId != null && !clientId.trim().isEmpty();
+                }
+                return true;
+            }
+            
+            /**
+             * 프로덕션 환경 여부 확인
+             */
+            private boolean isProductionEnvironment() {
+                String profile = System.getProperty("spring.profiles.active", "");
+                String env = System.getenv("SPRING_PROFILES_ACTIVE");
+                if (env != null) {
+                    profile = env;
+                }
+                return profile.contains("prod") || profile.contains("production");
+            }
         }
         
         @Data
+        @Validated
         public static class JwtProperties {
             /**
              * Enable JWT authentication.
@@ -383,6 +455,8 @@ public class HexacoreSecurityProperties {
              * Default is a generated secret for development purposes.
              * IMPORTANT: Change this in production!
              */
+            @NotEmpty(message = "JWT secret은 필수입니다")
+            @Size(min = 32, max = 512, message = "JWT secret은 32-512자 사이여야 합니다")
             private String secret = "default-jwt-secret-for-development-change-this-in-production";
             
             /**
@@ -390,7 +464,8 @@ public class HexacoreSecurityProperties {
              * Default is 3600 seconds (1 hour).
              */
             @NotNull
-            @Min(60) // Minimum 1 minute
+            @Min(value = 300, message = "액세스 토큰 만료 시간은 최소 5분(300초) 이상이어야 합니다")
+            @Max(value = 86400, message = "액세스 토큰 만료 시간은 최대 24시간(86400초) 이하를 권장합니다")
             private Integer accessTokenExpiration = 3600;
             
             /**
@@ -398,14 +473,16 @@ public class HexacoreSecurityProperties {
              * Default is 604800 seconds (7 days).
              */
             @NotNull
-            @Min(60) // Minimum 1 minute
+            @Min(value = 3600, message = "리프레시 토큰 만료 시간은 최소 1시간(3600초) 이상이어야 합니다")
+            @Max(value = 2592000, message = "리프레시 토큰 만료 시간은 최대 30일(2592000초) 이하를 권장합니다")
             private Integer refreshTokenExpiration = 604800;
             
             /**
              * Token issuer.
              * Default is "security-starter".
              */
-            @NotBlank
+            @NotBlank(message = "토큰 발행자(issuer)는 필수입니다")
+            @Size(min = 3, max = 100, message = "토큰 발행자는 3-100자 사이여야 합니다")
             private String issuer = "security-starter";
             
             /**
@@ -418,21 +495,23 @@ public class HexacoreSecurityProperties {
              * Algorithm to use for JWT signing.
              * Default is HS256.
              */
-            @NotBlank
+            @NotBlank(message = "알고리즘은 필수입니다")
+            @Pattern(regexp = "HS256|HS384|HS512|RS256|RS384|RS512", 
+                     message = "지원하는 알고리즘: HS256, HS384, HS512, RS256, RS384, RS512")
             private String algorithm = "HS256";
             
             /**
              * Token prefix in Authorization header.
              * Default is "Bearer ".
              */
-            @NotBlank
+            @NotBlank(message = "토큰 접두사는 필수입니다")
             private String tokenPrefix = "Bearer ";
             
             /**
              * Header name for JWT token.
              * Default is "Authorization".
              */
-            @NotBlank
+            @NotBlank(message = "헤더 이름은 필수입니다")
             private String headerName = "Authorization";
             
             /**
@@ -451,6 +530,40 @@ public class HexacoreSecurityProperties {
              */
             public Duration getRefreshTokenExpirationDuration() {
                 return Duration.ofSeconds(refreshTokenExpiration);
+            }
+            
+            /**
+             * 프로덕션 환경에서 기본 secret 사용 여부 검증
+             */
+            @AssertTrue(message = "프로덕션 환경에서는 기본 secret을 사용할 수 없습니다")
+            public boolean isValidSecretForProduction() {
+                if (isProductionEnvironment()) {
+                    return !secret.contains("default") && 
+                           !secret.contains("example") && 
+                           !secret.contains("test") &&
+                           !secret.contains("development");
+                }
+                return true;
+            }
+            
+            /**
+             * 액세스 토큰과 리프레시 토큰 만료 시간의 논리적 관계 검증
+             */
+            @AssertTrue(message = "리프레시 토큰 만료 시간은 액세스 토큰 만료 시간보다 길어야 합니다")
+            public boolean isValidTokenExpirationRelation() {
+                return refreshTokenExpiration > accessTokenExpiration;
+            }
+            
+            /**
+             * 프로덕션 환경 여부 확인
+             */
+            private boolean isProductionEnvironment() {
+                String profile = System.getProperty("spring.profiles.active", "");
+                String env = System.getenv("SPRING_PROFILES_ACTIVE");
+                if (env != null) {
+                    profile = env;
+                }
+                return profile.contains("prod") || profile.contains("production");
             }
         }
     }

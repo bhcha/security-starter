@@ -2,12 +2,16 @@ package com.dx.hexacore.security.config;
 
 import com.dx.hexacore.security.auth.application.command.port.in.AuthenticationUseCase;
 import com.dx.hexacore.security.config.autoconfigure.TokenProviderAutoConfiguration;
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 
 /**
@@ -16,25 +20,51 @@ import org.springframework.context.annotation.Import;
  * 
  * Users can override specific beans by defining their own with the same type.
  */
-@Configuration
+@Configuration("hexacoreSecurityAutoConfiguration")
 @ConditionalOnClass(AuthenticationUseCase.class)
 @ConditionalOnProperty(prefix = "hexacore.security", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties(com.dx.hexacore.security.config.properties.HexacoreSecurityProperties.class)
 @Import({
     TokenProviderAutoConfiguration.class,
-    com.dx.hexacore.security.config.autoconfigure.PersistenceAutoConfiguration.class
+    com.dx.hexacore.security.config.autoconfigure.PersistenceAutoConfiguration.class,
+    com.dx.hexacore.security.config.autoconfigure.SecurityFilterAutoConfiguration.class,
+    com.dx.hexacore.security.config.autoconfigure.HexacoreSecurityFilterAutoConfiguration.class,
+    com.dx.hexacore.security.config.autoconfigure.ApplicationLayerAutoConfiguration.class
 })
 @ComponentScan(basePackages = {
-    "com.dx.hexacore.security.auth.application.command.handler",
-    "com.dx.hexacore.security.auth.application.query.handler", 
-    "com.dx.hexacore.security.session.application.command.handler",
-    "com.dx.hexacore.security.session.application.query.handler",
-    "com.dx.hexacore.security.auth.adapter.outbound",
-    "com.dx.hexacore.security.session.adapter.outbound",
-    "com.dx.hexacore.security.auth.adapter.inbound",
-    "com.dx.hexacore.security.session.adapter.inbound"
+    "com.dx.hexacore.security.config.support"
+}, excludeFilters = {
+    @ComponentScan.Filter(
+        type = FilterType.REGEX,
+        pattern = ".*persistence.*"
+    )
 })
 public class HexacoreSecurityAutoConfiguration {
+    
+    private static final Logger logger = LoggerFactory.getLogger(HexacoreSecurityAutoConfiguration.class);
+    
+    @PostConstruct
+    public void init() {
+        logger.info("🚀 Hexacore Security Starter 초기화 중...");
+        
+        // Spring Security 버전 체크
+        try {
+            Package securityPackage = Package.getPackage("org.springframework.security");
+            if (securityPackage != null) {
+                String version = securityPackage.getImplementationVersion();
+                logger.info("📊 Spring Security 버전: {}", version != null ? version : "UNKNOWN");
+                
+                // 지원되는 버전 체크 (6.0.x ~ 6.3.x)
+                if (version != null && !version.startsWith("6.")) {
+                    logger.warn("⚠️ 지원되지 않는 Spring Security 버전입니다. 권장 버전: 6.0.x ~ 6.3.x");
+                }
+            }
+        } catch (Exception e) {
+            logger.debug("Spring Security 버전 확인 실패: {}", e.getMessage());
+        }
+        
+        logger.info("✅ Hexacore Security Starter 초기화 완료");
+    }
     
     /**
      * Marker bean to indicate that Hexacore Security is configured

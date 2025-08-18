@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnClass(AuthenticationRepository.class)
-@ConditionalOnBean(AuthenticationRepository.class)
 @ConditionalOnProperty(
     prefix = "hexacore.security.application", 
     name = "enabled", 
@@ -26,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(HexacoreSecurityProperties.class)
 @ComponentScan(basePackages = {
     "com.dx.hexacore.security.auth.application",
-    "com.dx.hexacore.security.session.application",
+    "com.dx.hexacore.security.session.application", 
     "com.dx.hexacore.security.auth.domain",
     "com.dx.hexacore.security.session.domain",
     "com.dx.hexacore.security.auth.adapter.inbound.config",

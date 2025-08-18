@@ -28,7 +28,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * security-auth-starter의 모든 기능을 통합하여 제공합니다.
  * 실제 구현은 SecurityFilterConfig에 위임하고, 추가 설정을 제공합니다.
  */
-@AutoConfiguration(after = {SecurityAutoConfiguration.class, PersistenceAutoConfiguration.class})
+@AutoConfiguration(after = {SecurityAutoConfiguration.class, PersistenceAutoConfiguration.class, TokenProviderAutoConfiguration.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnProperty(
     prefix = "hexacore.security.filter",
@@ -63,10 +63,12 @@ public class SecurityFilterAutoConfiguration {
     /**
      * Default security filter chain configuration for applications that don't define their own.
      * This provides a fallback configuration with security headers and basic authorization rules.
+     * 
+     * This bean is only created when SecurityFilterConfig is not active.
      */
     @Bean
     @Order(100) // Lower priority than custom filter chains
-    @ConditionalOnMissingBean(name = "defaultSecurityFilterChain")
+    @ConditionalOnMissingBean({SecurityFilterChain.class, SecurityFilterConfig.class})
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         logger.debug("Configuring default security filter chain");
         

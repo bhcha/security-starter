@@ -2,6 +2,7 @@ package com.dx.hexacore.security.session.application.command.handler;
 
 import com.dx.hexacore.security.session.application.command.port.in.CheckLockoutUseCase;
 import com.dx.hexacore.security.session.application.command.port.in.RecordAttemptUseCase;
+import com.dx.hexacore.security.session.application.command.port.in.SessionManagementUseCase;
 import com.dx.hexacore.security.session.application.command.port.in.UnlockAccountUseCase;
 import com.dx.hexacore.security.session.application.command.port.out.AuthenticationSessionRepository;
 import com.dx.hexacore.security.session.application.command.port.out.SessionEventPublisher;
@@ -14,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * 같은 패키지에 있는 package-private 구현체들을 Bean으로 등록합니다.
  */
 @Configuration
-public class SessionCommandConfiguration {
+class SessionCommandConfiguration {
 
     // Command Use Cases
     @Bean
@@ -37,5 +38,14 @@ public class SessionCommandConfiguration {
     public UnlockAccountUseCase unlockAccountUseCase(
             AuthenticationSessionRepository repository) {
         return new UnlockAccountUseCaseImpl(repository);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public SessionManagementUseCase sessionManagementUseCase(
+            CheckLockoutUseCase checkLockoutUseCase,
+            RecordAttemptUseCase recordAttemptUseCase,
+            UnlockAccountUseCase unlockAccountUseCase) {
+        return new SessionManagementUseCaseImpl(checkLockoutUseCase, recordAttemptUseCase, unlockAccountUseCase);
     }
 }

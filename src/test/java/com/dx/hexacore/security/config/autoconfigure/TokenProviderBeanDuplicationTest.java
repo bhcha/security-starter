@@ -134,6 +134,7 @@ class TokenProviderBeanDuplicationTest {
         contextRunner
                 .withPropertyValues(
                         "hexacore.security.token-provider.provider=keycloak",  // 표준 경로 사용
+                        "hexacore.security.token-provider.keycloak.enabled=true",  // 명시적으로 활성화
                         "hexacore.security.token-provider.keycloak.server-url=http://localhost:8080",
                         "hexacore.security.token-provider.keycloak.realm=test",
                         "hexacore.security.token-provider.keycloak.client-id=test-client",

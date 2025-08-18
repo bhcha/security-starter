@@ -88,6 +88,34 @@ class KeycloakTokenProviderTest {
     }
 
     @Test
+    @DisplayName("서버 URL에 trailing slash가 있어도 정상적인 endpoint URL 생성")
+    void shouldHandleTrailingSlashInServerUrl() throws Exception {
+        // Given
+        HexacoreSecurityProperties.TokenProvider.KeycloakProperties propertiesWithSlash = 
+            new HexacoreSecurityProperties.TokenProvider.KeycloakProperties();
+        propertiesWithSlash.setServerUrl("https://authdev.daewoong.co.kr/");
+        propertiesWithSlash.setRealm("backoffice-api");
+        propertiesWithSlash.setClientId("test-client");
+        propertiesWithSlash.setClientSecret("test-secret");
+        
+        KeycloakTokenProvider providerWithSlash = new KeycloakTokenProvider(propertiesWithSlash);
+        
+        // When - Use reflection to access the private properties field
+        java.lang.reflect.Field propertiesField = KeycloakTokenProvider.class.getDeclaredField("properties");
+        propertiesField.setAccessible(true);
+        KeycloakProperties internalProperties = (KeycloakProperties) propertiesField.get(providerWithSlash);
+        
+        String tokenEndpoint = internalProperties.getTokenEndpoint();
+        String introspectionEndpoint = internalProperties.getIntrospectionEndpoint();
+        String userInfoEndpoint = internalProperties.getUserInfoEndpoint();
+        
+        // Then
+        assertThat(tokenEndpoint).isEqualTo("https://authdev.daewoong.co.kr/realms/backoffice-api/protocol/openid-connect/token");
+        assertThat(introspectionEndpoint).isEqualTo("https://authdev.daewoong.co.kr/realms/backoffice-api/protocol/openid-connect/token/introspect");
+        assertThat(userInfoEndpoint).isEqualTo("https://authdev.daewoong.co.kr/realms/backoffice-api/protocol/openid-connect/userinfo");
+    }
+
+    @Test
     @DisplayName("null refresh 토큰으로 갱신 시 예외 발생")
     void shouldThrowExceptionWhenNullRefreshToken() {
         // Given

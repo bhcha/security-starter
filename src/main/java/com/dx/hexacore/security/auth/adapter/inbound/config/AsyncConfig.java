@@ -3,6 +3,7 @@ package com.dx.hexacore.security.auth.adapter.inbound.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
@@ -17,13 +18,13 @@ import java.util.concurrent.Executor;
  */
 @Configuration
 @EnableAsync
-class AsyncConfig implements AsyncConfigurer {
+class AsyncConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(AsyncConfig.class);
 
-    @Override
-    @Bean(name = "taskExecutor")
-    public Executor getAsyncExecutor() {
+    @Bean(name = "hexacoreSecurityTaskExecutor")
+    @ConditionalOnMissingBean(name = "taskExecutor")
+    public Executor hexacoreSecurityTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(5);
         executor.setMaxPoolSize(20);
@@ -40,11 +41,4 @@ class AsyncConfig implements AsyncConfigurer {
         return executor;
     }
 
-    @Override
-    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return (ex, method, params) -> {
-            logger.error("Async method '{}' threw exception: {}", method.getName(), ex.getMessage(), ex);
-            // 필요시 추가적인 예외 처리 로직 (알림, 메트릭 등)
-        };
-    }
 }

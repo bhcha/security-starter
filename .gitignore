@@ -26,3 +26,9 @@ Thumbs.db
 
 # Cache
 .cache/
+
+# Documentation and development files
+claude.md
+CLAUDE.md
+docs/domainModel/
+docs/guide/

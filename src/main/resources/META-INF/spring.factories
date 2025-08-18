@@ -2,7 +2,10 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.dx.hexacore.security.config.HexacoreSecurityAutoConfiguration,\
   com.dx.hexacore.security.config.autoconfigure.PersistenceAutoConfiguration,\
-  com.dx.hexacore.security.config.autoconfigure.ApplicationLayerAutoConfiguration
+  com.dx.hexacore.security.config.autoconfigure.ApplicationLayerAutoConfiguration,\
+  com.dx.hexacore.security.config.autoconfigure.TokenProviderAutoConfiguration,\
+  com.dx.hexacore.security.config.autoconfigure.SecurityFilterAutoConfiguration,\
+  com.dx.hexacore.security.config.autoconfigure.HexacoreSecurityFilterAutoConfiguration
 
 # Environment Post Processors
 org.springframework.boot.env.EnvironmentPostProcessor=\

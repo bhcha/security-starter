@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.dx'
-version = '1.0.0'
+version = '1.0.9'
 
 java {
     toolchain {
@@ -39,7 +39,7 @@ publishing {
             
             groupId = 'com.dx'
             artifactId = 'security-starter'
-            version = '1.0.0'
+            version = project.version
         }
     }
     
@@ -63,7 +63,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     
-    // JWT 라이브러리
+    // JWT 라이브러리 (최신 안정 버전 사용)
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
@@ -88,6 +88,7 @@ dependencies {
     
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

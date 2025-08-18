@@ -57,6 +57,21 @@ class KeycloakPropertiesTest {
     }
     
     @Test
+    @DisplayName("Token endpoint URL 생성 - 서버 URL에 trailing slash가 있는 경우")
+    void getTokenEndpoint_WithTrailingSlash() {
+        // Given
+        KeycloakProperties properties = new KeycloakProperties();
+        properties.setServerUrl("https://authdev.daewoong.co.kr/");
+        properties.setRealm("backoffice-api");
+        
+        // When
+        String endpoint = properties.getTokenEndpoint();
+        
+        // Then
+        assertThat(endpoint).isEqualTo("https://authdev.daewoong.co.kr/realms/backoffice-api/protocol/openid-connect/token");
+    }
+    
+    @Test
     @DisplayName("Introspection endpoint URL 생성")
     void getIntrospectionEndpoint() {
         // Given
@@ -69,6 +84,21 @@ class KeycloakPropertiesTest {
         
         // Then
         assertThat(endpoint).isEqualTo("http://localhost:8080/realms/test-realm/protocol/openid-connect/token/introspect");
+    }
+    
+    @Test
+    @DisplayName("Introspection endpoint URL 생성 - 서버 URL에 trailing slash가 있는 경우")
+    void getIntrospectionEndpoint_WithTrailingSlash() {
+        // Given
+        KeycloakProperties properties = new KeycloakProperties();
+        properties.setServerUrl("https://authdev.daewoong.co.kr/");
+        properties.setRealm("backoffice-api");
+        
+        // When
+        String endpoint = properties.getIntrospectionEndpoint();
+        
+        // Then
+        assertThat(endpoint).isEqualTo("https://authdev.daewoong.co.kr/realms/backoffice-api/protocol/openid-connect/token/introspect");
     }
     
     @Test

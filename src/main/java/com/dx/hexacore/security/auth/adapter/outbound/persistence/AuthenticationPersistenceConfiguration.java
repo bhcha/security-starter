@@ -4,15 +4,19 @@ import com.dx.hexacore.security.auth.adapter.outbound.persistence.repository.Aut
 import com.dx.hexacore.security.auth.application.command.port.out.AuthenticationRepository;
 import com.dx.hexacore.security.auth.application.query.port.out.LoadAuthenticationQueryPort;
 import com.dx.hexacore.security.auth.application.query.port.out.LoadTokenInfoQueryPort;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * Authentication 모듈의 Persistence 어댑터 설정 클래스
  */
 @Configuration
+@ConditionalOnClass(JpaRepository.class)
 public class AuthenticationPersistenceConfiguration {
 
     @Bean
@@ -22,7 +26,6 @@ public class AuthenticationPersistenceConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "hexacore.security.persistence", name = "jpa.enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMissingBean
     public AuthenticationJpaAdapter authenticationJpaAdapter(
             AuthenticationJpaRepository jpaRepository,
@@ -31,21 +34,20 @@ public class AuthenticationPersistenceConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "hexacore.security.persistence", name = "jpa.enabled", havingValue = "true", matchIfMissing = true)
+    @Primary  // JPA 구현체를 우선 선택
     @ConditionalOnMissingBean
     public AuthenticationRepository authenticationRepository(AuthenticationJpaAdapter adapter) {
         return adapter;
     }
 
-    @Bean
-    @ConditionalOnProperty(prefix = "hexacore.security.persistence", name = "jpa.enabled", havingValue = "true", matchIfMissing = true)
-    @ConditionalOnMissingBean
+    @Bean("jpaLoadAuthenticationQueryPort")
+    @ConditionalOnMissingBean(LoadAuthenticationQueryPort.class)
     public LoadAuthenticationQueryPort loadAuthenticationQueryPort(AuthenticationJpaAdapter adapter) {
         return adapter;
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "hexacore.security.persistence", name = "jpa.enabled", havingValue = "true", matchIfMissing = true)
+    @Primary  // JPA 구현체를 우선 선택
     @ConditionalOnMissingBean
     public LoadTokenInfoQueryPort loadTokenInfoQueryPort(AuthenticationJpaAdapter adapter) {
         return adapter;

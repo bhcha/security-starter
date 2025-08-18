@@ -9,6 +9,8 @@ public class KeycloakProperties {
     private String clientId;
     private String clientSecret;
     private String grantType = "password";
+    private String scopes = "openid profile email";
+    private boolean publicClient = false;
     
     public String getServerUrl() {
         return serverUrl;
@@ -50,22 +52,50 @@ public class KeycloakProperties {
         this.grantType = grantType;
     }
     
+    public String getScopes() {
+        return scopes;
+    }
+    
+    public void setScopes(String scopes) {
+        this.scopes = scopes;
+    }
+    
+    public boolean isPublicClient() {
+        return publicClient;
+    }
+    
+    public void setPublicClient(boolean publicClient) {
+        this.publicClient = publicClient;
+    }
+    
     public String getTokenEndpoint() {
-        return String.format("%s/realms/%s/protocol/openid-connect/token", serverUrl, realm);
+        return String.format("%s/realms/%s/protocol/openid-connect/token", normalizeServerUrl(), realm);
     }
     
     public String getIntrospectionEndpoint() {
-        return String.format("%s/realms/%s/protocol/openid-connect/token/introspect", serverUrl, realm);
+        return String.format("%s/realms/%s/protocol/openid-connect/token/introspect", normalizeServerUrl(), realm);
     }
     
     public String getUserInfoEndpoint() {
-        return String.format("%s/realms/%s/protocol/openid-connect/userinfo", serverUrl, realm);
+        return String.format("%s/realms/%s/protocol/openid-connect/userinfo", normalizeServerUrl(), realm);
     }
     
     public boolean isValid() {
         return StringUtils.hasText(serverUrl) &&
                StringUtils.hasText(realm) &&
                StringUtils.hasText(clientId) &&
-               StringUtils.hasText(clientSecret);
+               (publicClient || StringUtils.hasText(clientSecret));
+    }
+    
+    /**
+     * Normalizes the server URL by removing trailing slashes to prevent double slashes in endpoint URLs.
+     * 
+     * @return normalized server URL without trailing slash
+     */
+    private String normalizeServerUrl() {
+        if (serverUrl == null) {
+            return null;
+        }
+        return serverUrl.endsWith("/") ? serverUrl.substring(0, serverUrl.length() - 1) : serverUrl;
     }
 }

@@ -1,16 +1,15 @@
 # Keycloak 설정 (개발 환경)
-security:
-  auth:
-    keycloak:
-      enabled: true
-      server-url: ${KEYCLOAK_AUTH_SERVER_URL:https://authdev.daewoong.co.kr/}
-      realm: ${KEYCLOAK_REALM:backoffice-api}
-      client-id: ${KEYCLOAK_CLIENT:identity-api}
-      client-secret: ${KEYCLOAK_CLIENT_SECRET:jLWxxq2YCLIaowgTU1kaTjqRiWJ3dFQ0}
-      grant-type: password
-      disable-ssl-validation: false  # 운영에서는 반드시 false
-      connect-timeout: 10000
-      read-timeout: 10000
+hexacore:
+  security:
+    token-provider:
+      keycloak:
+        enabled: true
+        server-url: ${KEYCLOAK_AUTH_SERVER_URL:https://authdev.daewoong.co.kr/}
+        realm: ${KEYCLOAK_REALM:backoffice-api}
+        client-id: ${KEYCLOAK_CLIENT:identity-api}
+        client-secret: ${KEYCLOAK_CLIENT_SECRET:jLWxxq2YCLIaowgTU1kaTjqRiWJ3dFQ0}
+        grant-type: password
+        scopes: "openid profile email"  # OAuth2 scopes for userinfo endpoint access
 
 # JWT 필터 설정
 security:

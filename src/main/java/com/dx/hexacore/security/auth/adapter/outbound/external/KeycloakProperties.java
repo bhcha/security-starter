@@ -61,7 +61,7 @@ public class KeycloakProperties {
      * @return token endpoint URL
      */
     public String getTokenEndpoint() {
-        return String.format("%s/realms/%s/protocol/openid-connect/token", serverUrl, realm);
+        return String.format("%s/realms/%s/protocol/openid-connect/token", normalizeServerUrl(), realm);
     }
     
     /**
@@ -70,7 +70,7 @@ public class KeycloakProperties {
      * @return introspection endpoint URL
      */
     public String getIntrospectionEndpoint() {
-        return String.format("%s/realms/%s/protocol/openid-connect/token/introspect", serverUrl, realm);
+        return String.format("%s/realms/%s/protocol/openid-connect/token/introspect", normalizeServerUrl(), realm);
     }
     
     /**
@@ -83,5 +83,17 @@ public class KeycloakProperties {
                realm != null && !realm.isBlank() &&
                clientId != null && !clientId.isBlank() &&
                clientSecret != null && !clientSecret.isBlank();
+    }
+    
+    /**
+     * Normalizes the server URL by removing trailing slashes to prevent double slashes in endpoint URLs.
+     * 
+     * @return normalized server URL without trailing slash
+     */
+    private String normalizeServerUrl() {
+        if (serverUrl == null) {
+            return null;
+        }
+        return serverUrl.endsWith("/") ? serverUrl.substring(0, serverUrl.length() - 1) : serverUrl;
     }
 }

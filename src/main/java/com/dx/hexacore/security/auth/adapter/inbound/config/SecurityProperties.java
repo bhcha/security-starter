@@ -1,14 +1,12 @@
 package com.dx.hexacore.security.auth.adapter.inbound.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * 보안 관련 설정 프로퍼티
  */
-@Component
 @ConfigurationProperties(prefix = "security.auth")
 public class SecurityProperties {
     
@@ -40,7 +38,8 @@ public class SecurityProperties {
     
     public static class Jwt {
         private boolean enabled = true;
-        private List<String> excludePaths = List.of("/actuator/health", "/error", "/swagger-ui/**", "/v3/api-docs/**");
+        private List<String> excludePaths = List.of(); // 설정 파일에서 지정해야 함 (레거시)
+        private Exclude exclude = new Exclude(); // 새로운 nested 구조
         
         public boolean isEnabled() {
             return enabled;
@@ -56,6 +55,26 @@ public class SecurityProperties {
         
         public void setExcludePaths(List<String> excludePaths) {
             this.excludePaths = excludePaths;
+        }
+        
+        public Exclude getExclude() {
+            return exclude;
+        }
+        
+        public void setExclude(Exclude exclude) {
+            this.exclude = exclude;
+        }
+        
+        public static class Exclude {
+            private String[] paths = {}; // 설정 파일에서 지정해야 함
+            
+            public String[] getPaths() {
+                return paths;
+            }
+            
+            public void setPaths(String[] paths) {
+                this.paths = paths;
+            }
         }
     }
     

@@ -14,18 +14,27 @@ import org.springframework.context.annotation.Configuration;
  * 같은 패키지에 있는 package-private 구현체들을 Bean으로 등록합니다.
  */
 @Configuration
-public class AuthenticationQueryConfiguration {
+class AuthenticationQueryConfiguration {
+
+    // 하나의 Handler로 두 인터페이스를 모두 구현
+    @Bean
+    @ConditionalOnMissingBean
+    public AuthenticationQueryHandler authenticationQueryHandler(
+            LoadAuthenticationQueryPort loadAuthenticationQueryPort,
+            LoadTokenInfoQueryPort loadTokenInfoQueryPort) {
+        return new AuthenticationQueryHandler(loadAuthenticationQueryPort, loadTokenInfoQueryPort);
+    }
 
     // Application Services - Query Side
     @Bean
     @ConditionalOnMissingBean
-    public GetAuthenticationUseCase getAuthenticationUseCase(LoadAuthenticationQueryPort loadAuthenticationQueryPort) {
-        return new AuthenticationQueryHandler(loadAuthenticationQueryPort, null);
+    public GetAuthenticationUseCase getAuthenticationUseCase(AuthenticationQueryHandler handler) {
+        return handler;
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public GetTokenInfoUseCase getTokenInfoUseCase(LoadTokenInfoQueryPort loadTokenInfoQueryPort) {
-        return new AuthenticationQueryHandler(null, loadTokenInfoQueryPort);
+    public GetTokenInfoUseCase getTokenInfoUseCase(AuthenticationQueryHandler handler) {
+        return handler;
     }
 }
