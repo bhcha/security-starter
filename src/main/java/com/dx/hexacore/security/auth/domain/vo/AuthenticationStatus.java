@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.auth.domain.vo;
 
+import com.dx.hexacore.security.util.ValidationMessages;
 import jakarta.persistence.Embeddable;
 import java.util.Objects;
 
@@ -75,7 +76,7 @@ public final class AuthenticationStatus {
      */
     public static AuthenticationStatus of(String statusString) {
         if (statusString == null || statusString.isBlank()) {
-            throw new IllegalArgumentException("Status cannot be empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeEmpty("Status"));
         }
         
         try {
@@ -121,7 +122,7 @@ public final class AuthenticationStatus {
     
     private static void validateStatus(Status status) {
         if (status == null) {
-            throw new IllegalArgumentException("Status cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Status"));
         }
     }
     

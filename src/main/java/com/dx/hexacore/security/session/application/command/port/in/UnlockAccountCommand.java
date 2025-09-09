@@ -1,5 +1,7 @@
 package com.dx.hexacore.security.session.application.command.port.in;
 
+import com.dx.hexacore.security.util.ValidationMessages;
+
 /**
  * 계정 잠금 해제 명령
  * 
@@ -17,13 +19,13 @@ public record UnlockAccountCommand(
     
     private void validateSessionId(String sessionId) {
         if (sessionId == null || sessionId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Session ID cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("SessionId"));
         }
     }
     
     private void validateUserId(String userId) {
         if (userId == null || userId.trim().isEmpty()) {
-            throw new IllegalArgumentException("User ID cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("UserId"));
         }
     }
 }

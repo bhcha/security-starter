@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.auth.domain.vo;
 
+import com.dx.hexacore.security.util.ValidationUtils;
 import jakarta.persistence.Embeddable;
 import java.util.Objects;
 
@@ -20,8 +21,7 @@ import java.util.Objects;
 @Embeddable
 public final class Token {
     
-    private static final long MIN_EXPIRES_IN = 1L;
-    private static final long MAX_EXPIRES_IN = 86400L; // 24시간
+    // 상수는 SecurityConstants에서 주입받도록 변경
     
     private final String accessToken;
     private final String refreshToken;
@@ -36,16 +36,24 @@ public final class Token {
         this.expired = false;
     }
     
-    // private 생성자
-    private Token(String accessToken, String refreshToken, long expiresIn) {
-        this(accessToken, refreshToken, expiresIn, false);
+    // private 생성자 - 상수 주입 버전
+    private Token(String accessToken, String refreshToken, long expiresIn, 
+                  long minExpiresIn, long maxExpiresIn) {
+        this(accessToken, refreshToken, expiresIn, false, minExpiresIn, maxExpiresIn);
+    }
+    
+    // private 생성자 - 기본 상수 버전 (deprecated)
+    private Token(String accessToken, String refreshToken, long expiresIn, 
+                  long minExpiresIn, long maxExpiresIn, boolean deprecated) {
+        this(accessToken, refreshToken, expiresIn, false, minExpiresIn, maxExpiresIn);
     }
     
     // private 생성자 (만료 상태 포함)
-    private Token(String accessToken, String refreshToken, long expiresIn, boolean expired) {
-        validateAccessToken(accessToken);
-        validateRefreshToken(refreshToken);
-        validateExpiresIn(expiresIn);
+    private Token(String accessToken, String refreshToken, long expiresIn, boolean expired,
+                  long minExpiresIn, long maxExpiresIn) {
+        ValidationUtils.requireNonNullOrEmpty(accessToken, "Access token");
+        ValidationUtils.requireNonNullOrEmpty(refreshToken, "Refresh token");
+        ValidationUtils.requireInRange(expiresIn, minExpiresIn, maxExpiresIn, "Expires in");
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expiresIn = expiresIn;
@@ -60,11 +68,29 @@ public final class Token {
      * @param accessToken 액세스 토큰
      * @param refreshToken 리프레시 토큰
      * @param expiresIn 만료시간(초)
+     * @param minExpiresIn 최소 만료시간 (초)
+     * @param maxExpiresIn 최대 만료시간 (초)
      * @return 생성된 Token
      * @throws IllegalArgumentException 유효하지 않은 값인 경우
      */
+    public static Token of(String accessToken, String refreshToken, long expiresIn, 
+                          long minExpiresIn, long maxExpiresIn) {
+        return new Token(accessToken, refreshToken, expiresIn, minExpiresIn, maxExpiresIn);
+    }
+
+    /**
+     * 기본 제약사항으로 토큰 정보를 생성합니다.
+     * 
+     * @deprecated 외부에서 상수값을 주입받는 {@link #of(String, String, long, long, long)} 사용을 권장합니다.
+     * @param accessToken 액세스 토큰
+     * @param refreshToken 리프레시 토큰
+     * @param expiresIn 만료시간(초)
+     * @return 생성된 Token
+     * @throws IllegalArgumentException 유효하지 않은 값인 경우
+     */
+    @Deprecated
     public static Token of(String accessToken, String refreshToken, long expiresIn) {
-        return new Token(accessToken, refreshToken, expiresIn);
+        return new Token(accessToken, refreshToken, expiresIn, 1L, 86400L, true);
     }
     
     // ===== 유틸리티 메서드 =====
@@ -88,37 +114,26 @@ public final class Token {
     /**
      * 만료된 상태의 새로운 Token을 반환합니다.
      * 
+     * @param minExpiresIn 최소 만료시간 (초) - 원본과 동일한 제약사항 적용
+     * @param maxExpiresIn 최대 만료시간 (초) - 원본과 동일한 제약사항 적용  
      * @return 만료된 상태의 새로운 Token
      */
+    public Token expire(long minExpiresIn, long maxExpiresIn) {
+        return new Token(this.accessToken, this.refreshToken, this.expiresIn, true, 
+                        minExpiresIn, maxExpiresIn);
+    }
+
+    /**
+     * 기본 제약사항으로 만료된 상태의 새로운 Token을 반환합니다.
+     * 
+     * @deprecated 외부에서 상수값을 주입받는 {@link #expire(long, long)} 사용을 권장합니다.
+     * @return 만료된 상태의 새로운 Token
+     */
+    @Deprecated  
     public Token expire() {
-        return new Token(this.accessToken, this.refreshToken, this.expiresIn, true);
+        return new Token(this.accessToken, this.refreshToken, this.expiresIn, true, 1L, 86400L);
     }
     
-    // ===== Private 검증 메서드 =====
-    
-    private static void validateAccessToken(String accessToken) {
-        if (accessToken == null || accessToken.isBlank()) {
-            throw new IllegalArgumentException("Access token cannot be empty");
-        }
-    }
-    
-    private static void validateRefreshToken(String refreshToken) {
-        if (refreshToken == null || refreshToken.isBlank()) {
-            throw new IllegalArgumentException("Refresh token cannot be empty");
-        }
-    }
-    
-    private static void validateExpiresIn(long expiresIn) {
-        if (expiresIn <= 0) {
-            throw new IllegalArgumentException("Expires in must be positive");
-        }
-        
-        if (expiresIn > MAX_EXPIRES_IN) {
-            throw new IllegalArgumentException(
-                String.format("Expires in cannot exceed %d seconds", MAX_EXPIRES_IN)
-            );
-        }
-    }
     
     // ===== Object 메서드 =====
     

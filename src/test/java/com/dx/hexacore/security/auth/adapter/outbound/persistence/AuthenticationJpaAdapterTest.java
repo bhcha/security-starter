@@ -227,7 +227,7 @@ class AuthenticationJpaAdapterTest {
         // When & Then
         assertThatThrownBy(() -> adapter.loadByToken(null))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Token cannot be null or blank");
+                .hasMessage("Token cannot be null or empty");
         
         verify(jpaRepository, never()).findByAccessToken(anyString());
     }

@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.auth.domain.vo;
 
+import com.dx.hexacore.security.util.ValidationUtils;
 import jakarta.persistence.Embeddable;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -21,9 +22,7 @@ import java.util.regex.Pattern;
 public final class Credentials {
     
     private static final Pattern VALID_USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
-    private static final int MIN_USERNAME_LENGTH = 3;
-    private static final int MAX_USERNAME_LENGTH = 50;
-    private static final int MIN_PASSWORD_LENGTH = 8;
+    // 길이 상수들은 SecurityConstants에서 주입받도록 변경
     
     private final String username;
     private final String password;
@@ -34,10 +33,25 @@ public final class Credentials {
         this.password = null;
     }
     
-    // private 생성자
-    private Credentials(String username, String password) {
-        validateUsername(username);
-        validatePassword(password);
+    // private 생성자 - 상수 주입 버전
+    private Credentials(String username, String password, 
+                       int minUsernameLength, int maxUsernameLength, int minPasswordLength) {
+        ValidationUtils.requireNonNullOrEmpty(username, "Username");
+        ValidationUtils.requireInRange(username.length(), minUsernameLength, maxUsernameLength, "Username length");
+        ValidationUtils.requireValidPattern(username, VALID_USERNAME_PATTERN, "Username");
+        ValidationUtils.requireNonNullOrEmpty(password, "Password");
+        ValidationUtils.requireMinLength(password, minPasswordLength, "Password");
+        this.username = username;
+        this.password = password;
+    }
+    
+    // private 생성자 - 기본 상수 버전 (deprecated)
+    private Credentials(String username, String password, boolean deprecated) {
+        ValidationUtils.requireNonNullOrEmpty(username, "Username");
+        ValidationUtils.requireInRange(username.length(), 3, 50, "Username length");
+        ValidationUtils.requireValidPattern(username, VALID_USERNAME_PATTERN, "Username");
+        ValidationUtils.requireNonNullOrEmpty(password, "Password");
+        ValidationUtils.requireMinLength(password, 8, "Password");
         this.username = username;
         this.password = password;
     }
@@ -49,11 +63,29 @@ public final class Credentials {
      * 
      * @param username 사용자명
      * @param password 비밀번호
+     * @param minUsernameLength 최소 사용자명 길이
+     * @param maxUsernameLength 최대 사용자명 길이
+     * @param minPasswordLength 최소 비밀번호 길이
      * @return 생성된 Credentials
      * @throws IllegalArgumentException 유효하지 않은 값인 경우
      */
+    public static Credentials of(String username, String password,
+                               int minUsernameLength, int maxUsernameLength, int minPasswordLength) {
+        return new Credentials(username, password, minUsernameLength, maxUsernameLength, minPasswordLength);
+    }
+
+    /**
+     * 기본 제약사항으로 사용자명과 비밀번호로부터 Credentials를 생성합니다.
+     * 
+     * @deprecated 외부에서 상수값을 주입받는 {@link #of(String, String, int, int, int)} 사용을 권장합니다.
+     * @param username 사용자명
+     * @param password 비밀번호
+     * @return 생성된 Credentials
+     * @throws IllegalArgumentException 유효하지 않은 값인 경우
+     */
+    @Deprecated
     public static Credentials of(String username, String password) {
-        return new Credentials(username, password);
+        return new Credentials(username, password, true);
     }
     
     // ===== 유틸리티 메서드 =====
@@ -66,38 +98,6 @@ public final class Credentials {
         return password;
     }
     
-    // ===== Private 검증 메서드 =====
-    
-    private static void validateUsername(String username) {
-        if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("Username cannot be empty");
-        }
-        
-        if (username.length() < MIN_USERNAME_LENGTH || username.length() > MAX_USERNAME_LENGTH) {
-            throw new IllegalArgumentException(
-                String.format("Username must be between %d and %d characters", 
-                    MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH)
-            );
-        }
-        
-        if (!VALID_USERNAME_PATTERN.matcher(username).matches()) {
-            throw new IllegalArgumentException(
-                "Username contains invalid characters"
-            );
-        }
-    }
-    
-    private static void validatePassword(String password) {
-        if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Password cannot be empty");
-        }
-        
-        if (password.length() < MIN_PASSWORD_LENGTH) {
-            throw new IllegalArgumentException(
-                String.format("Password must be at least %d characters", MIN_PASSWORD_LENGTH)
-            );
-        }
-    }
     
     // ===== Object 메서드 =====
     

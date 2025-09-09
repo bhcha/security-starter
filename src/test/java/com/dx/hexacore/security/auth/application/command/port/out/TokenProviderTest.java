@@ -83,7 +83,7 @@ class TokenProviderTest {
         Method[] methods = TokenProvider.class.getDeclaredMethods();
         
         // then
-        assertThat(methods).hasSize(4);
+        assertThat(methods).hasSize(5);
     }
 
     @Test

@@ -3,9 +3,12 @@ package com.dx.hexacore.security.auth.adapter.inbound.filter;
 import com.dx.hexacore.security.auth.adapter.inbound.filter.JwtAuthenticationFilter;
 import com.dx.hexacore.security.auth.application.command.port.out.TokenProvider;
 import com.dx.hexacore.security.auth.application.command.port.out.TokenValidationResult;
+import com.dx.hexacore.security.auth.application.command.port.out.TokenValidationContext;
 import com.dx.hexacore.security.auth.application.command.port.in.ValidateTokenCommand;
 import com.dx.hexacore.security.auth.application.exception.ValidationException;
 import com.dx.hexacore.security.auth.adapter.inbound.config.SecurityProperties;
+import com.dx.hexacore.security.logging.SecurityRequestLogger;
+import com.dx.hexacore.security.logging.SecurityEventLogger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +28,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.lenient;
@@ -41,6 +45,12 @@ class JwtAuthenticationFilterTest {
 
     @Mock
     private SecurityProperties securityProperties;
+    
+    @Mock
+    private SecurityRequestLogger securityRequestLogger;
+    
+    @Mock
+    private SecurityEventLogger securityEventLogger;
 
     private JwtAuthenticationFilter filter;
     private ObjectMapper objectMapper;
@@ -67,7 +77,9 @@ class JwtAuthenticationFilterTest {
             tokenProvider,
             objectMapper,
             List.of("/actuator/health", "/error", "/public/**"),
-            securityProperties
+            securityProperties,
+            securityRequestLogger,
+            securityEventLogger
         );
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
@@ -87,14 +99,14 @@ class JwtAuthenticationFilterTest {
             request.setRequestURI("/api/protected");
 
             TokenValidationResult validResult = TokenValidationResult.valid("user-123", "testuser", Set.of("ROLE_USER"), null);
-            given(tokenProvider.validateToken(token))
+            given(tokenProvider.validateTokenWithContext(eq(token), any()))
                 .willReturn(validResult);
 
             // When
             filter.doFilterInternal(request, response, filterChain);
 
             // Then
-            verify(tokenProvider).validateToken(token);
+            verify(tokenProvider).validateTokenWithContext(eq(token), any());
             verify(filterChain).doFilter(request, response);
             assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         }
@@ -109,7 +121,7 @@ class JwtAuthenticationFilterTest {
             filter.doFilterInternal(request, response, filterChain);
 
             // Then
-            verify(tokenProvider, never()).validateToken(anyString());
+            verify(tokenProvider, never()).validateTokenWithContext(anyString(), any());
             verify(filterChain).doFilter(request, response);
             assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
         }
@@ -125,7 +137,7 @@ class JwtAuthenticationFilterTest {
             filter.doFilterInternal(request, response, filterChain);
 
             // Then
-            verify(tokenProvider, never()).validateToken(anyString());
+            verify(tokenProvider, never()).validateTokenWithContext(anyString(), any());
             verify(filterChain).doFilter(request, response);
         }
 
@@ -140,7 +152,7 @@ class JwtAuthenticationFilterTest {
             filter.doFilterInternal(request, response, filterChain);
 
             // Then
-            verify(tokenProvider, never()).validateToken(anyString());
+            verify(tokenProvider, never()).validateTokenWithContext(anyString(), any());
             verify(filterChain).doFilter(request, response);
         }
     }
@@ -158,7 +170,7 @@ class JwtAuthenticationFilterTest {
             request.setRequestURI("/api/protected");
 
             TokenValidationResult validResult = TokenValidationResult.valid("user-123", "testuser", Set.of("ROLE_USER"), null);
-            given(tokenProvider.validateToken(token))
+            given(tokenProvider.validateTokenWithContext(eq(token), any()))
                 .willReturn(validResult);
 
             // When
@@ -181,7 +193,7 @@ class JwtAuthenticationFilterTest {
             request.setRequestURI("/api/protected");
 
             TokenValidationResult invalidResult = TokenValidationResult.invalid("Token expired");
-            given(tokenProvider.validateToken(token))
+            given(tokenProvider.validateTokenWithContext(eq(token), any()))
                 .willReturn(invalidResult);
 
             // When
@@ -202,7 +214,7 @@ class JwtAuthenticationFilterTest {
             request.setRequestURI("/api/protected");
 
             TokenValidationResult invalidResult = TokenValidationResult.invalid("Invalid signature");
-            given(tokenProvider.validateToken(token))
+            given(tokenProvider.validateTokenWithContext(eq(token), any()))
                 .willReturn(invalidResult);
 
             // When
@@ -221,7 +233,7 @@ class JwtAuthenticationFilterTest {
             request.addHeader("Authorization", "Bearer " + token);
             request.setRequestURI("/api/protected");
 
-            given(tokenProvider.validateToken(token))
+            given(tokenProvider.validateTokenWithContext(eq(token), any()))
                 .willReturn(TokenValidationResult.invalid("Invalid token format"));
 
             // When
@@ -304,7 +316,7 @@ class JwtAuthenticationFilterTest {
             request.setRequestURI("/api/protected");
 
             TokenValidationResult invalidResult = TokenValidationResult.invalid("Invalid token");
-            given(tokenProvider.validateToken(token))
+            given(tokenProvider.validateTokenWithContext(eq(token), any()))
                 .willReturn(invalidResult);
 
             // When
@@ -330,7 +342,7 @@ class JwtAuthenticationFilterTest {
             request.addHeader("Authorization", "Bearer " + token);
             request.setRequestURI("/api/protected");
 
-            given(tokenProvider.validateToken(token))
+            given(tokenProvider.validateTokenWithContext(eq(token), any()))
                 .willThrow(new RuntimeException("Unexpected error"));
 
             // When
@@ -368,7 +380,7 @@ class JwtAuthenticationFilterTest {
             request.addHeader("Authorization", "Bearer " + token);
             request.setRequestURI("/api/protected");
 
-            given(tokenProvider.validateToken(token))
+            given(tokenProvider.validateTokenWithContext(eq(token), any()))
                 .willThrow(new RuntimeException("Error"));
 
             // When

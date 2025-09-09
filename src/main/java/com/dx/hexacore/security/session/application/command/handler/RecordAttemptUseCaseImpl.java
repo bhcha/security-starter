@@ -10,6 +10,7 @@ import com.dx.hexacore.security.session.domain.AuthenticationSession;
 import com.dx.hexacore.security.session.domain.vo.ClientIp;
 import com.dx.hexacore.security.session.domain.vo.RiskLevel;
 import com.dx.hexacore.security.session.domain.vo.SessionId;
+import com.dx.hexacore.security.config.properties.HexacoreSecurityProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +27,14 @@ class RecordAttemptUseCaseImpl implements RecordAttemptUseCase {
     
     private final AuthenticationSessionRepository sessionRepository;
     private final SessionEventPublisher eventPublisher;
+    private final HexacoreSecurityProperties securityProperties;
     
     public RecordAttemptUseCaseImpl(AuthenticationSessionRepository sessionRepository,
-                                   SessionEventPublisher eventPublisher) {
+                                   SessionEventPublisher eventPublisher,
+                                   HexacoreSecurityProperties securityProperties) {
         this.sessionRepository = sessionRepository;
         this.eventPublisher = eventPublisher;
+        this.securityProperties = securityProperties;
     }
     
     @Override

@@ -11,7 +11,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * 간단한 Bean 등록 검증 테스트
  */
-@SpringBootTest(classes = com.dx.hexacore.security.TestApplication.class)
+@SpringBootTest(classes = {
+    com.dx.hexacore.security.config.HexacoreSecurityAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
+})
 @TestPropertySource(properties = {
     "spring.datasource.url=jdbc:h2:mem:testdb",
     "spring.datasource.driver-class-name=org.h2.Driver",
@@ -22,7 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
     "hexacore.security.token-provider.jwt.enabled=true",
     "hexacore.security.token-provider.jwt.secret=test-secret-key-for-verification-purpose-only",
     "hexacore.security.persistence.jpa.enabled=true",
-    "hexacore.security.persistence.memory.enabled=false"
+    "hexacore.security.persistence.memory.enabled=false",
+    "spring.main.allow-bean-definition-overriding=true"
 })
 class SimpleBeanRegistrationTest {
     

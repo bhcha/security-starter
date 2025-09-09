@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.auth.application.command.port.in;
 
+import com.dx.hexacore.security.util.ValidationMessages;
 import java.util.Objects;
 
 /**
@@ -34,10 +35,10 @@ public class RefreshTokenCommand {
     
     private String validateRefreshToken(String refreshToken) {
         if (refreshToken == null) {
-            throw new IllegalArgumentException("refreshToken cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("refreshToken"));
         }
         if (refreshToken.trim().isEmpty()) {
-            throw new IllegalArgumentException("refreshToken cannot be empty or blank");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("refreshToken"));
         }
         return refreshToken;
     }

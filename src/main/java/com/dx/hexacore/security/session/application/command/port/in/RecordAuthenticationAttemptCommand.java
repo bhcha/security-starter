@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.session.application.command.port.in;
 
+import com.dx.hexacore.security.util.ValidationMessages;
 import java.util.regex.Pattern;
 
 /**
@@ -37,23 +38,23 @@ public record RecordAuthenticationAttemptCommand(
     
     private void validateSessionId(String sessionId) {
         if (sessionId == null || sessionId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Session ID cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("SessionId"));
         }
     }
     
     private void validateUserId(String userId) {
         if (userId == null || userId.trim().isEmpty()) {
-            throw new IllegalArgumentException("User ID cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("UserId"));
         }
     }
     
     private void validateClientIp(String clientIp) {
         if (clientIp == null || clientIp.trim().isEmpty()) {
-            throw new IllegalArgumentException("Client IP cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("ClientIp"));
         }
         
         if (!isValidIpAddress(clientIp)) {
-            throw new IllegalArgumentException("Invalid IP address format");
+            throw new IllegalArgumentException("Invalid ClientIp format: " + clientIp);
         }
     }
     
@@ -65,7 +66,7 @@ public record RecordAuthenticationAttemptCommand(
     
     private void validateRiskReason(String riskReason) {
         if (riskReason == null || riskReason.trim().isEmpty()) {
-            throw new IllegalArgumentException("Risk reason cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Risk reason"));
         }
     }
     

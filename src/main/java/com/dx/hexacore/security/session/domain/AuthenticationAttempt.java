@@ -2,6 +2,7 @@ package com.dx.hexacore.security.session.domain;
 
 import com.dx.hexacore.security.session.domain.vo.ClientIp;
 import com.dx.hexacore.security.session.domain.vo.RiskLevel;
+import com.dx.hexacore.security.util.ValidationMessages;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -37,16 +38,16 @@ public class AuthenticationAttempt {
 
     private static void validateParameters(String userId, LocalDateTime attemptedAt, ClientIp clientIp, RiskLevel riskLevel) {
         if (userId == null || userId.trim().isEmpty()) {
-            throw new IllegalArgumentException("User ID cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("UserId"));
         }
         if (attemptedAt == null) {
-            throw new IllegalArgumentException("Attempted time cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Attempted time"));
         }
         if (clientIp == null) {
-            throw new IllegalArgumentException("Client IP cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("ClientIp"));
         }
         if (riskLevel == null) {
-            throw new IllegalArgumentException("Risk level cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Risk level"));
         }
     }
 
@@ -55,7 +56,7 @@ public class AuthenticationAttempt {
      */
     public boolean isWithinTimeWindow(LocalDateTime windowStart) {
         if (windowStart == null) {
-            throw new IllegalArgumentException("Window start time cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Window start time"));
         }
         return attemptedAt.isAfter(windowStart) || attemptedAt.isEqual(windowStart);
     }
@@ -65,7 +66,7 @@ public class AuthenticationAttempt {
      */
     public boolean isFromSameSource(ClientIp otherIp) {
         if (otherIp == null) {
-            throw new IllegalArgumentException("Other IP cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Other IP"));
         }
         return clientIp.equals(otherIp);
     }

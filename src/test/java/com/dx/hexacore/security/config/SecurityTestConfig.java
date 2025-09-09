@@ -13,12 +13,18 @@ import com.dx.hexacore.security.auth.application.query.port.out.LoadTokenInfoQue
 import com.dx.hexacore.security.auth.adapter.outbound.persistence.repository.AuthenticationJpaRepository;
 import com.dx.hexacore.security.session.application.command.port.in.CheckLockoutUseCase;
 import com.dx.hexacore.security.session.application.command.port.in.RecordAttemptUseCase;
+import com.dx.hexacore.security.session.application.command.port.in.SessionManagementUseCase;
 import com.dx.hexacore.security.session.application.command.port.in.UnlockAccountUseCase;
 import com.dx.hexacore.security.session.application.command.port.out.AuthenticationSessionRepository;
 import com.dx.hexacore.security.session.application.command.port.out.SessionEventPublisher;
 import com.dx.hexacore.security.session.application.query.port.out.LoadFailedAttemptsQueryPort;
 import com.dx.hexacore.security.session.application.query.port.out.LoadSessionStatusQueryPort;
 import com.dx.hexacore.security.session.adapter.outbound.persistence.repository.SessionJpaRepository;
+import com.dx.hexacore.security.logging.SecurityRequestLogger;
+import com.dx.hexacore.security.logging.SecurityEventLogger;
+import com.dx.hexacore.security.config.support.SecurityConfigurationValidator;
+import com.dx.hexacore.security.config.HexacoreSecurityAutoConfiguration;
+import com.dx.hexacore.security.config.properties.HexacoreSecurityProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -81,6 +87,12 @@ public class SecurityTestConfig {
     @Primary
     public UnlockAccountUseCase mockUnlockAccountUseCase() {
         return Mockito.mock(UnlockAccountUseCase.class);
+    }
+
+    @Bean
+    @Primary
+    public SessionManagementUseCase mockSessionManagementUseCase() {
+        return Mockito.mock(SessionManagementUseCase.class);
     }
 
     // Authentication Aggregate - Outbound Ports
@@ -164,6 +176,35 @@ public class SecurityTestConfig {
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
+    
+    @Bean
+    @Primary
+    public SecurityRequestLogger mockSecurityRequestLogger() {
+        return Mockito.mock(SecurityRequestLogger.class);
+    }
+    
+    @Bean
+    @Primary
+    public SecurityEventLogger mockSecurityEventLogger() {
+        return Mockito.mock(SecurityEventLogger.class);
+    }
 
+    @Bean
+    @Primary
+    public SecurityConfigurationValidator securityConfigurationValidator(HexacoreSecurityProperties properties) {
+        return new SecurityConfigurationValidator(properties);
+    }
+
+    @Bean("hexacoreSecurityAutoConfiguration")
+    @Primary
+    public HexacoreSecurityAutoConfiguration hexacoreSecurityAutoConfiguration() {
+        return new HexacoreSecurityAutoConfiguration();
+    }
+
+    @Bean
+    @Primary
+    public HexacoreSecurityProperties hexacoreSecurityProperties() {
+        return new HexacoreSecurityProperties();
+    }
 
 }

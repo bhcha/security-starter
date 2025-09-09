@@ -42,7 +42,7 @@ class RefreshTokenCommandTest {
         // when & then
         assertThatThrownBy(() -> new RefreshTokenCommand(refreshToken))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("refreshToken cannot be empty or blank");
+                .hasMessage("refreshToken cannot be null or empty");
     }
 
     @Test
@@ -54,7 +54,7 @@ class RefreshTokenCommandTest {
         // when & then
         assertThatThrownBy(() -> new RefreshTokenCommand(refreshToken))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("refreshToken cannot be empty or blank");
+                .hasMessage("refreshToken cannot be null or empty");
     }
 
     @Test

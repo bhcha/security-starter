@@ -1,5 +1,7 @@
 package com.dx.hexacore.security.session.application.query.port.in;
 
+import com.dx.hexacore.security.util.ValidationMessages;
+
 /**
  * 세션 상태 조회 쿼리
  * 
@@ -17,7 +19,7 @@ public record GetSessionStatusQuery(
     
     private void validateSessionId(String sessionId) {
         if (sessionId == null || sessionId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Session ID cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("SessionId"));
         }
     }
 }

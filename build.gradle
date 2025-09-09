@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.dx'
-version = '1.0.9'
+version = '1.5.0'
 
 java {
     toolchain {
@@ -67,6 +67,9 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    
+    // Team's Keycloak Client Library
+    implementation 'io.github.l-dxd:keycloak-client:0.0.17'
     
     // Optional dependencies for conditional beans
     compileOnly 'org.keycloak:keycloak-admin-client:26.0.0'

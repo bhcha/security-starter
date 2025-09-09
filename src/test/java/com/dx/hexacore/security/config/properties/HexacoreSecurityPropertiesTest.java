@@ -20,7 +20,7 @@ class HexacoreSecurityPropertiesTest {
         contextRunner.run(context -> {
             HexacoreSecurityProperties properties = context.getBean(HexacoreSecurityProperties.class);
             
-            assertThat(properties.getEnabled()).isTrue();
+            assertThat(properties.getEnabled()).isFalse(); // 기본값이 false로 변경됨
             
             // TokenProvider defaults
             var tokenProvider = properties.getTokenProvider();

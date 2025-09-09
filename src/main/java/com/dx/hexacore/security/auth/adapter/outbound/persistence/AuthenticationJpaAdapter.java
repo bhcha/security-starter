@@ -1,6 +1,7 @@
 package com.dx.hexacore.security.auth.adapter.outbound.persistence;
 
 import com.dx.hexacore.security.auth.adapter.outbound.persistence.entity.AuthenticationJpaEntity;
+import com.dx.hexacore.security.util.ValidationMessages;
 import com.dx.hexacore.security.auth.adapter.outbound.persistence.repository.AuthenticationJpaRepository;
 import com.dx.hexacore.security.auth.application.command.port.out.AuthenticationRepository;
 import com.dx.hexacore.security.auth.application.query.port.out.LoadAuthenticationQueryPort;
@@ -26,7 +27,7 @@ class AuthenticationJpaAdapter implements AuthenticationRepository, LoadAuthenti
     @Transactional
     public Authentication save(Authentication authentication) {
         if (authentication == null) {
-            throw new IllegalArgumentException("Authentication cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Authentication"));
         }
         
         log.debug("Saving authentication with id: {}", authentication.getId());
@@ -42,7 +43,7 @@ class AuthenticationJpaAdapter implements AuthenticationRepository, LoadAuthenti
     @Transactional(readOnly = true)
     public Optional<Authentication> findById(UUID id) {
         if (id == null) {
-            throw new IllegalArgumentException("Authentication ID cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Authentication ID"));
         }
         
         log.debug("Finding authentication by id: {}", id);
@@ -55,7 +56,7 @@ class AuthenticationJpaAdapter implements AuthenticationRepository, LoadAuthenti
     @Transactional(readOnly = true)
     public Optional<Authentication> findLatestSuccessfulByUsername(String username) {
         if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("Username cannot be null or blank");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Username"));
         }
         
         log.debug("Finding latest successful authentication by username: {}", username);
@@ -69,7 +70,7 @@ class AuthenticationJpaAdapter implements AuthenticationRepository, LoadAuthenti
     @Transactional(readOnly = true)
     public Optional<Authentication> findByAccessToken(String accessToken) {
         if (accessToken == null || accessToken.isBlank()) {
-            throw new IllegalArgumentException("Access token cannot be null or blank");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Access token"));
         }
         
         log.debug("Finding authentication by access token");
@@ -82,7 +83,7 @@ class AuthenticationJpaAdapter implements AuthenticationRepository, LoadAuthenti
     @Transactional(readOnly = true)
     public Optional<Authentication> findByRefreshToken(String refreshToken) {
         if (refreshToken == null || refreshToken.isBlank()) {
-            throw new IllegalArgumentException("Refresh token cannot be null or blank");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Refresh token"));
         }
         
         log.debug("Finding authentication by refresh token");
@@ -95,7 +96,7 @@ class AuthenticationJpaAdapter implements AuthenticationRepository, LoadAuthenti
     @Transactional(readOnly = true)
     public Optional<AuthenticationProjection> loadById(String authenticationId) {
         if (authenticationId == null || authenticationId.isBlank()) {
-            throw new IllegalArgumentException("Authentication ID cannot be null or blank");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Authentication ID"));
         }
         
         log.debug("Loading authentication projection by id: {}", authenticationId);
@@ -108,7 +109,7 @@ class AuthenticationJpaAdapter implements AuthenticationRepository, LoadAuthenti
     @Transactional(readOnly = true)
     public Optional<TokenInfoProjection> loadByToken(String token) {
         if (token == null || token.isBlank()) {
-            throw new IllegalArgumentException("Token cannot be null or blank");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Token"));
         }
         
         log.debug("Loading token info projection by token");

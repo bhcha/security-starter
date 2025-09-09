@@ -7,6 +7,7 @@ import com.dx.hexacore.security.auth.application.command.port.out.ExternalAuthEx
 import com.dx.hexacore.security.auth.application.command.port.out.ExternalAuthProvider;
 import com.dx.hexacore.security.auth.domain.vo.Credentials;
 import com.dx.hexacore.security.auth.domain.vo.Token;
+import com.dx.hexacore.security.util.ValidationMessages;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -48,7 +49,7 @@ class KeycloakAuthenticationAdapter implements ExternalAuthProvider {
     @Override
     public Token authenticate(Credentials credentials) throws ExternalAuthException {
         if (credentials == null) {
-            throw new IllegalArgumentException("Credentials cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Credentials"));
         }
         
         log.debug("Authenticating user with Keycloak");
@@ -98,7 +99,7 @@ class KeycloakAuthenticationAdapter implements ExternalAuthProvider {
     @Override
     public Token refreshToken(String refreshToken) throws ExternalAuthException {
         if (refreshToken == null || refreshToken.isBlank()) {
-            throw new IllegalArgumentException("Refresh token cannot be null or blank");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Refresh token"));
         }
         
         log.debug("Refreshing token with Keycloak");
@@ -147,7 +148,7 @@ class KeycloakAuthenticationAdapter implements ExternalAuthProvider {
     @Override
     public boolean validateToken(String accessToken) throws ExternalAuthException {
         if (accessToken == null || accessToken.isBlank()) {
-            throw new IllegalArgumentException("Access token cannot be null or blank");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Access token"));
         }
         
         log.debug("Validating token with Keycloak");

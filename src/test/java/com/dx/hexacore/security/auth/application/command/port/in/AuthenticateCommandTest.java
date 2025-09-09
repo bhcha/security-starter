@@ -46,7 +46,7 @@ class AuthenticateCommandTest {
         // when & then
         assertThatThrownBy(() -> new AuthenticateCommand(username, password))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("username cannot be empty or blank");
+                .hasMessage("username cannot be null or empty");
     }
 
     @Test
@@ -59,7 +59,7 @@ class AuthenticateCommandTest {
         // when & then
         assertThatThrownBy(() -> new AuthenticateCommand(username, password))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("username cannot be empty or blank");
+                .hasMessage("username cannot be null or empty");
     }
 
     @Test
@@ -85,7 +85,7 @@ class AuthenticateCommandTest {
         // when & then
         assertThatThrownBy(() -> new AuthenticateCommand(username, password))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("password cannot be empty or blank");
+                .hasMessage("password cannot be null or empty");
     }
 
     @Test
@@ -98,7 +98,7 @@ class AuthenticateCommandTest {
         // when & then
         assertThatThrownBy(() -> new AuthenticateCommand(username, password))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("password cannot be empty or blank");
+                .hasMessage("password cannot be null or empty");
     }
 
     @Test

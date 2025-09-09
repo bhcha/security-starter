@@ -192,7 +192,7 @@ class TokenValidationResultTest {
                 nullUserId, "username", Set.of(), Instant.now())
         )
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("User ID cannot be null or empty");
+                .hasMessageContaining("UserId cannot be null or empty");
     }
 
     @Test
@@ -206,7 +206,7 @@ class TokenValidationResultTest {
                 emptyUserId, "username", Set.of(), Instant.now())
         )
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("User ID cannot be null or empty");
+                .hasMessageContaining("UserId cannot be null or empty");
     }
 
     @Test

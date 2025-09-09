@@ -20,7 +20,7 @@ import java.util.Map;
  * JWT 인증 실패 시 처리를 담당하는 Entry Point
  * Spring Security에서 인증되지 않은 요청이 보호된 리소스에 접근할 때 호출됩니다.
  */
-class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
     

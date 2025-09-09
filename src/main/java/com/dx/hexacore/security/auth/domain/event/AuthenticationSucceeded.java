@@ -1,6 +1,7 @@
 package com.dx.hexacore.security.auth.domain.event;
 
 import com.dx.hexacore.security.auth.domain.vo.Token;
+import com.dx.hexacore.security.util.ValidationMessages;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -20,13 +21,13 @@ public class AuthenticationSucceeded extends DomainEvent {
 
     public static AuthenticationSucceeded of(UUID authenticationId, Token token, LocalDateTime successTime) {
         if (authenticationId == null) {
-            throw new IllegalArgumentException("Authentication ID cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Authentication ID"));
         }
         if (token == null) {
-            throw new IllegalArgumentException("Token cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Token"));
         }
         if (successTime == null) {
-            throw new IllegalArgumentException("Success time cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Success time"));
         }
 
         return new AuthenticationSucceeded(authenticationId, token, successTime);

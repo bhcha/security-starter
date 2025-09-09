@@ -5,6 +5,9 @@ import com.dx.hexacore.security.auth.adapter.inbound.config.SecurityProperties;
 import com.dx.hexacore.security.auth.adapter.inbound.filter.JwtAuthenticationEntryPoint;
 import com.dx.hexacore.security.auth.adapter.inbound.filter.JwtAuthenticationFilter;
 import com.dx.hexacore.security.auth.application.command.port.out.TokenProvider;
+import com.dx.hexacore.security.logging.SecurityRequestLogger;
+import com.dx.hexacore.security.logging.SecurityEventLogger;
+import com.dx.hexacore.security.config.properties.HexacoreSecurityProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +19,7 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +38,15 @@ class SecurityFilterConfigTest {
 
     @Mock
     private SecurityProperties securityProperties;
+    
+    @Mock
+    private SecurityRequestLogger securityRequestLogger;
+    
+    @Mock
+    private SecurityEventLogger securityEventLogger;
+    
+    @Mock
+    private SecurityFilterChain securityFilterChain;
 
     private SecurityFilterConfig securityFilterConfig;
 
@@ -50,12 +63,7 @@ class SecurityFilterConfigTest {
 
         // Then
         assertThat(properties).isNotNull();
-        assertThat(properties.getPaths()).containsExactlyInAnyOrder(
-            "/actuator/health",
-            "/error",
-            "/swagger-ui/**",
-            "/v3/api-docs/**"
-        );
+        assertThat(properties.getPaths()).isEmpty(); // 기본값 없음 - 설정 파일에서 지정
     }
 
     @Test
@@ -70,7 +78,9 @@ class SecurityFilterConfigTest {
             tokenProvider,
             objectMapper,
             excludeProperties,
-            securityProperties
+            securityProperties,
+            securityRequestLogger,
+            securityEventLogger
         );
 
         // Then
@@ -108,15 +118,19 @@ class SecurityFilterConfigTest {
     void conditionalOnProperty_EnabledCase() {
         // Given & When
         new ApplicationContextRunner()
-            .withPropertyValues("security.auth.jwt.enabled=true")
+            .withPropertyValues("hexacore.security.enabled=true")
             .withUserConfiguration(SecurityFilterConfig.class, TestConfig.class)
             .withBean(TokenProvider.class, () -> tokenProvider)
             .withBean(ObjectMapper.class, () -> objectMapper)
+            .withBean(SecurityRequestLogger.class, () -> securityRequestLogger)
+            .withBean(SecurityEventLogger.class, () -> securityEventLogger)
+            .withBean(SecurityFilterChain.class, () -> securityFilterChain)
             .run(context -> {
                 // Then
                 assertThat(context).hasSingleBean(SecurityFilterConfig.class);
                 assertThat(context).hasSingleBean(JwtAuthenticationFilter.class);
                 assertThat(context).hasSingleBean(JwtAuthenticationEntryPoint.class);
+                // SecurityFilterChain은 테스트하지 않음 - HttpSecurity 의존성 필요
             });
     }
 
@@ -125,7 +139,7 @@ class SecurityFilterConfigTest {
     void conditionalOnProperty_DisabledCase() {
         // Given & When
         new ApplicationContextRunner()
-            .withPropertyValues("security.auth.jwt.enabled=false")
+            .withPropertyValues("hexacore.security.enabled=false")
             .withUserConfiguration(SecurityFilterConfig.class)
             .withBean(TokenProvider.class, () -> tokenProvider)
             .withBean(ObjectMapper.class, () -> objectMapper)
@@ -145,6 +159,9 @@ class SecurityFilterConfigTest {
             .withUserConfiguration(SecurityFilterConfig.class, TestConfig.class)
             .withBean(TokenProvider.class, () -> tokenProvider)
             .withBean(ObjectMapper.class, () -> objectMapper)
+            .withBean(SecurityRequestLogger.class, () -> securityRequestLogger)
+            .withBean(SecurityEventLogger.class, () -> securityEventLogger)
+            .withBean(SecurityFilterChain.class, () -> securityFilterChain)
             .run(context -> {
                 // Then
                 assertThat(context).hasSingleBean(SecurityFilterConfig.class);
@@ -187,6 +204,24 @@ class SecurityFilterConfigTest {
             
             auth.setErrorResponse(errorResponse);
             properties.setAuthentication(auth);
+            return properties;
+        }
+        
+        @Bean
+        @Primary
+        public HexacoreSecurityProperties hexacoreSecurityProperties() {
+            HexacoreSecurityProperties properties = new HexacoreSecurityProperties();
+            
+            HexacoreSecurityProperties.AuthFilterProperties filter = new HexacoreSecurityProperties.AuthFilterProperties();
+            filter.setExcludePaths(new String[]{"/test/**"});
+            properties.setFilter(filter);
+            
+            HexacoreSecurityProperties.TokenProvider tokenProvider = new HexacoreSecurityProperties.TokenProvider();
+            HexacoreSecurityProperties.TokenProvider.JwtProperties jwt = new HexacoreSecurityProperties.TokenProvider.JwtProperties();
+            jwt.setExcludedPaths(List.of("/jwt-excluded/**"));
+            tokenProvider.setJwt(jwt);
+            properties.setTokenProvider(tokenProvider);
+            
             return properties;
         }
     }

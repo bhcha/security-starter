@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.auth.application.command.port.in;
 
+import com.dx.hexacore.security.util.ValidationMessages;
 import java.util.Objects;
 
 /**
@@ -38,20 +39,20 @@ public class AuthenticateCommand {
     
     private String validateUsername(String username) {
         if (username == null) {
-            throw new IllegalArgumentException("username cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("username"));
         }
         if (username.trim().isEmpty()) {
-            throw new IllegalArgumentException("username cannot be empty or blank");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("username"));
         }
         return username;
     }
     
     private String validatePassword(String password) {
         if (password == null) {
-            throw new IllegalArgumentException("password cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("password"));
         }
         if (password.trim().isEmpty()) {
-            throw new IllegalArgumentException("password cannot be empty or blank");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("password"));
         }
         return password;
     }

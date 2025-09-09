@@ -1,5 +1,7 @@
 package com.dx.hexacore.security.auth.application.command.port.out;
 
+import com.dx.hexacore.security.util.ValidationMessages;
+
 /**
  * 토큰 제공자에서 발생하는 예외를 정의하는 클래스
  * 
@@ -166,17 +168,17 @@ public class TokenProviderException extends RuntimeException {
     
     private static void validateParameters(String message, TokenProviderErrorCode errorCode, String providerType) {
         if (message == null || message.trim().isEmpty()) {
-            throw new IllegalArgumentException("Message cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Message"));
         }
         if (errorCode == null) {
-            throw new IllegalArgumentException("Error code cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Error code"));
         }
         validateProviderType(providerType);
     }
     
     private static void validateProviderType(String providerType) {
         if (providerType == null || providerType.trim().isEmpty()) {
-            throw new IllegalArgumentException("Provider type cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Provider type"));
         }
     }
 }

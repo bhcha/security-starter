@@ -5,6 +5,7 @@ import com.dx.hexacore.security.session.domain.event.AccountLocked;
 import com.dx.hexacore.security.session.domain.vo.ClientIp;
 import com.dx.hexacore.security.session.domain.vo.RiskLevel;
 import com.dx.hexacore.security.session.domain.vo.SessionId;
+import com.dx.hexacore.security.util.ValidationMessages;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,10 +16,7 @@ import java.util.List;
  */
 public class AuthenticationSession extends AggregateRoot {
     
-    // 정책 상수
-    private static final int MAX_FAILED_ATTEMPTS = 5;
-    private static final int LOCKOUT_DURATION_MINUTES = 30;
-    private static final int TIME_WINDOW_MINUTES = 15;
+    // 정책 상수는 SecurityConstants에서 주입받도록 변경
     
     private final SessionId sessionId;
     private final String userId;
@@ -28,11 +26,21 @@ public class AuthenticationSession extends AggregateRoot {
     private LocalDateTime lockedUntil;
     private final LocalDateTime createdAt;
     private LocalDateTime lastActivityAt;
+    
+    // 설정값으로 주입받는 정책들
+    private final int maxFailedAttempts;
+    private final int lockoutDurationMinutes;
+    private final int timeWindowMinutes;
 
-    private AuthenticationSession(SessionId sessionId, String userId, ClientIp clientIp) {
+    private AuthenticationSession(SessionId sessionId, String userId, ClientIp clientIp, 
+                                  int maxFailedAttempts, int lockoutDurationMinutes, 
+                                  int timeWindowMinutes) {
         this.sessionId = sessionId;
         this.userId = userId;
         this.clientIp = clientIp;
+        this.maxFailedAttempts = maxFailedAttempts;
+        this.lockoutDurationMinutes = lockoutDurationMinutes;
+        this.timeWindowMinutes = timeWindowMinutes;
         this.attempts = new ArrayList<>();
         this.isLocked = false;
         this.lockedUntil = null;
@@ -43,20 +51,36 @@ public class AuthenticationSession extends AggregateRoot {
     /**
      * AuthenticationSession 생성 팩토리 메서드
      */
-    public static AuthenticationSession create(SessionId sessionId, String userId, ClientIp clientIp) {
+    public static AuthenticationSession create(SessionId sessionId, String userId, ClientIp clientIp, 
+                                               int maxFailedAttempts, int lockoutDurationMinutes,
+                                               int timeWindowMinutes) {
         validateParameters(sessionId, userId, clientIp);
-        return new AuthenticationSession(sessionId, userId, clientIp);
+        return new AuthenticationSession(sessionId, userId, clientIp, maxFailedAttempts, 
+                                        lockoutDurationMinutes, timeWindowMinutes);
+    }
+
+    /**
+     * 기본 제약사항으로 AuthenticationSession 생성 팩토리 메서드
+     * 
+     * @deprecated 외부에서 상수값을 주입받는 {@link #create(SessionId, String, ClientIp, int, int, int)} 사용을 권장합니다.
+     */
+    @Deprecated
+    public static AuthenticationSession create(SessionId sessionId, String userId, ClientIp clientIp, 
+                                               int maxFailedAttempts, int lockoutDurationMinutes) {
+        validateParameters(sessionId, userId, clientIp);
+        return new AuthenticationSession(sessionId, userId, clientIp, maxFailedAttempts, 
+                                        lockoutDurationMinutes, 15);
     }
 
     private static void validateParameters(SessionId sessionId, String userId, ClientIp clientIp) {
         if (sessionId == null) {
-            throw new IllegalArgumentException("Session ID cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("SessionId"));
         }
         if (userId == null || userId.trim().isEmpty()) {
-            throw new IllegalArgumentException("User ID cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("UserId"));
         }
         if (clientIp == null) {
-            throw new IllegalArgumentException("Client IP cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("ClientIp"));
         }
     }
 
@@ -99,7 +123,7 @@ public class AuthenticationSession extends AggregateRoot {
             return false; // 이미 잠금 상태
         }
         
-        return getFailedAttemptsInWindow() >= MAX_FAILED_ATTEMPTS;
+        return getFailedAttemptsInWindow() >= maxFailedAttempts;
     }
 
     /**
@@ -111,7 +135,7 @@ public class AuthenticationSession extends AggregateRoot {
         }
         
         this.isLocked = true;
-        this.lockedUntil = LocalDateTime.now().plusMinutes(LOCKOUT_DURATION_MINUTES);
+        this.lockedUntil = LocalDateTime.now().plusMinutes(lockoutDurationMinutes);
         
         // 도메인 이벤트 발행
         AccountLocked event = AccountLocked.of(
@@ -157,7 +181,7 @@ public class AuthenticationSession extends AggregateRoot {
      * 시간 윈도우 내 실패 횟수 조회
      */
     public int getFailedAttemptsInWindow() {
-        LocalDateTime windowStart = LocalDateTime.now().minusMinutes(TIME_WINDOW_MINUTES);
+        LocalDateTime windowStart = LocalDateTime.now().minusMinutes(timeWindowMinutes);
         
         // 마지막 성공한 시도 이후의 실패만 카운트
         LocalDateTime lastSuccessTime = getLastSuccessfulAttemptTime();

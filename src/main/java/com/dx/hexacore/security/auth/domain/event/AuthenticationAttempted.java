@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.auth.domain.event;
 
+import com.dx.hexacore.security.util.ValidationMessages;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -18,13 +19,13 @@ public class AuthenticationAttempted extends DomainEvent {
 
     public static AuthenticationAttempted of(UUID authenticationId, String username, LocalDateTime attemptTime) {
         if (authenticationId == null) {
-            throw new IllegalArgumentException("Authentication ID cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Authentication ID"));
         }
         if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Username cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Username"));
         }
         if (attemptTime == null) {
-            throw new IllegalArgumentException("Attempt time cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Attempt time"));
         }
 
         return new AuthenticationAttempted(authenticationId, username, attemptTime);

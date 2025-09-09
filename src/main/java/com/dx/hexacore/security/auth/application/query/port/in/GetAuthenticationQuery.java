@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.auth.application.query.port.in;
 
+import com.dx.hexacore.security.util.ValidationMessages;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
@@ -50,13 +51,13 @@ public class GetAuthenticationQuery {
 
     private String validateAuthenticationId(String authenticationId) {
         if (authenticationId == null) {
-            throw new IllegalArgumentException("Authentication ID cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Authentication ID"));
         }
         if (authenticationId.isEmpty()) {
-            throw new IllegalArgumentException("Authentication ID cannot be empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeEmpty("Authentication ID"));
         }
         if (authenticationId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Authentication ID cannot be blank");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeBlank("Authentication ID"));
         }
         return authenticationId;
     }

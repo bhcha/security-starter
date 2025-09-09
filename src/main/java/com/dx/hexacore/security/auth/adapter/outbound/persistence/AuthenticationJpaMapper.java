@@ -1,6 +1,7 @@
 package com.dx.hexacore.security.auth.adapter.outbound.persistence;
 
 import com.dx.hexacore.security.auth.adapter.outbound.persistence.entity.AuthenticationJpaEntity;
+import com.dx.hexacore.security.util.ValidationMessages;
 import com.dx.hexacore.security.auth.adapter.outbound.persistence.entity.TokenEntity;
 import com.dx.hexacore.security.auth.application.projection.AuthenticationProjection;
 import com.dx.hexacore.security.auth.application.projection.TokenInfoProjection;
@@ -18,7 +19,7 @@ public class AuthenticationJpaMapper {
     
     public AuthenticationJpaEntity toEntity(Authentication authentication) {
         if (authentication == null) {
-            throw new IllegalArgumentException("Authentication cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Authentication"));
         }
         
         AuthenticationJpaEntity.AuthenticationJpaEntityBuilder builder = AuthenticationJpaEntity.builder()

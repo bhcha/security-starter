@@ -6,6 +6,7 @@ import com.dx.hexacore.security.session.application.command.port.in.SessionManag
 import com.dx.hexacore.security.session.application.command.port.in.UnlockAccountUseCase;
 import com.dx.hexacore.security.session.application.command.port.out.AuthenticationSessionRepository;
 import com.dx.hexacore.security.session.application.command.port.out.SessionEventPublisher;
+import com.dx.hexacore.security.config.properties.HexacoreSecurityProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,15 +16,16 @@ import org.springframework.context.annotation.Configuration;
  * 같은 패키지에 있는 package-private 구현체들을 Bean으로 등록합니다.
  */
 @Configuration
-class SessionCommandConfiguration {
+public class SessionCommandConfiguration {
 
     // Command Use Cases
     @Bean
     @ConditionalOnMissingBean
     public RecordAttemptUseCase recordAttemptUseCase(
             AuthenticationSessionRepository repository,
-            SessionEventPublisher eventPublisher) {
-        return new RecordAttemptUseCaseImpl(repository, eventPublisher);
+            SessionEventPublisher eventPublisher,
+            HexacoreSecurityProperties securityProperties) {
+        return new RecordAttemptUseCaseImpl(repository, eventPublisher, securityProperties);
     }
 
     @Bean

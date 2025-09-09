@@ -2,6 +2,7 @@ package com.dx.hexacore.security.auth.adapter.outbound.event;
 
 import com.dx.hexacore.security.auth.application.command.port.out.EventPublisher;
 import com.dx.hexacore.security.auth.domain.event.DomainEvent;
+import com.dx.hexacore.security.util.ValidationMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -23,7 +24,7 @@ class SpringEventPublisher implements EventPublisher {
     @Override
     public void publish(DomainEvent event) {
         if (event == null) {
-            throw new IllegalArgumentException("Event cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Event"));
         }
         
         log.debug("Publishing domain event: {} with id: {}", 
@@ -40,14 +41,14 @@ class SpringEventPublisher implements EventPublisher {
     @Override
     public void publishAll(DomainEvent... events) {
         if (events == null || events.length == 0) {
-            throw new IllegalArgumentException("Events cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Events"));
         }
         
         log.debug("Publishing {} domain events", events.length);
         
         for (DomainEvent event : events) {
             if (event == null) {
-                throw new IllegalArgumentException("Event in array cannot be null");
+                throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Event in array"));
             }
             publish(event);
         }

@@ -7,11 +7,11 @@ import com.dx.hexacore.security.auth.application.command.port.out.TokenProvider;
 import com.dx.hexacore.security.auth.application.command.port.out.TokenProviderErrorCode;
 import com.dx.hexacore.security.auth.application.command.port.out.TokenProviderException;
 import com.dx.hexacore.security.auth.application.command.port.out.TokenProviderType;
+import com.dx.hexacore.security.auth.application.command.port.out.TokenValidationContext;
 import com.dx.hexacore.security.auth.application.command.port.out.TokenValidationResult;
 import com.dx.hexacore.security.config.properties.HexacoreSecurityProperties;
 import com.dx.hexacore.security.auth.domain.vo.Credentials;
 import com.dx.hexacore.security.auth.domain.vo.Token;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -20,6 +20,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -29,12 +31,12 @@ public class KeycloakTokenProvider implements TokenProvider {
     
     private final KeycloakProperties properties;
     private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
+    private final KeycloakAuthorizationService authorizationService;
     
     public KeycloakTokenProvider(HexacoreSecurityProperties.TokenProvider.KeycloakProperties configProperties) {
         this.properties = convertToKeycloakProperties(configProperties);
         this.restTemplate = createRestTemplate();
-        this.objectMapper = new ObjectMapper();
+        this.authorizationService = new KeycloakAuthorizationService(properties);
         
         if (!properties.isValid()) {
             throw new IllegalStateException("Invalid Keycloak configuration. Please check your properties.");
@@ -270,6 +272,113 @@ public class KeycloakTokenProvider implements TokenProvider {
     public TokenProviderType getProviderType() {
         return TokenProviderType.KEYCLOAK;
     }
+    
+    @Override
+    public TokenValidationResult validateTokenWithContext(String accessToken, TokenValidationContext context) 
+            throws TokenProviderException {
+        
+        // 컨텍스트 정보 상세 로깅
+        if (context != null) {
+            log.info("=== Token Validation Context ===");
+            log.info("Request URI: {}", context.getRequestUri());
+            log.info("HTTP Method: {}", context.getHttpMethod());
+            log.info("Client IP: {}", context.getClientIp());
+            log.info("User-Agent: {}", context.getUserAgent());
+            log.info("Resource Permission Check: {}", context.isCheckResourcePermission());
+            log.info("================================");
+        }
+        
+        // 먼저 기본 토큰 검증 수행
+        TokenValidationResult basicValidation = validateToken(accessToken);
+        
+        // 토큰이 유효하지 않으면 바로 반환
+        if (!basicValidation.valid()) {
+            log.warn("Basic token validation failed");
+            return basicValidation;
+        }
+        
+        log.info("Basic token validation successful for user: {}", basicValidation.username());
+        
+        // 리소스 권한 체크가 활성화되어 있고 컨텍스트가 있는 경우
+        if (context != null && context.isCheckResourcePermission()) {
+            log.info("Starting UMA resource permission check for URI: {} with method: {}", 
+                context.getRequestUri(), context.getHttpMethod());
+            
+            // UMA 권한 체크 수행
+            boolean hasPermission = checkUMAPermission(accessToken, context);
+            
+            if (!hasPermission) {
+                log.warn("❌ Resource permission DENIED for URI: {} with method: {}", 
+                    context.getRequestUri(), context.getHttpMethod());
+                
+                // 권한이 없는 경우 검증 실패로 처리
+                Map<String, Object> claims = new HashMap<>(basicValidation.claims());
+                claims.put("resource_permission_denied", true);
+                claims.put("requested_uri", context.getRequestUri());
+                claims.put("requested_method", context.getHttpMethod());
+                
+                return new TokenValidationResult(
+                    false,
+                    basicValidation.userId(),
+                    basicValidation.username(),
+                    basicValidation.authorities(),
+                    basicValidation.expiresAt(),
+                    claims
+                );
+            }
+            
+            // 권한이 있는 경우 컨텍스트 정보를 추가하여 반환
+            log.info("✅ Resource permission GRANTED for URI: {} with method: {}", 
+                context.getRequestUri(), context.getHttpMethod());
+            
+            Map<String, Object> claims = new HashMap<>(basicValidation.claims());
+            claims.put("resource_permission_granted", true);
+            claims.put("requested_uri", context.getRequestUri());
+            claims.put("requested_method", context.getHttpMethod());
+            
+            return new TokenValidationResult(
+                true,
+                basicValidation.userId(),
+                basicValidation.username(),
+                basicValidation.authorities(),
+                basicValidation.expiresAt(),
+                claims
+            );
+        }
+        
+        // 리소스 권한 체크가 필요 없는 경우 기본 검증 결과 반환
+        return basicValidation;
+    }
+    
+    /**
+     * Keycloak Admin Client Authorization을 사용하여 리소스 권한을 체크합니다.
+     * 
+     * <p>하드코딩 없이 Keycloak에 설정된 리소스와 URI를 직접 매칭하여 권한을 판단합니다.</p>
+     */
+    private boolean checkUMAPermission(String accessToken, TokenValidationContext context) {
+        try {
+            String requestUri = context.getRequestUri();
+            String httpMethod = context.getHttpMethod();
+            
+            log.info("🔍 Admin Client 기반 리소스 권한 체크 시작: {} {}", httpMethod, requestUri);
+            
+            // 팀 Keycloak Client를 사용한 직접 authorization 체크
+            return authorizationService.checkAuthorization(accessToken, requestUri, httpMethod);
+            
+        } catch (Exception e) {
+            log.error("Unexpected error during team keycloak-client authorization check for URI: {} method: {}", 
+                context.getRequestUri(), context.getHttpMethod(), e);
+            return false;
+        }
+    }
+    
+    /**
+     * 팀 Keycloak Client 기반 권한 검증 완료
+     * 
+     * <p>기존 UMA 2.0 수동 구현을 제거하고 팀 라이브러리를 사용합니다.</p>
+     * <p>하드코딩 없이 Keycloak이 직접 엔드포인트 권한을 검증합니다.</p>
+     */
+    
     
     private KeycloakProperties convertToKeycloakProperties(HexacoreSecurityProperties.TokenProvider.KeycloakProperties configProperties) {
         KeycloakProperties properties = new KeycloakProperties();

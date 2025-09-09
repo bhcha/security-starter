@@ -3,6 +3,7 @@ package com.dx.hexacore.security.session.domain.event;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.dx.hexacore.security.auth.domain.event.DomainEvent;
+import com.dx.hexacore.security.util.ValidationMessages;
 
 import java.time.LocalDateTime;
 
@@ -47,19 +48,19 @@ public class AccountLocked extends DomainEvent {
     private static void validateParameters(String sessionId, String userId, String clientIp,
                                          LocalDateTime lockedUntil, int failedAttemptCount, LocalDateTime occurredAt) {
         if (sessionId == null || sessionId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Session ID cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("SessionId"));
         }
         if (userId == null || userId.trim().isEmpty()) {
-            throw new IllegalArgumentException("User ID cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("UserId"));
         }
         if (clientIp == null || clientIp.trim().isEmpty()) {
-            throw new IllegalArgumentException("Client IP cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("ClientIp"));
         }
         if (lockedUntil == null) {
-            throw new IllegalArgumentException("Locked until time cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Locked until time"));
         }
         if (occurredAt == null) {
-            throw new IllegalArgumentException("Occurred time cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Occurred time"));
         }
         if (failedAttemptCount <= 0) {
             throw new IllegalArgumentException("Failed attempt count must be positive");

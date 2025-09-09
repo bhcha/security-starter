@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import com.dx.hexacore.security.config.properties.HexacoreSecurityProperties;
 
 /**
  * Session 모듈의 Persistence 어댑터 설정 클래스
@@ -24,8 +25,8 @@ public class SessionPersistenceConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public SessionMapper sessionMapper() {
-        return new SessionMapper();
+    public SessionMapper sessionMapper(HexacoreSecurityProperties securityProperties) {
+        return new SessionMapper(securityProperties);
     }
 
     @Bean

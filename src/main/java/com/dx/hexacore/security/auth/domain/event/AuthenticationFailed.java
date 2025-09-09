@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.auth.domain.event;
 
+import com.dx.hexacore.security.util.ValidationMessages;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -18,13 +19,13 @@ public class AuthenticationFailed extends DomainEvent {
 
     public static AuthenticationFailed of(UUID authenticationId, String reason, LocalDateTime failureTime) {
         if (authenticationId == null) {
-            throw new IllegalArgumentException("Authentication ID cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Authentication ID"));
         }
         if (reason == null || reason.trim().isEmpty()) {
-            throw new IllegalArgumentException("Reason cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Reason"));
         }
         if (failureTime == null) {
-            throw new IllegalArgumentException("Failure time cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Failure time"));
         }
 
         return new AuthenticationFailed(authenticationId, reason, failureTime);

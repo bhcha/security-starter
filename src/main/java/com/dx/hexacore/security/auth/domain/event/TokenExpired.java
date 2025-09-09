@@ -1,6 +1,7 @@
 package com.dx.hexacore.security.auth.domain.event;
 
 import com.dx.hexacore.security.auth.domain.vo.Token;
+import com.dx.hexacore.security.util.ValidationMessages;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -20,13 +21,13 @@ public class TokenExpired extends DomainEvent {
 
     public static TokenExpired of(UUID authenticationId, Token expiredToken, LocalDateTime expiredTime) {
         if (authenticationId == null) {
-            throw new IllegalArgumentException("Authentication ID cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Authentication ID"));
         }
         if (expiredToken == null) {
-            throw new IllegalArgumentException("Expired token cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Expired token"));
         }
         if (expiredTime == null) {
-            throw new IllegalArgumentException("Expired time cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Expired time"));
         }
 
         return new TokenExpired(authenticationId, expiredToken, expiredTime);

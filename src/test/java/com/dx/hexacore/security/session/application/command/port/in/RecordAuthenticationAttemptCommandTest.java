@@ -73,7 +73,7 @@ class RecordAuthenticationAttemptCommandTest {
         assertThatThrownBy(() -> new RecordAuthenticationAttemptCommand(
                 sessionId, userId, clientIp, isSuccessful, riskScore, riskReason))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Session ID cannot be null or empty");
+                .hasMessage("SessionId cannot be null or empty");
     }
 
     @ParameterizedTest
@@ -91,7 +91,7 @@ class RecordAuthenticationAttemptCommandTest {
         assertThatThrownBy(() -> new RecordAuthenticationAttemptCommand(
                 sessionId, userId, clientIp, isSuccessful, riskScore, riskReason))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Session ID cannot be null or empty");
+                .hasMessage("SessionId cannot be null or empty");
     }
 
     @Test
@@ -109,7 +109,7 @@ class RecordAuthenticationAttemptCommandTest {
         assertThatThrownBy(() -> new RecordAuthenticationAttemptCommand(
                 sessionId, userId, clientIp, isSuccessful, riskScore, riskReason))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("User ID cannot be null or empty");
+                .hasMessage("UserId cannot be null or empty");
     }
 
     @ParameterizedTest
@@ -127,7 +127,7 @@ class RecordAuthenticationAttemptCommandTest {
         assertThatThrownBy(() -> new RecordAuthenticationAttemptCommand(
                 sessionId, userId, clientIp, isSuccessful, riskScore, riskReason))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("User ID cannot be null or empty");
+                .hasMessage("UserId cannot be null or empty");
     }
 
     @Test
@@ -145,7 +145,7 @@ class RecordAuthenticationAttemptCommandTest {
         assertThatThrownBy(() -> new RecordAuthenticationAttemptCommand(
                 sessionId, userId, clientIp, isSuccessful, riskScore, riskReason))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Client IP cannot be null or empty");
+                .hasMessage("ClientIp cannot be null or empty");
     }
 
     @ParameterizedTest
@@ -163,7 +163,7 @@ class RecordAuthenticationAttemptCommandTest {
         assertThatThrownBy(() -> new RecordAuthenticationAttemptCommand(
                 sessionId, userId, clientIp, isSuccessful, riskScore, riskReason))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Client IP cannot be null or empty");
+                .hasMessage("ClientIp cannot be null or empty");
     }
 
     @ParameterizedTest
@@ -181,7 +181,7 @@ class RecordAuthenticationAttemptCommandTest {
         assertThatThrownBy(() -> new RecordAuthenticationAttemptCommand(
                 sessionId, userId, clientIp, isSuccessful, riskScore, riskReason))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Invalid IP address format");
+                .hasMessageContaining("Invalid ClientIp format:");
     }
 
     @ParameterizedTest

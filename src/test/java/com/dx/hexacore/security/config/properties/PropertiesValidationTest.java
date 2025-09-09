@@ -20,7 +20,7 @@ class PropertiesValidationTest {
     @DisplayName("기본 설정이 올바르게 설정된다")
     void defaultConfiguration_ShouldBeValid() {
         // Then
-        assertThat(properties.getEnabled()).isTrue();
+        assertThat(properties.getEnabled()).isFalse(); // 기본값이 false로 변경됨
         assertThat(properties.getTokenProvider().getProvider()).isEqualTo("jwt");
         assertThat(properties.getTokenProvider().getJwt().getEnabled()).isTrue();
         assertThat(properties.getSession().getEnabled()).isTrue();

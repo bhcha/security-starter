@@ -41,6 +41,23 @@ public interface TokenProvider {
     TokenValidationResult validateToken(String accessToken) throws TokenProviderException;
     
     /**
+     * 주어진 액세스 토큰을 컨텍스트 정보와 함께 검증합니다.
+     * 
+     * <p>토큰 검증과 함께 요청 URI, HTTP 메소드 등의 컨텍스트 정보를 사용하여
+     * Keycloak의 리소스 권한을 체크할 수 있습니다.</p>
+     * 
+     * @param accessToken 검증할 액세스 토큰
+     * @param context 검증 컨텍스트 (요청 정보 포함)
+     * @return 토큰 검증 결과 (유효성, 사용자 정보, 권한 정보, 리소스 권한 등)
+     * @throws TokenProviderException 토큰 검증에 실패한 경우
+     */
+    default TokenValidationResult validateTokenWithContext(String accessToken, TokenValidationContext context) 
+            throws TokenProviderException {
+        // 기본 구현은 컨텍스트를 무시하고 일반 검증 수행
+        return validateToken(accessToken);
+    }
+    
+    /**
      * 주어진 리프레시 토큰으로 새로운 토큰을 발급합니다.
      * 
      * <p>리프레시 토큰의 유효성을 검증하고 새로운 액세스 토큰과 리프레시 토큰을 발급합니다.</p>

@@ -7,6 +7,7 @@ import com.dx.hexacore.security.auth.domain.event.TokenExpired;
 import com.dx.hexacore.security.auth.domain.vo.AuthenticationStatus;
 import com.dx.hexacore.security.auth.domain.vo.Credentials;
 import com.dx.hexacore.security.auth.domain.vo.Token;
+import com.dx.hexacore.security.util.ValidationMessages;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -32,7 +33,7 @@ public class Authentication extends AggregateRoot {
 
     public static Authentication attemptAuthentication(Credentials credentials) {
         if (credentials == null) {
-            throw new IllegalArgumentException("Credentials cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Credentials"));
         }
 
         UUID id = UUID.randomUUID();
@@ -50,7 +51,7 @@ public class Authentication extends AggregateRoot {
 
     public void markAsSuccessful(Token token) {
         if (token == null) {
-            throw new IllegalArgumentException("Token cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Token"));
         }
         if (!status.isPending()) {
             throw new IllegalStateException("Cannot mark as successful: authentication is not in PENDING state");
@@ -65,7 +66,7 @@ public class Authentication extends AggregateRoot {
 
     public void markAsFailed(String reason) {
         if (reason == null || reason.trim().isEmpty()) {
-            throw new IllegalArgumentException("Failure reason cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Failure reason"));
         }
         if (!status.isPending()) {
             throw new IllegalStateException("Cannot mark as failed: authentication is not in PENDING state");
@@ -80,7 +81,7 @@ public class Authentication extends AggregateRoot {
     
     public void updateToken(Token newToken) {
         if (newToken == null) {
-            throw new IllegalArgumentException("Token cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Token"));
         }
         if (!status.isSuccess()) {
             throw new IllegalStateException("Cannot update token: authentication is not in SUCCESS state");

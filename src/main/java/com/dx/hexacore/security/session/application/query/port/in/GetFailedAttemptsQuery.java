@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.session.application.query.port.in;
 
+import com.dx.hexacore.security.util.ValidationMessages;
 import java.time.LocalDateTime;
 
 /**
@@ -23,16 +24,16 @@ public record GetFailedAttemptsQuery(
     
     private void validateSessionId(String sessionId) {
         if (sessionId == null || sessionId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Session ID cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("SessionId"));
         }
     }
     
     private void validateTimeRange(LocalDateTime from, LocalDateTime to) {
         if (from == null) {
-            throw new IllegalArgumentException("From time cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("From time"));
         }
         if (to == null) {
-            throw new IllegalArgumentException("To time cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("To time"));
         }
         if (from.isAfter(to)) {
             throw new IllegalArgumentException("From time cannot be after to time");

@@ -95,7 +95,7 @@ class SessionIdTest {
         // When & Then
         assertThatThrownBy(() -> SessionId.of(invalidUuidString))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Invalid UUID format: " + invalidUuidString);
+            .hasMessage("Invalid SessionId string format: " + invalidUuidString);
     }
 
     @Test

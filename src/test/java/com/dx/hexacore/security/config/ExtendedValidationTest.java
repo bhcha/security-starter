@@ -14,7 +14,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * v1.0.4 확장된 설정 검증 시스템 테스트
  */
-@SpringBootTest(classes = ExtendedValidationTest.TestApp.class)
+@SpringBootTest(classes = {
+    com.dx.hexacore.security.config.HexacoreSecurityAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
+})
 @TestPropertySource(properties = {
     "spring.datasource.url=jdbc:h2:mem:validationtest",
     "spring.datasource.driver-class-name=org.h2.Driver",
@@ -28,7 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat;
     "hexacore.security.persistence.memory.enabled=true",
     "hexacore.session.cache.enabled=false",
     "hexacore.security.cache.enabled=false",
-    "hexacore.security.headers.enabled=true"
+    "hexacore.security.headers.enabled=true",
+    "spring.main.allow-bean-definition-overriding=true"
 })
 class ExtendedValidationTest {
     
@@ -67,6 +72,7 @@ class ExtendedValidationTest {
     @SpringBootApplication
     @ComponentScan(basePackages = {
         "com.dx.hexacore.security.auth",
+        "com.dx.hexacore.security.session",
         "com.dx.hexacore.security.config"
     })
     static class TestApp {

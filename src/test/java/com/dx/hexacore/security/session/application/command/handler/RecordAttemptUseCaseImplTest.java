@@ -10,6 +10,7 @@ import com.dx.hexacore.security.session.domain.event.AccountLocked;
 import com.dx.hexacore.security.session.domain.vo.ClientIp;
 import com.dx.hexacore.security.session.domain.vo.RiskLevel;
 import com.dx.hexacore.security.session.domain.vo.SessionId;
+import com.dx.hexacore.security.config.properties.HexacoreSecurityProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,9 @@ class RecordAttemptUseCaseImplTest {
 
     @BeforeEach
     void setUp() {
-        useCase = new RecordAttemptUseCaseImpl(sessionRepository, eventPublisher);
+        // 실제 Properties 객체 사용
+        HexacoreSecurityProperties securityProperties = new HexacoreSecurityProperties();
+        useCase = new RecordAttemptUseCaseImpl(sessionRepository, eventPublisher, securityProperties);
     }
 
     @Test
@@ -53,7 +56,7 @@ class RecordAttemptUseCaseImplTest {
 
         SessionId sessionId = SessionId.of(sessionIdStr);
         ClientIp clientIp = ClientIp.of(clientIpStr);
-        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp, 5, 30);
 
         when(sessionRepository.findBySessionId(sessionId)).thenReturn(Optional.of(session));
         when(sessionRepository.save(any(AuthenticationSession.class))).thenReturn(session);
@@ -87,7 +90,7 @@ class RecordAttemptUseCaseImplTest {
 
         SessionId sessionId = SessionId.of(sessionIdStr);
         ClientIp clientIp = ClientIp.of(clientIpStr);
-        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp, 5, 30);
 
         when(sessionRepository.findBySessionId(sessionId)).thenReturn(Optional.of(session));
         when(sessionRepository.save(any(AuthenticationSession.class))).thenReturn(session);
@@ -124,7 +127,7 @@ class RecordAttemptUseCaseImplTest {
         RiskLevel riskLevel = RiskLevel.of(70, "Brute force attempt");
         
         // 4번의 실패 시도가 이미 있는 세션 생성
-        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp, 5, 30);
         for (int i = 0; i < 4; i++) {
             session.recordAttempt(userId, clientIp, false, riskLevel);
         }
@@ -171,7 +174,7 @@ class RecordAttemptUseCaseImplTest {
         RiskLevel riskLevel = RiskLevel.of(70, "Previous failed attempt");
         
         // 계정이 잠긴 세션 생성
-        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp, 5, 30);
         for (int i = 0; i < 5; i++) {
             session.recordAttempt(userId, clientIp, false, riskLevel);
         }
@@ -251,7 +254,7 @@ class RecordAttemptUseCaseImplTest {
 
         SessionId sessionId = SessionId.of(sessionIdStr);
         ClientIp clientIp = ClientIp.of(clientIpStr);
-        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp, 5, 30);
 
         when(sessionRepository.findBySessionId(sessionId)).thenReturn(Optional.of(session));
         RuntimeException saveException = new RuntimeException("Save operation failed");
@@ -279,7 +282,7 @@ class RecordAttemptUseCaseImplTest {
 
         SessionId sessionId = SessionId.of(sessionIdStr);
         ClientIp clientIp = ClientIp.of(clientIpStr);
-        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp, 5, 30);
 
         // 15분 이전의 실패 시도들을 시뮬레이션하기 위해 
         // 현재 시점에서 실패 시도를 하나만 기록
@@ -315,7 +318,7 @@ class RecordAttemptUseCaseImplTest {
 
         SessionId sessionId = SessionId.of(sessionIdStr);
         ClientIp clientIp = ClientIp.of(clientIpStr);
-        AuthenticationSession session = AuthenticationSession.create(sessionId, userId1, clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, userId1, clientIp, 5, 30);
 
         // 4번 실패 시도 기록 (사용자 무관하게 세션에 누적)
         RiskLevel riskLevel = RiskLevel.of(60, "Previous attempt");
@@ -353,7 +356,7 @@ class RecordAttemptUseCaseImplTest {
 
         SessionId sessionId = SessionId.of(sessionIdStr);
         ClientIp clientIp = ClientIp.of(clientIpStr);
-        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp, 5, 30);
 
         when(sessionRepository.findBySessionId(sessionId)).thenReturn(Optional.of(session));
         when(sessionRepository.save(any(AuthenticationSession.class))).thenReturn(session);
@@ -382,7 +385,7 @@ class RecordAttemptUseCaseImplTest {
 
         SessionId sessionId = SessionId.of(sessionIdStr);
         ClientIp clientIp = ClientIp.of(clientIpStr);
-        AuthenticationSession session = AuthenticationSession.create(sessionId, "primaryUser", clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, "primaryUser", clientIp, 5, 30);
 
         when(sessionRepository.findBySessionId(sessionId)).thenReturn(Optional.of(session));
         when(sessionRepository.save(any(AuthenticationSession.class))).thenReturn(session);

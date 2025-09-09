@@ -4,6 +4,7 @@ import com.dx.hexacore.security.session.domain.event.AccountLocked;
 import com.dx.hexacore.security.session.domain.vo.ClientIp;
 import com.dx.hexacore.security.session.domain.vo.RiskLevel;
 import com.dx.hexacore.security.session.domain.vo.SessionId;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +16,13 @@ import static org.assertj.core.api.Assertions.*;
 @DisplayName("AuthenticationSession Aggregate Root 테스트")
 class AuthenticationSessionTest {
 
+    private com.dx.hexacore.security.config.SecurityConstants securityConstants;
+    
+    @BeforeEach
+    void setUp() {
+        securityConstants = new com.dx.hexacore.security.config.SecurityConstants();
+    }
+
     @Test
     @DisplayName("AuthenticationSession 생성")
     void shouldCreateAuthenticationSession() {
@@ -24,7 +32,10 @@ class AuthenticationSessionTest {
         ClientIp clientIp = ClientIp.of("192.168.1.100");
 
         // When
-        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp, 
+                                                                    securityConstants.getSession().getMaxFailedAttempts(),
+                                                                    securityConstants.getSession().getLockoutDurationMinutes(),
+                                                                    securityConstants.getSession().getTimeWindowMinutes());
 
         // Then
         assertThat(session).isNotNull();
@@ -43,9 +54,12 @@ class AuthenticationSessionTest {
     void shouldThrowExceptionWhenSessionIdIsNull() {
         // Given & When & Then
         assertThatThrownBy(() -> AuthenticationSession.create(
-            null, "user123", ClientIp.of("192.168.1.100")
+            null, "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         )).isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("Session ID cannot be null");
+          .hasMessage("SessionId cannot be null");
     }
 
     @Test
@@ -53,9 +67,12 @@ class AuthenticationSessionTest {
     void shouldThrowExceptionWhenUserIdIsNull() {
         // Given & When & Then
         assertThatThrownBy(() -> AuthenticationSession.create(
-            SessionId.generate(), null, ClientIp.of("192.168.1.100")
+            SessionId.generate(), null, ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         )).isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("User ID cannot be null or empty");
+          .hasMessage("UserId cannot be null or empty");
     }
 
     @Test
@@ -63,9 +80,12 @@ class AuthenticationSessionTest {
     void shouldThrowExceptionWhenUserIdIsEmpty() {
         // Given & When & Then
         assertThatThrownBy(() -> AuthenticationSession.create(
-            SessionId.generate(), "", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         )).isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("User ID cannot be null or empty");
+          .hasMessage("UserId cannot be null or empty");
     }
 
     @Test
@@ -73,9 +93,12 @@ class AuthenticationSessionTest {
     void shouldThrowExceptionWhenClientIpIsNull() {
         // Given & When & Then
         assertThatThrownBy(() -> AuthenticationSession.create(
-            SessionId.generate(), "user123", null
+            SessionId.generate(), "user123", null, 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         )).isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("Client IP cannot be null");
+          .hasMessage("ClientIp cannot be null");
     }
 
     @Test
@@ -83,7 +106,10 @@ class AuthenticationSessionTest {
     void shouldRecordSuccessfulAttempt() throws InterruptedException {
         // Given
         AuthenticationSession session = AuthenticationSession.create(
-            SessionId.generate(), "user123", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         );
         String userId = "user123";
         ClientIp clientIp = ClientIp.of("192.168.1.100");
@@ -110,7 +136,10 @@ class AuthenticationSessionTest {
     void shouldRecordFailedAttempt() {
         // Given
         AuthenticationSession session = AuthenticationSession.create(
-            SessionId.generate(), "user123", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         );
         String userId = "user123";
         ClientIp clientIp = ClientIp.of("192.168.1.100");
@@ -131,7 +160,10 @@ class AuthenticationSessionTest {
     void shouldRecordMultipleFailedAttempts() throws InterruptedException {
         // Given
         AuthenticationSession session = AuthenticationSession.create(
-            SessionId.generate(), "user123", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         );
         String userId = "user123";
         ClientIp clientIp = ClientIp.of("192.168.1.100");
@@ -159,10 +191,13 @@ class AuthenticationSessionTest {
     void shouldNotLockAccountWhenBelowThreshold() {
         // Given
         AuthenticationSession session = AuthenticationSession.create(
-            SessionId.generate(), "user123", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         );
         
-        // 4번의 실패 시도 (MAX_FAILED_ATTEMPTS = 5)
+        // 4번의 실패 시도 (MAX_FAILED_ATTEMPTS보다 1개 적음)
         for (int i = 0; i < 4; i++) {
             session.recordAttempt("user123", ClientIp.of("192.168.1.100"), 
                                 false, RiskLevel.low("Attempt " + (i + 1)));
@@ -180,7 +215,10 @@ class AuthenticationSessionTest {
     void shouldLockAccountWhenThresholdReached() {
         // Given
         AuthenticationSession session = AuthenticationSession.create(
-            SessionId.generate(), "user123", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         );
         
         // 5번의 실패 시도 추가 후 확인
@@ -202,7 +240,10 @@ class AuthenticationSessionTest {
     void shouldLockAccount() {
         // Given
         AuthenticationSession session = AuthenticationSession.create(
-            SessionId.generate(), "user123", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         );
         
         // 5번의 실패 시도
@@ -237,7 +278,10 @@ class AuthenticationSessionTest {
     void shouldUnlockAccount() {
         // Given
         AuthenticationSession session = AuthenticationSession.create(
-            SessionId.generate(), "user123", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         );
         
         // 잠금 상태로 만들기
@@ -260,7 +304,10 @@ class AuthenticationSessionTest {
     void shouldReturnTrueWhenCurrentlyLocked() {
         // Given
         AuthenticationSession session = AuthenticationSession.create(
-            SessionId.generate(), "user123", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         );
         
         // 잠금 상태로 만들기
@@ -282,7 +329,10 @@ class AuthenticationSessionTest {
     void shouldReturnFalseWhenLockExpired() {
         // Given
         AuthenticationSession session = AuthenticationSession.create(
-            SessionId.generate(), "user123", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         );
         
         // 과거 시각으로 잠금 해제 시각 강제 설정 (테스트를 위해)
@@ -302,10 +352,13 @@ class AuthenticationSessionTest {
     void shouldCountAllFailedAttemptsInWindow() {
         // Given
         AuthenticationSession session = AuthenticationSession.create(
-            SessionId.generate(), "user123", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         );
         
-        // 15분 윈도우 내 3번의 실패 시도
+        // 시간 윈도우 내 3번의 실패 시도
         LocalDateTime now = LocalDateTime.now();
         session.recordAttemptAtSpecificTime("user123", ClientIp.of("192.168.1.100"), 
                                           false, RiskLevel.low("Attempt 1"), now.minusMinutes(5));
@@ -326,7 +379,10 @@ class AuthenticationSessionTest {
     void shouldCountOnlyFailedAttemptsInWindow() {
         // Given
         AuthenticationSession session = AuthenticationSession.create(
-            SessionId.generate(), "user123", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         );
         
         // 윈도우 내 2번, 윈도우 밖 2번의 실패 시도
@@ -352,7 +408,10 @@ class AuthenticationSessionTest {
     void shouldResetFailedCounterAfterSuccessfulAttempt() {
         // Given
         AuthenticationSession session = AuthenticationSession.create(
-            SessionId.generate(), "user123", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         );
         
         // 3번 실패 후 1번 성공
@@ -378,7 +437,10 @@ class AuthenticationSessionTest {
     void shouldUpdateLastActivityTime() throws InterruptedException {
         // Given
         AuthenticationSession session = AuthenticationSession.create(
-            SessionId.generate(), "user123", ClientIp.of("192.168.1.100")
+            SessionId.generate(), "user123", ClientIp.of("192.168.1.100"), 
+            securityConstants.getSession().getMaxFailedAttempts(),
+            securityConstants.getSession().getLockoutDurationMinutes(),
+            securityConstants.getSession().getTimeWindowMinutes()
         );
         LocalDateTime initialLastActivity = session.getLastActivityAt();
 

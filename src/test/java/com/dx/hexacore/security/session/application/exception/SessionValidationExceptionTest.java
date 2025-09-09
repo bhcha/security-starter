@@ -160,18 +160,18 @@ class SessionValidationExceptionTest {
     void shouldCreateExceptionWithMultipleValidationFailures() {
         // Given
         String message = "Multiple validation failures: " +
-                "[1] Session ID is invalid, " +
-                "[2] User ID is missing, " +
-                "[3] Client IP is malformed";
+                "[1] SessionId is invalid, " +
+                "[2] UserId is missing, " +
+                "[3] ClientIp is malformed";
 
         // When
         SessionValidationException exception = new SessionValidationException(message);
 
         // Then
         assertThat(exception.getMessage()).isEqualTo(message);
-        assertThat(exception.getMessage()).contains("Session ID is invalid");
-        assertThat(exception.getMessage()).contains("User ID is missing");
-        assertThat(exception.getMessage()).contains("Client IP is malformed");
+        assertThat(exception.getMessage()).contains("SessionId is invalid");
+        assertThat(exception.getMessage()).contains("UserId is missing");
+        assertThat(exception.getMessage()).contains("ClientIp is malformed");
     }
 
     @Test

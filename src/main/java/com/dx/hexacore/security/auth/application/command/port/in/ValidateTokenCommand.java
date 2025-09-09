@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.auth.application.command.port.in;
 
+import com.dx.hexacore.security.util.ValidationMessages;
 import java.util.Objects;
 
 /**
@@ -34,10 +35,10 @@ public class ValidateTokenCommand {
     
     private String validateAccessToken(String accessToken) {
         if (accessToken == null) {
-            throw new IllegalArgumentException("accessToken cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("accessToken"));
         }
         if (accessToken.trim().isEmpty()) {
-            throw new IllegalArgumentException("accessToken cannot be empty or blank");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("accessToken"));
         }
         return accessToken;
     }

@@ -35,7 +35,7 @@ class UnlockAccountCommandTest {
         // When & Then
         assertThatThrownBy(() -> new UnlockAccountCommand(sessionId, userId))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Session ID cannot be null or empty");
+                .hasMessage("SessionId cannot be null or empty");
     }
 
     @ParameterizedTest
@@ -48,7 +48,7 @@ class UnlockAccountCommandTest {
         // When & Then
         assertThatThrownBy(() -> new UnlockAccountCommand(sessionId, userId))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Session ID cannot be null or empty");
+                .hasMessage("SessionId cannot be null or empty");
     }
 
     @Test
@@ -61,7 +61,7 @@ class UnlockAccountCommandTest {
         // When & Then
         assertThatThrownBy(() -> new UnlockAccountCommand(sessionId, userId))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("User ID cannot be null or empty");
+                .hasMessage("UserId cannot be null or empty");
     }
 
     @ParameterizedTest
@@ -74,7 +74,7 @@ class UnlockAccountCommandTest {
         // When & Then
         assertThatThrownBy(() -> new UnlockAccountCommand(sessionId, userId))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("User ID cannot be null or empty");
+                .hasMessage("UserId cannot be null or empty");
     }
 
     @Test

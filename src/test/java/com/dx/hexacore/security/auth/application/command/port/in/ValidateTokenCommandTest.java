@@ -42,7 +42,7 @@ class ValidateTokenCommandTest {
         // when & then
         assertThatThrownBy(() -> new ValidateTokenCommand(accessToken))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("accessToken cannot be empty or blank");
+                .hasMessage("accessToken cannot be null or empty");
     }
 
     @Test
@@ -54,7 +54,7 @@ class ValidateTokenCommandTest {
         // when & then
         assertThatThrownBy(() -> new ValidateTokenCommand(accessToken))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("accessToken cannot be empty or blank");
+                .hasMessage("accessToken cannot be null or empty");
     }
 
     @Test

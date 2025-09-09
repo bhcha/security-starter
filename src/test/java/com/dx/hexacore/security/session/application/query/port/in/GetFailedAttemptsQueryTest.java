@@ -67,7 +67,7 @@ class GetFailedAttemptsQueryTest {
         // When & Then
         assertThatThrownBy(() -> new GetFailedAttemptsQuery(sessionId, userId, from, to, limit))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Session ID cannot be null or empty");
+                .hasMessage("SessionId cannot be null or empty");
     }
 
     @ParameterizedTest
@@ -83,7 +83,7 @@ class GetFailedAttemptsQueryTest {
         // When & Then
         assertThatThrownBy(() -> new GetFailedAttemptsQuery(sessionId, userId, from, to, limit))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Session ID cannot be null or empty");
+                .hasMessage("SessionId cannot be null or empty");
     }
 
     @Test

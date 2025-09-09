@@ -81,6 +81,7 @@ public class SecurityProperties {
     public static class Authentication {
         private String defaultRole = "ROLE_USER";
         private ErrorResponse errorResponse = new ErrorResponse();
+        private boolean checkResourcePermission = false;
         
         public String getDefaultRole() {
             return defaultRole;
@@ -96,6 +97,14 @@ public class SecurityProperties {
         
         public void setErrorResponse(ErrorResponse errorResponse) {
             this.errorResponse = errorResponse;
+        }
+        
+        public boolean isCheckResourcePermission() {
+            return checkResourcePermission;
+        }
+        
+        public void setCheckResourcePermission(boolean checkResourcePermission) {
+            this.checkResourcePermission = checkResourcePermission;
         }
         
         public static class ErrorResponse {

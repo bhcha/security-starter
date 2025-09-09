@@ -57,7 +57,7 @@ class AccountLockedTest {
             null, "user123", "192.168.1.100", 
             LocalDateTime.now().plusMinutes(30), 5, LocalDateTime.now()
         )).isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("Session ID cannot be null or empty");
+          .hasMessage("SessionId cannot be null or empty");
     }
 
     @Test
@@ -68,7 +68,7 @@ class AccountLockedTest {
             "session-123", null, "192.168.1.100", 
             LocalDateTime.now().plusMinutes(30), 5, LocalDateTime.now()
         )).isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("User ID cannot be null or empty");
+          .hasMessage("UserId cannot be null or empty");
     }
 
     @Test
@@ -79,7 +79,7 @@ class AccountLockedTest {
             "session-123", "user123", null, 
             LocalDateTime.now().plusMinutes(30), 5, LocalDateTime.now()
         )).isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("Client IP cannot be null or empty");
+          .hasMessage("ClientIp cannot be null or empty");
     }
 
     @Test
@@ -133,7 +133,7 @@ class AccountLockedTest {
             "   ", "user123", "192.168.1.100", 
             LocalDateTime.now().plusMinutes(30), 5, LocalDateTime.now()
         )).isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("Session ID cannot be null or empty");
+          .hasMessage("SessionId cannot be null or empty");
     }
 
     @Test
@@ -144,7 +144,7 @@ class AccountLockedTest {
             "session-123", "   ", "192.168.1.100", 
             LocalDateTime.now().plusMinutes(30), 5, LocalDateTime.now()
         )).isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("User ID cannot be null or empty");
+          .hasMessage("UserId cannot be null or empty");
     }
 
     @Test
@@ -155,7 +155,7 @@ class AccountLockedTest {
             "session-123", "user123", "   ", 
             LocalDateTime.now().plusMinutes(30), 5, LocalDateTime.now()
         )).isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("Client IP cannot be null or empty");
+          .hasMessage("ClientIp cannot be null or empty");
     }
 
     @Test

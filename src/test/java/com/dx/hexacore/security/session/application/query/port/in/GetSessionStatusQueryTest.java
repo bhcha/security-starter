@@ -49,7 +49,7 @@ class GetSessionStatusQueryTest {
         // When & Then
         assertThatThrownBy(() -> new GetSessionStatusQuery(sessionId, userId))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Session ID cannot be null or empty");
+                .hasMessage("SessionId cannot be null or empty");
     }
 
     @ParameterizedTest
@@ -62,7 +62,7 @@ class GetSessionStatusQueryTest {
         // When & Then
         assertThatThrownBy(() -> new GetSessionStatusQuery(sessionId, userId))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Session ID cannot be null or empty");
+                .hasMessage("SessionId cannot be null or empty");
     }
 
     @Test

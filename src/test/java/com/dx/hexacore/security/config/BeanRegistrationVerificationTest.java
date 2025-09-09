@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Import;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,7 +17,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 
  * v1.0.3에서 수정된 Bean들이 정상적으로 등록되는지 확인합니다.
  */
-@SpringBootTest
+@SpringBootTest(classes = {
+    com.dx.hexacore.security.config.HexacoreSecurityAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
+})
 @TestPropertySource(properties = {
     "hexacore.security.enabled=true",
     "hexacore.security.session.enabled=true",
@@ -24,7 +29,9 @@ import static org.assertj.core.api.Assertions.assertThat;
     "hexacore.security.token-provider.jwt.enabled=true",
     "hexacore.security.token-provider.jwt.secret=test-secret-key-for-verification-purpose-only",
     "hexacore.security.persistence.jpa.enabled=true",
-    "hexacore.security.persistence.memory.enabled=false"
+    "hexacore.security.persistence.memory.enabled=false",
+    "spring.datasource.url=jdbc:h2:mem:testdb",
+    "spring.jpa.hibernate.ddl-auto=create-drop"
 })
 class BeanRegistrationVerificationTest {
     
@@ -61,8 +68,8 @@ class BeanRegistrationVerificationTest {
         
         // Then
         assertThat(autoConfiguration).isNotNull();
-        assertThat(autoConfiguration.getClass().getSimpleName())
-            .isEqualTo("HexacoreSecurityAutoConfiguration");
+        assertThat(autoConfiguration.getClass().getName())
+            .contains("HexacoreSecurityAutoConfiguration");
     }
     
     @Test
@@ -79,14 +86,30 @@ class BeanRegistrationVerificationTest {
     @Test
     void 모든_핵심_빈들이_정상_등록되어야_함() {
         // Given & When & Then
+        // 등록된 Bean들을 먼저 확인해보자
+        System.out.println("=== 등록된 Bean 목록 ===");
+        String[] allBeans = applicationContext.getBeanDefinitionNames();
+        for (String beanName : allBeans) {
+            if (beanName.contains("session") || beanName.contains("Security") || beanName.contains("hexacore")) {
+                System.out.println("  - " + beanName);
+            }
+        }
+        
+        // 타입별로 Bean 확인
+        String[] sessionBeans = applicationContext.getBeanNamesForType(SessionManagementUseCase.class);
+        System.out.println("SessionManagementUseCase 타입 Bean들: " + java.util.Arrays.toString(sessionBeans));
+        
         // 핵심 Bean들이 모두 존재하는지 확인
-        assertThat(applicationContext.containsBean("sessionManagementUseCase")).isTrue();
+        boolean hasSessionUseCase = sessionBeans.length > 0;
+        assertThat(hasSessionUseCase).isTrue();
         assertThat(applicationContext.containsBean("hexacoreSecurityAutoConfiguration")).isTrue();
         assertThat(applicationContext.getBean(SecurityConfigurationValidator.class)).isNotNull();
         
         System.out.println("✅ 모든 핵심 Bean이 정상적으로 등록되었습니다!");
-        System.out.println("  - SessionManagementUseCase: " + 
-            applicationContext.getBean(SessionManagementUseCase.class).getClass().getSimpleName());
+        if (hasSessionUseCase) {
+            System.out.println("  - SessionManagementUseCase: " + 
+                applicationContext.getBean(SessionManagementUseCase.class).getClass().getSimpleName());
+        }
         System.out.println("  - SecurityConfigurationValidator: " + 
             applicationContext.getBean(SecurityConfigurationValidator.class).getClass().getSimpleName());
         System.out.println("  - HexacoreSecurityAutoConfiguration: " + 

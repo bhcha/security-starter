@@ -1,6 +1,7 @@
 package com.dx.hexacore.security.auth.adapter.outbound.event;
 
 import com.dx.hexacore.security.auth.domain.event.DomainEvent;
+import com.dx.hexacore.security.util.ValidationMessages;
 import org.springframework.context.ApplicationEvent;
 
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ public class DomainEventWrapper extends ApplicationEvent {
     public DomainEventWrapper(DomainEvent domainEvent) {
         super(domainEvent != null ? domainEvent : new Object());
         if (domainEvent == null) {
-            throw new IllegalArgumentException("Domain event cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Domain event"));
         }
         this.domainEvent = domainEvent;
         this.publishedAt = LocalDateTime.now();

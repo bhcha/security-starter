@@ -2,6 +2,7 @@ package com.dx.hexacore.security.auth.domain.vo;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -13,6 +14,13 @@ class TokenTest {
 
     private static final String VALID_JWT_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNjE2MjM5MDIyfQ.test";
     private static final String VALID_REFRESH_TOKEN = "refresh_token_123456789";
+    
+    private com.dx.hexacore.security.config.SecurityConstants securityConstants;
+    
+    @BeforeEach
+    void setUp() {
+        securityConstants = new com.dx.hexacore.security.config.SecurityConstants();
+    }
 
     @Test
     @DisplayName("유효한 accessToken, refreshToken, expiresIn으로 Token 생성에 성공한다")
@@ -20,10 +28,12 @@ class TokenTest {
         // Given
         String accessToken = VALID_JWT_ACCESS_TOKEN;
         String refreshToken = VALID_REFRESH_TOKEN;
-        long expiresIn = 3600L;
+        long expiresIn = 3600L; // Using example value within valid range
 
         // When
-        Token token = Token.of(accessToken, refreshToken, expiresIn);
+        Token token = Token.of(accessToken, refreshToken, expiresIn,
+                              securityConstants.getToken().getMinExpiresIn(),
+                              securityConstants.getToken().getMaxExpiresIn());
 
         // Then
         assertThat(token).isNotNull();
@@ -38,10 +48,12 @@ class TokenTest {
         // Given
         String accessToken = VALID_JWT_ACCESS_TOKEN;
         String refreshToken = VALID_REFRESH_TOKEN;
-        long expiresIn = 1L;
+        long expiresIn = securityConstants.getToken().getMinExpiresIn();
 
         // When
-        Token token = Token.of(accessToken, refreshToken, expiresIn);
+        Token token = Token.of(accessToken, refreshToken, expiresIn, 
+                              securityConstants.getToken().getMinExpiresIn(),
+                              securityConstants.getToken().getMaxExpiresIn());
 
         // Then
         assertThat(token).isNotNull();
@@ -54,10 +66,12 @@ class TokenTest {
         // Given
         String accessToken = VALID_JWT_ACCESS_TOKEN;
         String refreshToken = VALID_REFRESH_TOKEN;
-        long expiresIn = 86400L;
+        long expiresIn = securityConstants.getToken().getMaxExpiresIn();
 
         // When
-        Token token = Token.of(accessToken, refreshToken, expiresIn);
+        Token token = Token.of(accessToken, refreshToken, expiresIn,
+                              securityConstants.getToken().getMinExpiresIn(),
+                              securityConstants.getToken().getMaxExpiresIn());
 
         // Then
         assertThat(token).isNotNull();
@@ -70,9 +84,13 @@ class TokenTest {
         // Given
         String accessToken = VALID_JWT_ACCESS_TOKEN;
         String refreshToken = VALID_REFRESH_TOKEN;
-        long expiresIn = 3600L;
-        Token token1 = Token.of(accessToken, refreshToken, expiresIn);
-        Token token2 = Token.of(accessToken, refreshToken, expiresIn);
+        long expiresIn = 3600L; // Using example value within valid range
+        Token token1 = Token.of(accessToken, refreshToken, expiresIn,
+                              securityConstants.getToken().getMinExpiresIn(),
+                              securityConstants.getToken().getMaxExpiresIn());
+        Token token2 = Token.of(accessToken, refreshToken, expiresIn,
+                              securityConstants.getToken().getMinExpiresIn(),
+                              securityConstants.getToken().getMaxExpiresIn());
 
         // When & Then
         assertThat(token1).isEqualTo(token2);
@@ -82,8 +100,13 @@ class TokenTest {
     @DisplayName("다른 값으로 생성된 Token은 equals false를 반환한다")
     void shouldReturnFalseWhenDifferentToken() {
         // Given
-        Token token1 = Token.of(VALID_JWT_ACCESS_TOKEN, VALID_REFRESH_TOKEN, 3600L);
-        Token token2 = Token.of(VALID_JWT_ACCESS_TOKEN, "different_refresh", 3600L);
+        long expiresIn = 3600L; // Using example value within valid range
+        Token token1 = Token.of(VALID_JWT_ACCESS_TOKEN, VALID_REFRESH_TOKEN, expiresIn,
+                              securityConstants.getToken().getMinExpiresIn(),
+                              securityConstants.getToken().getMaxExpiresIn());
+        Token token2 = Token.of(VALID_JWT_ACCESS_TOKEN, "different_refresh", expiresIn,
+                              securityConstants.getToken().getMinExpiresIn(),
+                              securityConstants.getToken().getMaxExpiresIn());
 
         // When & Then
         assertThat(token1).isNotEqualTo(token2);
@@ -95,9 +118,13 @@ class TokenTest {
         // Given
         String accessToken = VALID_JWT_ACCESS_TOKEN;
         String refreshToken = VALID_REFRESH_TOKEN;
-        long expiresIn = 3600L;
-        Token token1 = Token.of(accessToken, refreshToken, expiresIn);
-        Token token2 = Token.of(accessToken, refreshToken, expiresIn);
+        long expiresIn = 3600L; // Using example value within valid range
+        Token token1 = Token.of(accessToken, refreshToken, expiresIn,
+                              securityConstants.getToken().getMinExpiresIn(),
+                              securityConstants.getToken().getMaxExpiresIn());
+        Token token2 = Token.of(accessToken, refreshToken, expiresIn,
+                              securityConstants.getToken().getMinExpiresIn(),
+                              securityConstants.getToken().getMaxExpiresIn());
 
         // When & Then
         assertThat(token1.hashCode()).isEqualTo(token2.hashCode());
@@ -109,10 +136,12 @@ class TokenTest {
         // Given
         String accessToken = VALID_JWT_ACCESS_TOKEN;
         String refreshToken = VALID_REFRESH_TOKEN;
-        long expiresIn = 3600L;
+        long expiresIn = 3600L; // Using example value within valid range
 
         // When
-        Token token = Token.of(accessToken, refreshToken, expiresIn);
+        Token token = Token.of(accessToken, refreshToken, expiresIn,
+                              securityConstants.getToken().getMinExpiresIn(),
+                              securityConstants.getToken().getMaxExpiresIn());
 
         // Then
         assertThat(token).isNotNull();
@@ -125,12 +154,14 @@ class TokenTest {
         // Given
         String accessToken = null;
         String refreshToken = VALID_REFRESH_TOKEN;
-        long expiresIn = 3600L;
+        long expiresIn = 3600L; // Using example value within valid range
 
         // When & Then
-        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn))
+        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn,
+                                         securityConstants.getToken().getMinExpiresIn(),
+                                         securityConstants.getToken().getMaxExpiresIn()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Access token cannot be empty");
+                .hasMessageContaining("Access token cannot be null or empty");
     }
 
     @Test
@@ -139,12 +170,14 @@ class TokenTest {
         // Given
         String accessToken = "";
         String refreshToken = VALID_REFRESH_TOKEN;
-        long expiresIn = 3600L;
+        long expiresIn = 3600L; // Using example value within valid range
 
         // When & Then
-        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn))
+        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn,
+                                         securityConstants.getToken().getMinExpiresIn(),
+                                         securityConstants.getToken().getMaxExpiresIn()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Access token cannot be empty");
+                .hasMessageContaining("Access token cannot be null or empty");
     }
 
     @Test
@@ -153,12 +186,14 @@ class TokenTest {
         // Given
         String accessToken = VALID_JWT_ACCESS_TOKEN;
         String refreshToken = null;
-        long expiresIn = 3600L;
+        long expiresIn = 3600L; // Using example value within valid range
 
         // When & Then
-        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn))
+        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn,
+                                         securityConstants.getToken().getMinExpiresIn(),
+                                         securityConstants.getToken().getMaxExpiresIn()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Refresh token cannot be empty");
+                .hasMessageContaining("Refresh token cannot be null or empty");
     }
 
     @Test
@@ -167,12 +202,14 @@ class TokenTest {
         // Given
         String accessToken = VALID_JWT_ACCESS_TOKEN;
         String refreshToken = "";
-        long expiresIn = 3600L;
+        long expiresIn = 3600L; // Using example value within valid range
 
         // When & Then
-        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn))
+        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn,
+                                         securityConstants.getToken().getMinExpiresIn(),
+                                         securityConstants.getToken().getMaxExpiresIn()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Refresh token cannot be empty");
+                .hasMessageContaining("Refresh token cannot be null or empty");
     }
 
     @Test
@@ -184,9 +221,11 @@ class TokenTest {
         long expiresIn = 0L;
 
         // When & Then
-        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn))
+        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn,
+                                         securityConstants.getToken().getMinExpiresIn(),
+                                         securityConstants.getToken().getMaxExpiresIn()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Expires in must be positive");
+                .hasMessageContaining("Expires in must be between " + securityConstants.getToken().getMinExpiresIn() + " and " + securityConstants.getToken().getMaxExpiresIn());
     }
 
     @Test
@@ -198,23 +237,27 @@ class TokenTest {
         long expiresIn = -1L;
 
         // When & Then
-        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn))
+        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn,
+                                         securityConstants.getToken().getMinExpiresIn(),
+                                         securityConstants.getToken().getMaxExpiresIn()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Expires in must be positive");
+                .hasMessageContaining("Expires in must be between " + securityConstants.getToken().getMinExpiresIn() + " and " + securityConstants.getToken().getMaxExpiresIn());
     }
 
     @Test
-    @DisplayName("expiresIn이 86401초 이상일 때 IllegalArgumentException이 발생한다")
+    @DisplayName("expiresIn이 최대값을 초과할 때 IllegalArgumentException이 발생한다")
     void shouldThrowExceptionWhenExpiresInExceedsMaxValue() {
         // Given
         String accessToken = VALID_JWT_ACCESS_TOKEN;
         String refreshToken = VALID_REFRESH_TOKEN;
-        long expiresIn = 86401L;
+        long expiresIn = securityConstants.getToken().getMaxExpiresIn() + 1L;
 
         // When & Then
-        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn))
+        assertThatThrownBy(() -> Token.of(accessToken, refreshToken, expiresIn,
+                                         securityConstants.getToken().getMinExpiresIn(),
+                                         securityConstants.getToken().getMaxExpiresIn()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Expires in cannot exceed 86400 seconds");
+                .hasMessageContaining("Expires in must be between " + securityConstants.getToken().getMinExpiresIn() + " and " + securityConstants.getToken().getMaxExpiresIn());
     }
 
     @Test
@@ -223,10 +266,12 @@ class TokenTest {
         // Given
         String accessToken = VALID_JWT_ACCESS_TOKEN;
         String refreshToken = VALID_REFRESH_TOKEN;
-        long expiresIn = 3600L;
+        long expiresIn = 3600L; // Using example value within valid range
 
         // When
-        Token token = Token.of(accessToken, refreshToken, expiresIn);
+        Token token = Token.of(accessToken, refreshToken, expiresIn,
+                              securityConstants.getToken().getMinExpiresIn(),
+                              securityConstants.getToken().getMaxExpiresIn());
 
         // Then
         assertThat(token.isExpired()).isFalse();
@@ -238,8 +283,10 @@ class TokenTest {
         // Given
         String accessToken = VALID_JWT_ACCESS_TOKEN;
         String refreshToken = VALID_REFRESH_TOKEN;
-        long expiresIn = 3600L;
-        Token originalToken = Token.of(accessToken, refreshToken, expiresIn);
+        long expiresIn = 3600L; // Using example value within valid range
+        Token originalToken = Token.of(accessToken, refreshToken, expiresIn,
+                                     securityConstants.getToken().getMinExpiresIn(),
+                                     securityConstants.getToken().getMaxExpiresIn());
 
         // When
         Token expiredToken = originalToken.expire();
@@ -258,8 +305,10 @@ class TokenTest {
         // Given
         String accessToken = VALID_JWT_ACCESS_TOKEN;
         String refreshToken = VALID_REFRESH_TOKEN;
-        long expiresIn = 3600L;
-        Token originalToken = Token.of(accessToken, refreshToken, expiresIn);
+        long expiresIn = 3600L; // Using example value within valid range
+        Token originalToken = Token.of(accessToken, refreshToken, expiresIn,
+                                     securityConstants.getToken().getMinExpiresIn(),
+                                     securityConstants.getToken().getMaxExpiresIn());
         Token firstExpired = originalToken.expire();
 
         // When

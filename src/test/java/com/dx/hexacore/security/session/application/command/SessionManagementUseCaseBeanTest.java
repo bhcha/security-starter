@@ -11,7 +11,9 @@ import org.springframework.context.ApplicationContext;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {
-    com.dx.hexacore.security.config.HexacoreSecurityAutoConfiguration.class
+    com.dx.hexacore.security.config.HexacoreSecurityAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
 })
 @TestPropertySource(properties = {
     "hexacore.security.enabled=true",

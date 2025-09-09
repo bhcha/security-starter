@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.session.domain.vo;
 
+import com.dx.hexacore.security.util.ValidationUtils;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Objects;
@@ -21,23 +22,9 @@ public class ClientIp {
      * IP 주소 문자열로부터 ClientIp를 생성합니다.
      */
     public static ClientIp of(String ipAddress) {
-        if (ipAddress == null || ipAddress.trim().isEmpty()) {
-            throw new IllegalArgumentException("IP address cannot be null or empty");
-        }
-        
-        // 공백 제거하여 정확한 검증
-        String trimmedIp = ipAddress.trim();
-        if (!trimmedIp.equals(ipAddress)) {
-            throw new IllegalArgumentException("Invalid IP address format: " + ipAddress);
-        }
-        
-        try {
-            InetAddress.getByName(ipAddress);
-            IpType type = determineIpType(ipAddress);
-            return new ClientIp(ipAddress, type);
-        } catch (UnknownHostException e) {
-            throw new IllegalArgumentException("Invalid IP address format: " + ipAddress);
-        }
+        String validatedIp = ValidationUtils.requireValidIpAddress(ipAddress, "IP address");
+        IpType type = determineIpType(validatedIp);
+        return new ClientIp(validatedIp, type);
     }
     
     /**

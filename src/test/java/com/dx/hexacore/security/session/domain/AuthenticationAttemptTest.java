@@ -185,7 +185,7 @@ class AuthenticationAttemptTest {
             null, LocalDateTime.now(), true, 
             ClientIp.of("192.168.1.100"), RiskLevel.low("Normal activity")
         )).isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("User ID cannot be null or empty");
+          .hasMessage("UserId cannot be null or empty");
     }
 
     @Test
@@ -206,7 +206,7 @@ class AuthenticationAttemptTest {
         assertThatThrownBy(() -> AuthenticationAttempt.create(
             "user123", LocalDateTime.now(), true, null, RiskLevel.low("Normal activity")
         )).isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("Client IP cannot be null");
+          .hasMessage("ClientIp cannot be null");
     }
 
     @Test

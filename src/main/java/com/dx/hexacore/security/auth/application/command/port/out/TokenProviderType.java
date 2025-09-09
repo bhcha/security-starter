@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.auth.application.command.port.out;
 
+import com.dx.hexacore.security.util.ValidationMessages;
 import java.util.Arrays;
 
 /**
@@ -54,7 +55,7 @@ public enum TokenProviderType {
      */
     public static TokenProviderType fromCode(String code) {
         if (code == null) {
-            throw new IllegalArgumentException("Token provider type code cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Token provider type code"));
         }
         
         return Arrays.stream(values())

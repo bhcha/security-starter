@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.auth.application.command.port.out;
 
+import com.dx.hexacore.security.util.ValidationMessages;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
@@ -88,19 +89,19 @@ public record TokenValidationResult(
     
     private static void validateUserId(String userId) {
         if (userId == null || userId.trim().isEmpty()) {
-            throw new IllegalArgumentException("User ID cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("UserId"));
         }
     }
     
     private static void validateUsername(String username) {
         if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Username cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Username"));
         }
     }
     
     private static void validateReason(String reason) {
         if (reason == null || reason.trim().isEmpty()) {
-            throw new IllegalArgumentException("Reason cannot be null or empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNullOrEmpty("Reason"));
         }
     }
 }

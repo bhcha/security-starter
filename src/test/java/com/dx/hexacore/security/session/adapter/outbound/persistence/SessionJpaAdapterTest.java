@@ -55,7 +55,7 @@ class SessionJpaAdapterTest {
             // Given
             SessionId sessionId = SessionId.of(UUID.randomUUID().toString());
             ClientIp clientIp = ClientIp.of("192.168.1.100");
-            AuthenticationSession session = AuthenticationSession.create(sessionId, "user123", clientIp);
+            AuthenticationSession session = AuthenticationSession.create(sessionId, "user123", clientIp, 5, 30);
             
             SessionJpaEntity entity = SessionJpaEntity.builder()
                 .sessionId(sessionId.toString())
@@ -84,7 +84,7 @@ class SessionJpaAdapterTest {
             // Given
             SessionId sessionId = SessionId.of(UUID.randomUUID().toString());
             ClientIp clientIp = ClientIp.of("192.168.1.100");
-            AuthenticationSession session = AuthenticationSession.create(sessionId, "user123", clientIp);
+            AuthenticationSession session = AuthenticationSession.create(sessionId, "user123", clientIp, 5, 30);
             
             SessionJpaEntity existingEntity = SessionJpaEntity.builder()
                 .sessionId(sessionId.toString())
@@ -117,7 +117,7 @@ class SessionJpaAdapterTest {
                 .build();
             
             ClientIp clientIp = ClientIp.of("192.168.1.100");
-            AuthenticationSession session = AuthenticationSession.create(sessionId, "user123", clientIp);
+            AuthenticationSession session = AuthenticationSession.create(sessionId, "user123", clientIp, 5, 30);
             
             given(repository.findById(sessionId.toString())).willReturn(Optional.of(entity));
             given(mapper.toDomain(entity)).willReturn(session);

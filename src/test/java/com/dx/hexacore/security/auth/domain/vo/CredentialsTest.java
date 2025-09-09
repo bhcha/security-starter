@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.auth.domain.vo;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,6 +14,13 @@ import static org.assertj.core.api.Assertions.*;
 @DisplayName("Credentials 값 객체")
 class CredentialsTest {
 
+    private com.dx.hexacore.security.config.SecurityConstants securityConstants;
+    
+    @BeforeEach
+    void setUp() {
+        securityConstants = new com.dx.hexacore.security.config.SecurityConstants();
+    }
+
     @Test
     @DisplayName("유효한 username과 password로 Credentials 생성에 성공한다")
     void shouldCreateCredentialsWhenValidUsernameAndPassword() {
@@ -21,7 +29,10 @@ class CredentialsTest {
         String password = "password123";
 
         // When
-        Credentials credentials = Credentials.of(username, password);
+        Credentials credentials = Credentials.of(username, password,
+                                                securityConstants.getValidation().getMinUsernameLength(),
+                                                securityConstants.getValidation().getMaxUsernameLength(),
+                                                securityConstants.getValidation().getMinPasswordLength());
 
         // Then
         assertThat(credentials).isNotNull();
@@ -30,14 +41,17 @@ class CredentialsTest {
     }
 
     @Test
-    @DisplayName("username 최소 길이(3자)로 생성에 성공한다")
+    @DisplayName("username 최소 길이로 생성에 성공한다")
     void shouldCreateCredentialsWhenUsernameMinLength() {
         // Given
-        String username = "abc";
+        String username = "a".repeat(securityConstants.getValidation().getMinUsernameLength());
         String password = "password123";
 
         // When
-        Credentials credentials = Credentials.of(username, password);
+        Credentials credentials = Credentials.of(username, password,
+                                                securityConstants.getValidation().getMinUsernameLength(),
+                                                securityConstants.getValidation().getMaxUsernameLength(),
+                                                securityConstants.getValidation().getMinPasswordLength());
 
         // Then
         assertThat(credentials).isNotNull();
@@ -45,14 +59,17 @@ class CredentialsTest {
     }
 
     @Test
-    @DisplayName("username 최대 길이(50자)로 생성에 성공한다")
+    @DisplayName("username 최대 길이로 생성에 성공한다")
     void shouldCreateCredentialsWhenUsernameMaxLength() {
         // Given
-        String username = "a".repeat(50);
+        String username = "a".repeat(securityConstants.getValidation().getMaxUsernameLength());
         String password = "password123";
 
         // When
-        Credentials credentials = Credentials.of(username, password);
+        Credentials credentials = Credentials.of(username, password,
+                                                securityConstants.getValidation().getMinUsernameLength(),
+                                                securityConstants.getValidation().getMaxUsernameLength(),
+                                                securityConstants.getValidation().getMinPasswordLength());
 
         // Then
         assertThat(credentials).isNotNull();
@@ -60,14 +77,17 @@ class CredentialsTest {
     }
 
     @Test
-    @DisplayName("password 최소 길이(8자)로 생성에 성공한다")
+    @DisplayName("password 최소 길이로 생성에 성공한다")
     void shouldCreateCredentialsWhenPasswordMinLength() {
         // Given
         String username = "testuser";
-        String password = "12345678";
+        String password = "1".repeat(securityConstants.getValidation().getMinPasswordLength());
 
         // When
-        Credentials credentials = Credentials.of(username, password);
+        Credentials credentials = Credentials.of(username, password,
+                                                securityConstants.getValidation().getMinUsernameLength(),
+                                                securityConstants.getValidation().getMaxUsernameLength(),
+                                                securityConstants.getValidation().getMinPasswordLength());
 
         // Then
         assertThat(credentials).isNotNull();
@@ -82,7 +102,10 @@ class CredentialsTest {
         String password = "password123";
 
         // When
-        Credentials credentials = Credentials.of(username, password);
+        Credentials credentials = Credentials.of(username, password,
+                                                securityConstants.getValidation().getMinUsernameLength(),
+                                                securityConstants.getValidation().getMaxUsernameLength(),
+                                                securityConstants.getValidation().getMinPasswordLength());
 
         // Then
         assertThat(credentials).isNotNull();
@@ -95,8 +118,14 @@ class CredentialsTest {
         // Given
         String username = "testuser";
         String password = "password123";
-        Credentials credentials1 = Credentials.of(username, password);
-        Credentials credentials2 = Credentials.of(username, password);
+        Credentials credentials1 = Credentials.of(username, password,
+                                                securityConstants.getValidation().getMinUsernameLength(),
+                                                securityConstants.getValidation().getMaxUsernameLength(),
+                                                securityConstants.getValidation().getMinPasswordLength());
+        Credentials credentials2 = Credentials.of(username, password,
+                                                securityConstants.getValidation().getMinUsernameLength(),
+                                                securityConstants.getValidation().getMaxUsernameLength(),
+                                                securityConstants.getValidation().getMinPasswordLength());
 
         // When & Then
         assertThat(credentials1).isEqualTo(credentials2);
@@ -106,8 +135,14 @@ class CredentialsTest {
     @DisplayName("다른 값으로 생성된 Credentials는 equals false를 반환한다")
     void shouldReturnFalseWhenDifferentCredentials() {
         // Given
-        Credentials credentials1 = Credentials.of("user1", "password123");
-        Credentials credentials2 = Credentials.of("user2", "password123");
+        Credentials credentials1 = Credentials.of("user1", "password123",
+                                                 securityConstants.getValidation().getMinUsernameLength(),
+                                                 securityConstants.getValidation().getMaxUsernameLength(),
+                                                 securityConstants.getValidation().getMinPasswordLength());
+        Credentials credentials2 = Credentials.of("user2", "password123",
+                                                 securityConstants.getValidation().getMinUsernameLength(),
+                                                 securityConstants.getValidation().getMaxUsernameLength(),
+                                                 securityConstants.getValidation().getMinPasswordLength());
 
         // When & Then
         assertThat(credentials1).isNotEqualTo(credentials2);
@@ -119,8 +154,14 @@ class CredentialsTest {
         // Given
         String username = "testuser";
         String password = "password123";
-        Credentials credentials1 = Credentials.of(username, password);
-        Credentials credentials2 = Credentials.of(username, password);
+        Credentials credentials1 = Credentials.of(username, password,
+                                                securityConstants.getValidation().getMinUsernameLength(),
+                                                securityConstants.getValidation().getMaxUsernameLength(),
+                                                securityConstants.getValidation().getMinPasswordLength());
+        Credentials credentials2 = Credentials.of(username, password,
+                                                securityConstants.getValidation().getMinUsernameLength(),
+                                                securityConstants.getValidation().getMaxUsernameLength(),
+                                                securityConstants.getValidation().getMinPasswordLength());
 
         // When & Then
         assertThat(credentials1.hashCode()).isEqualTo(credentials2.hashCode());
@@ -134,9 +175,12 @@ class CredentialsTest {
         String password = "password123";
 
         // When & Then
-        assertThatThrownBy(() -> Credentials.of(username, password))
+        assertThatThrownBy(() -> Credentials.of(username, password,
+                                               securityConstants.getValidation().getMinUsernameLength(),
+                                               securityConstants.getValidation().getMaxUsernameLength(),
+                                               securityConstants.getValidation().getMinPasswordLength()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Username cannot be empty");
+                .hasMessageContaining("Username cannot be null or empty");
     }
 
     @Test
@@ -147,35 +191,48 @@ class CredentialsTest {
         String password = "password123";
 
         // When & Then
-        assertThatThrownBy(() -> Credentials.of(username, password))
+        assertThatThrownBy(() -> Credentials.of(username, password,
+                                               securityConstants.getValidation().getMinUsernameLength(),
+                                               securityConstants.getValidation().getMaxUsernameLength(),
+                                               securityConstants.getValidation().getMinPasswordLength()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Username cannot be empty");
+                .hasMessageContaining("Username cannot be null or empty");
     }
 
     @Test
-    @DisplayName("username이 2자 이하일 때 IllegalArgumentException이 발생한다")
+    @DisplayName("username이 최소 길이보다 짧을 때 IllegalArgumentException이 발생한다")
     void shouldThrowExceptionWhenUsernameIsTooShort() {
         // Given
-        String username = "ab";
+        String username = "a".repeat(securityConstants.getValidation().getMinUsernameLength() - 1);
         String password = "password123";
 
         // When & Then
-        assertThatThrownBy(() -> Credentials.of(username, password))
+        assertThatThrownBy(() -> Credentials.of(username, password,
+                                               securityConstants.getValidation().getMinUsernameLength(),
+                                               securityConstants.getValidation().getMaxUsernameLength(),
+                                               securityConstants.getValidation().getMinPasswordLength()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Username must be between 3 and 50 characters");
+                .hasMessageContaining(String.format("Username length must be between %d and %d",
+                                     securityConstants.getValidation().getMinUsernameLength(),
+                                     securityConstants.getValidation().getMaxUsernameLength()));
     }
 
     @Test
-    @DisplayName("username이 51자 이상일 때 IllegalArgumentException이 발생한다")
+    @DisplayName("username이 최대 길이보다 길 때 IllegalArgumentException이 발생한다")
     void shouldThrowExceptionWhenUsernameIsTooLong() {
         // Given
-        String username = "a".repeat(51);
+        String username = "a".repeat(securityConstants.getValidation().getMaxUsernameLength() + 1);
         String password = "password123";
 
         // When & Then
-        assertThatThrownBy(() -> Credentials.of(username, password))
+        assertThatThrownBy(() -> Credentials.of(username, password,
+                                               securityConstants.getValidation().getMinUsernameLength(),
+                                               securityConstants.getValidation().getMaxUsernameLength(),
+                                               securityConstants.getValidation().getMinPasswordLength()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Username must be between 3 and 50 characters");
+                .hasMessageContaining(String.format("Username length must be between %d and %d",
+                                     securityConstants.getValidation().getMinUsernameLength(),
+                                     securityConstants.getValidation().getMaxUsernameLength()));
     }
 
     @ParameterizedTest
@@ -186,7 +243,10 @@ class CredentialsTest {
         String password = "password123";
 
         // When & Then
-        assertThatThrownBy(() -> Credentials.of(username, password))
+        assertThatThrownBy(() -> Credentials.of(username, password,
+                                               securityConstants.getValidation().getMinUsernameLength(),
+                                               securityConstants.getValidation().getMaxUsernameLength(),
+                                               securityConstants.getValidation().getMinPasswordLength()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Username contains invalid characters");
     }
@@ -199,9 +259,12 @@ class CredentialsTest {
         String password = null;
 
         // When & Then
-        assertThatThrownBy(() -> Credentials.of(username, password))
+        assertThatThrownBy(() -> Credentials.of(username, password,
+                                               securityConstants.getValidation().getMinUsernameLength(),
+                                               securityConstants.getValidation().getMaxUsernameLength(),
+                                               securityConstants.getValidation().getMinPasswordLength()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Password cannot be empty");
+                .hasMessageContaining("Password cannot be null or empty");
     }
 
     @Test
@@ -212,21 +275,28 @@ class CredentialsTest {
         String password = "";
 
         // When & Then
-        assertThatThrownBy(() -> Credentials.of(username, password))
+        assertThatThrownBy(() -> Credentials.of(username, password,
+                                               securityConstants.getValidation().getMinUsernameLength(),
+                                               securityConstants.getValidation().getMaxUsernameLength(),
+                                               securityConstants.getValidation().getMinPasswordLength()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Password cannot be empty");
+                .hasMessageContaining("Password cannot be null or empty");
     }
 
     @Test
-    @DisplayName("password가 7자 이하일 때 IllegalArgumentException이 발생한다")
+    @DisplayName("password가 최소 길이보다 짧을 때 IllegalArgumentException이 발생한다")
     void shouldThrowExceptionWhenPasswordIsTooShort() {
         // Given
         String username = "testuser";
-        String password = "1234567";
+        String password = "1".repeat(securityConstants.getValidation().getMinPasswordLength() - 1);
 
         // When & Then
-        assertThatThrownBy(() -> Credentials.of(username, password))
+        assertThatThrownBy(() -> Credentials.of(username, password,
+                                               securityConstants.getValidation().getMinUsernameLength(),
+                                               securityConstants.getValidation().getMaxUsernameLength(),
+                                               securityConstants.getValidation().getMinPasswordLength()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Password must be at least 8 characters");
+                .hasMessageContaining(String.format("Password must be at least %d characters",
+                                     securityConstants.getValidation().getMinPasswordLength()));
     }
 }

@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.auth.application.query.port.in;
 
+import com.dx.hexacore.security.util.ValidationMessages;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
@@ -50,13 +51,13 @@ public class GetTokenInfoQuery {
 
     private String validateToken(String token) {
         if (token == null) {
-            throw new IllegalArgumentException("Token cannot be null");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeNull("Token"));
         }
         if (token.isEmpty()) {
-            throw new IllegalArgumentException("Token cannot be empty");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeEmpty("Token"));
         }
         if (token.trim().isEmpty()) {
-            throw new IllegalArgumentException("Token cannot be blank");
+            throw new IllegalArgumentException(ValidationMessages.cannotBeBlank("Token"));
         }
         return token;
     }

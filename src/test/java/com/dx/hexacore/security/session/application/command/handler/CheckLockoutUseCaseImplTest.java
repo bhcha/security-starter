@@ -42,7 +42,7 @@ class CheckLockoutUseCaseImplTest {
 
         SessionId sessionId = SessionId.of(sessionIdStr);
         ClientIp clientIp = ClientIp.of("192.168.1.100");
-        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp, 5, 30);
 
         when(sessionRepository.findBySessionId(sessionId)).thenReturn(Optional.of(session));
 
@@ -68,7 +68,7 @@ class CheckLockoutUseCaseImplTest {
 
         SessionId sessionId = SessionId.of(sessionIdStr);
         ClientIp clientIp = ClientIp.of("192.168.1.100");
-        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp, 5, 30);
 
         // 5회 실패로 계정 잠금 발생
         RiskLevel riskLevel = RiskLevel.of(70, "Failed attempt");
@@ -118,7 +118,7 @@ class CheckLockoutUseCaseImplTest {
 
         SessionId sessionId = SessionId.of(sessionIdStr);
         ClientIp clientIp = ClientIp.of("192.168.1.100");
-        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, userId, clientIp, 5, 30);
 
         // 5회 실패로 계정 잠금 발생 후 시간이 충분히 경과했다고 가정
         // (실제로는 도메인 로직에서 시간 확인)
@@ -168,7 +168,7 @@ class CheckLockoutUseCaseImplTest {
 
         SessionId sessionId = SessionId.of(sessionIdStr);
         ClientIp clientIp = ClientIp.of("192.168.1.100");
-        AuthenticationSession session = AuthenticationSession.create(sessionId, userId1, clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, userId1, clientIp, 5, 30);
 
         // 5회 실패로 세션 잠금
         RiskLevel riskLevel = RiskLevel.of(70, "Failed attempt");
@@ -199,7 +199,7 @@ class CheckLockoutUseCaseImplTest {
 
         SessionId sessionId = SessionId.of(sessionIdStr);
         ClientIp clientIp = ClientIp.of("192.168.1.100");
-        AuthenticationSession session = AuthenticationSession.create(sessionId, "primaryUser", clientIp);
+        AuthenticationSession session = AuthenticationSession.create(sessionId, "primaryUser", clientIp, 5, 30);
         // 인증 시도 기록 없음
 
         when(sessionRepository.findBySessionId(sessionId)).thenReturn(Optional.of(session));

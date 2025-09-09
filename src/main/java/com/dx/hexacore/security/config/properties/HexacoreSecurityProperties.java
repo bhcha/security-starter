@@ -31,9 +31,17 @@ public class HexacoreSecurityProperties {
     
     /**
      * Hexacore Security 기능 활성화 여부
+     * 기본값을 false로 설정하여 명시적 활성화 필요
      */
     @NotNull
-    private Boolean enabled = true;
+    private Boolean enabled = false;
+    
+    /**
+     * JWT 통합 전략 설정
+     */
+    @Valid
+    @NestedConfigurationProperty
+    private JwtIntegration jwt = new JwtIntegration();
     
     /**
      * 토큰 제공자 설정
@@ -832,5 +840,41 @@ public class HexacoreSecurityProperties {
          */
         @NotNull
         private Boolean cspEnabled = true;
+    }
+    
+    /**
+     * JWT 통합 전략 설정
+     */
+    @Data
+    public static class JwtIntegration {
+        /**
+         * JWT 기능 활성화 여부
+         */
+        @NotNull
+        private Boolean enabled = true;
+        
+        /**
+         * JWT 통합 전략
+         * - security-integration (기본값): SecurityFilterChain과 통합, 부모가 정의하면 백오프
+         * - servlet-filter: Spring Security와 독립적으로 ServletFilter로 동작
+         * - manual: JWT 필터만 Bean으로 제공, 부모가 완전히 제어
+         */
+        @NotNull
+        @Pattern(regexp = "security-integration|servlet-filter|manual",
+                message = "JWT strategy must be one of: security-integration, servlet-filter, manual")
+        private String strategy = "security-integration";
+        
+        /**
+         * ServletFilter 전략 사용 시 우선순위
+         */
+        @Min(-100)
+        @Max(100)
+        private Integer filterOrder = 50;
+        
+        /**
+         * 자동 주입 활성화 여부 (구 설정, deprecated)
+         */
+        @Deprecated
+        private Boolean autoInject = false;
     }
 }

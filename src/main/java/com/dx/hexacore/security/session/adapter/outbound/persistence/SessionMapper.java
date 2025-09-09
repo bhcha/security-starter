@@ -9,12 +9,19 @@ import com.dx.hexacore.security.session.domain.vo.ClientIp;
 import com.dx.hexacore.security.session.domain.vo.RiskLevel;
 import com.dx.hexacore.security.session.adapter.outbound.persistence.entity.AuthenticationAttemptJpaEntity;
 import com.dx.hexacore.security.session.adapter.outbound.persistence.entity.SessionJpaEntity;
+import com.dx.hexacore.security.config.properties.HexacoreSecurityProperties;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 @Component
 public class SessionMapper {
+    
+    private final HexacoreSecurityProperties securityProperties;
+    
+    public SessionMapper(HexacoreSecurityProperties securityProperties) {
+        this.securityProperties = securityProperties;
+    }
     
     public SessionJpaEntity toEntity(AuthenticationSession session) {
         SessionJpaEntity entity = SessionJpaEntity.builder()
@@ -93,7 +100,14 @@ public class SessionMapper {
             ClientIp.of("127.0.0.1") : 
             ClientIp.of(entity.getAttempts().get(0).getClientIp());
             
-        AuthenticationSession session = AuthenticationSession.create(sessionId, entity.getUserId(), clientIp);
+        // 설정값으로 세션 생성
+        AuthenticationSession session = AuthenticationSession.create(
+            sessionId, 
+            entity.getUserId(), 
+            clientIp,
+            securityProperties.getSession().getLockout().getMaxAttempts(),
+            securityProperties.getSession().getLockout().getLockoutDurationMinutes()
+        );
         
         // Restore lockout state
         if (entity.getLockoutUntil() != null && entity.getLockoutUntil().isAfter(LocalDateTime.now())) {

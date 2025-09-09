@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * 같은 패키지에 있는 package-private 구현체들을 Bean으로 등록합니다.
  */
 @Configuration
-class SessionQueryConfiguration {
+public class SessionQueryConfiguration {
 
     // Query Handler
     @Bean

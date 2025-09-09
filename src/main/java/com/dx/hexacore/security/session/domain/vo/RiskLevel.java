@@ -1,5 +1,6 @@
 package com.dx.hexacore.security.session.domain.vo;
 
+import com.dx.hexacore.security.util.ValidationUtils;
 import java.util.Objects;
 
 /**
@@ -12,8 +13,8 @@ public class RiskLevel {
     private final String reason;
     
     private RiskLevel(int score, String reason) {
-        validateScore(score);
-        validateReason(reason);
+        ValidationUtils.requireInRange(score, 0, 100, "Risk score");
+        ValidationUtils.requireNonNullOrEmpty(reason, "Risk reason");
         
         this.score = score;
         this.category = determineCategory(score);
@@ -31,7 +32,7 @@ public class RiskLevel {
      * 낮은 위험도를 생성합니다.
      */
     public static RiskLevel low(String reason) {
-        validateReason(reason);
+        ValidationUtils.requireNonNullOrEmpty(reason, "Risk reason");
         return new RiskLevel(0, reason);
     }
     
@@ -39,7 +40,7 @@ public class RiskLevel {
      * 중간 위험도를 생성합니다.
      */
     public static RiskLevel medium(String reason) {
-        validateReason(reason);
+        ValidationUtils.requireNonNullOrEmpty(reason, "Risk reason");
         return new RiskLevel(38, reason);
     }
     
@@ -47,7 +48,7 @@ public class RiskLevel {
      * 높은 위험도를 생성합니다.
      */
     public static RiskLevel high(String reason) {
-        validateReason(reason);
+        ValidationUtils.requireNonNullOrEmpty(reason, "Risk reason");
         return new RiskLevel(63, reason);
     }
     
@@ -55,27 +56,10 @@ public class RiskLevel {
      * 심각한 위험도를 생성합니다.
      */
     public static RiskLevel critical(String reason) {
-        validateReason(reason);
+        ValidationUtils.requireNonNullOrEmpty(reason, "Risk reason");
         return new RiskLevel(88, reason);
     }
     
-    /**
-     * 점수 검증
-     */
-    private static void validateScore(int score) {
-        if (score < 0 || score > 100) {
-            throw new IllegalArgumentException("Risk score must be between 0 and 100");
-        }
-    }
-    
-    /**
-     * 사유 검증
-     */
-    private static void validateReason(String reason) {
-        if (reason == null || reason.trim().isEmpty()) {
-            throw new IllegalArgumentException("Risk reason cannot be null or empty");
-        }
-    }
     
     /**
      * 점수에 따른 위험도 범주 결정

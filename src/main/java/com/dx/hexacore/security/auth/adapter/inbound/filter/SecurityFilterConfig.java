@@ -6,12 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.Ordered;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,22 +31,15 @@ import java.util.List;
  * Spring Boot Starter로 제공될 보안 필터 체인을 구성합니다.
  */
 @Configuration
-@EnableWebSecurity
 @EnableConfigurationProperties({SecurityProperties.class})
 @ConditionalOnProperty(
-    prefix = "hexacore.security.filter",
-    name = "enabled",
-    havingValue = "true",
-    matchIfMissing = true
-)
-@ConditionalOnProperty(
-    prefix = "security.auth.jwt",
+    prefix = "hexacore.security",
     name = "enabled",
     havingValue = "true",
     matchIfMissing = true
 )
 @ConditionalOnBean(TokenProvider.class)
-@Order(50) // 높은 우선순위로 설정하여 사용자 정의 SecurityConfig보다 먼저 적용
+@ConditionalOnClass(ObjectMapper.class)
 public class SecurityFilterConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityFilterConfig.class);
@@ -63,7 +59,9 @@ public class SecurityFilterConfig {
             TokenProvider tokenProvider,
             ObjectMapper objectMapper,
             JwtExcludeProperties excludeProperties,
-            SecurityProperties securityProperties) {
+            SecurityProperties securityProperties,
+            com.dx.hexacore.security.logging.SecurityRequestLogger requestLogger,
+            com.dx.hexacore.security.logging.SecurityEventLogger eventLogger) {
         
         logger.info("🛡️ JwtAuthenticationFilter Bean 생성됨");
         logger.info("TokenProvider 타입: {}", tokenProvider.getClass().getSimpleName());
@@ -73,7 +71,9 @@ public class SecurityFilterConfig {
             tokenProvider,
             objectMapper,
             excludeProperties.getPaths(),
-            securityProperties
+            securityProperties,
+            requestLogger,
+            eventLogger
         );
     }
 
@@ -84,7 +84,9 @@ public class SecurityFilterConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(
+    @ConditionalOnMissingBean(SecurityFilterChain.class)  // 사용자가 정의하지 않은 경우에만
+    @Order(Ordered.LOWEST_PRECEDENCE - 10)  // 낮은 우선순위로 fallback 역할
+    public SecurityFilterChain defaultSecurityFilterChain(
             HttpSecurity http,
             JwtAuthenticationFilter jwtAuthenticationFilter,
             JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
