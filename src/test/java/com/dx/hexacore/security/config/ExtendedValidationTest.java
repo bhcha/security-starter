@@ -28,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
     "hexacore.security.token-provider.provider=jwt",
     "hexacore.security.token-provider.jwt.enabled=true",
     "hexacore.security.token-provider.jwt.secret=extended-validation-test-secret-key-with-good-entropy",
+    "hexacore.security.persistence.type=MEMORY",
     "hexacore.security.persistence.jpa.enabled=false",
     "hexacore.security.persistence.memory.enabled=true",
     "hexacore.session.cache.enabled=false",

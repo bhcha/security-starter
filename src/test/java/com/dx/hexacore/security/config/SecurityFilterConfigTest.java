@@ -21,6 +21,7 @@ class SecurityFilterConfigTest {
             .withConfiguration(AutoConfigurations.of(
                     // SecurityAutoConfiguration.class, // 제외하여 충돌 방지
                     org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
+                    HexacoreSecurityAutoConfiguration.class, // ✅ 전체 설정 포함
                     TokenProviderAutoConfiguration.class,
                     SecurityFilterAutoConfiguration.class
             ))

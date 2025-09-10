@@ -37,22 +37,6 @@ public class SessionPersistenceConfiguration {
         return new SessionJpaAdapter(jpaRepository, mapper);
     }
 
-    @Bean
-    @Primary  // JPA 구현체를 우선 선택
-    @ConditionalOnMissingBean
-    public AuthenticationSessionRepository authenticationSessionRepository(SessionJpaAdapter adapter) {
-        return adapter;
-    }
-
-    @Bean("sessionJpaQueryAdapter")
-    @ConditionalOnMissingBean(name = "sessionJpaQueryAdapter")
-    public LoadSessionStatusQueryPort loadSessionStatusQueryPort(SessionJpaAdapter adapter) {
-        return adapter;
-    }
-
-    @Bean("sessionJpaFailedAttemptsAdapter")
-    @ConditionalOnMissingBean(name = "sessionJpaFailedAttemptsAdapter")
-    public LoadFailedAttemptsQueryPort loadFailedAttemptsQueryPort(SessionJpaAdapter adapter) {
-        return adapter;
-    }
+    // SessionJpaAdapter는 3개 인터페이스를 모두 구현하므로 하나의 Bean으로만 등록
+    // Spring이 타입으로 자동 매핑하도록 함
 }

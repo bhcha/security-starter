@@ -2,7 +2,6 @@ package com.dx.hexacore.security.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
@@ -15,7 +14,6 @@ import java.time.Duration;
  * @author Claude Code Assistant
  */
 @Data
-@Component
 @ConfigurationProperties(prefix = "hexacore.security")
 public class SecurityConstants {
 

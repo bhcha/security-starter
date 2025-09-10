@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = {
     com.dx.hexacore.security.config.HexacoreSecurityAutoConfiguration.class,
     org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
     org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
 })
 @TestPropertySource(properties = {
@@ -28,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
     "hexacore.security.token-provider.provider=jwt",
     "hexacore.security.token-provider.jwt.enabled=true",
     "hexacore.security.token-provider.jwt.secret=test-secret-key-for-verification-purpose-only",
+    "hexacore.security.persistence.type=JPA",
     "hexacore.security.persistence.jpa.enabled=true",
     "hexacore.security.persistence.memory.enabled=false",
     "spring.datasource.url=jdbc:h2:mem:testdb",

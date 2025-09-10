@@ -23,7 +23,10 @@ import org.springframework.context.annotation.Import;
 @Configuration("hexacoreSecurityAutoConfiguration")
 @ConditionalOnClass(AuthenticationUseCase.class)
 @ConditionalOnProperty(prefix = "hexacore.security", name = "enabled", havingValue = "true", matchIfMissing = false)
-@EnableConfigurationProperties(com.dx.hexacore.security.config.properties.HexacoreSecurityProperties.class)
+@EnableConfigurationProperties({
+    com.dx.hexacore.security.config.properties.HexacoreSecurityProperties.class,
+    com.dx.hexacore.security.config.SecurityConstants.class
+})
 @Import({
     TokenProviderAutoConfiguration.class,
     com.dx.hexacore.security.config.autoconfigure.PersistenceAutoConfiguration.class,
