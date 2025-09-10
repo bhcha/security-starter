@@ -1,0 +1,39 @@
+package com.ldx.hexacore.security.auth.application.query.handler;
+
+import com.ldx.hexacore.security.auth.application.query.port.in.GetAuthenticationUseCase;
+import com.ldx.hexacore.security.auth.application.query.port.in.GetTokenInfoUseCase;
+import com.ldx.hexacore.security.auth.application.query.port.out.LoadAuthenticationQueryPort;
+import com.ldx.hexacore.security.auth.application.query.port.out.LoadTokenInfoQueryPort;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * Authentication Query Use Case 설정 클래스
+ * 같은 패키지에 있는 package-private 구현체들을 Bean으로 등록합니다.
+ */
+@Configuration
+public class AuthenticationQueryConfiguration {
+
+    // 하나의 Handler로 두 인터페이스를 모두 구현
+    @Bean
+    @ConditionalOnMissingBean
+    public AuthenticationQueryHandler authenticationQueryHandler(
+            LoadAuthenticationQueryPort loadAuthenticationQueryPort,
+            LoadTokenInfoQueryPort loadTokenInfoQueryPort) {
+        return new AuthenticationQueryHandler(loadAuthenticationQueryPort, loadTokenInfoQueryPort);
+    }
+
+    // Application Services - Query Side
+    @Bean
+    @ConditionalOnMissingBean
+    public GetAuthenticationUseCase getAuthenticationUseCase(AuthenticationQueryHandler handler) {
+        return handler;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public GetTokenInfoUseCase getTokenInfoUseCase(AuthenticationQueryHandler handler) {
+        return handler;
+    }
+}
