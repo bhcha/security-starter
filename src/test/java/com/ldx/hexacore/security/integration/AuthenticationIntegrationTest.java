@@ -8,7 +8,7 @@ import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenValidationResult;
 import com.ldx.hexacore.security.auth.domain.vo.Credentials;
 import com.ldx.hexacore.security.auth.domain.vo.Token;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import com.ldx.hexacore.security.config.autoconfigure.TokenProviderAutoConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -155,8 +155,8 @@ class AuthenticationIntegrationTest {
         @DisplayName("Keycloak 설정에서 OpenID Connect scope가 올바르게 설정되는지 확인")
         void shouldHaveCorrectOpenIdConnectScopes() {
             contextRunner.run(context -> {
-                HexacoreSecurityProperties properties = context.getBean(HexacoreSecurityProperties.class);
-                HexacoreSecurityProperties.TokenProvider.KeycloakProperties keycloakProps = 
+                SecurityStarterProperties properties = context.getBean(SecurityStarterProperties.class);
+                SecurityStarterProperties.TokenProvider.KeycloakProperties keycloakProps = 
                     properties.getTokenProvider().getKeycloak();
                 
                 // OpenID Connect에 필요한 scope가 포함되어 있는지 확인

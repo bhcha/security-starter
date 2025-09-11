@@ -1,7 +1,7 @@
 package com.ldx.hexacore.security.config.autoconfigure;
 
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -19,7 +19,7 @@ class SimpleAutoConfigurationTest {
     void shouldLoadAutoConfiguration() {
         contextRunner.run(context -> {
             // Check if properties are loaded
-            assertThat(context).hasSingleBean(HexacoreSecurityProperties.class);
+            assertThat(context).hasSingleBean(SecurityStarterProperties.class);
             // Check if TokenProvider is created (default JWT provider)
             assertThat(context).hasSingleBean(TokenProvider.class);
         });

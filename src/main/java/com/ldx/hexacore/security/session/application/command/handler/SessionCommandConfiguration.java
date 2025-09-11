@@ -6,7 +6,7 @@ import com.ldx.hexacore.security.session.application.command.port.in.SessionMana
 import com.ldx.hexacore.security.session.application.command.port.in.UnlockAccountUseCase;
 import com.ldx.hexacore.security.session.application.command.port.out.AuthenticationSessionRepository;
 import com.ldx.hexacore.security.session.application.command.port.out.SessionEventPublisher;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ public class SessionCommandConfiguration {
     public RecordAttemptUseCase recordAttemptUseCase(
             AuthenticationSessionRepository repository,
             SessionEventPublisher eventPublisher,
-            HexacoreSecurityProperties securityProperties) {
+            SecurityStarterProperties securityProperties) {
         return new RecordAttemptUseCaseImpl(repository, eventPublisher, securityProperties);
     }
 

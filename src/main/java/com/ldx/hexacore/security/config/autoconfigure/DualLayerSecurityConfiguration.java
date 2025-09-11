@@ -1,7 +1,7 @@
 package com.ldx.hexacore.security.config.autoconfigure;
 
 import com.ldx.hexacore.security.auth.adapter.inbound.filter.JwtAuthenticationFilter;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,7 +48,7 @@ import java.util.List;
  */
 @AutoConfiguration(before = SecurityAutoConfiguration.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-@EnableConfigurationProperties(HexacoreSecurityProperties.class)
+@EnableConfigurationProperties(SecurityStarterProperties.class)
 public class DualLayerSecurityConfiguration {
     
     private static final Logger logger = LoggerFactory.getLogger(DualLayerSecurityConfiguration.class);
@@ -59,7 +59,7 @@ public class DualLayerSecurityConfiguration {
      */
     @Configuration
     @ConditionalOnProperty(
-        prefix = "hexacore.security.jwt",
+        prefix = "security-starter.jwt",
         name = "layer",
         havingValue = "servlet",
         matchIfMissing = true  // 기본값
@@ -73,7 +73,7 @@ public class DualLayerSecurityConfiguration {
         @Bean
         public FilterRegistrationBean<JwtServletFilter> jwtServletFilterRegistration(
                 JwtAuthenticationFilter jwtFilter,
-                HexacoreSecurityProperties properties) {
+                SecurityStarterProperties properties) {
             
             logger.info("🔧 [Layer 1] Registering JWT as ServletFilter");
             
@@ -98,7 +98,7 @@ public class DualLayerSecurityConfiguration {
      */
     @Configuration
     @ConditionalOnProperty(
-        prefix = "hexacore.security.filter",
+        prefix = "security-starter.filter",
         name = "enabled",
         havingValue = "true",
         matchIfMissing = true
@@ -114,7 +114,7 @@ public class DualLayerSecurityConfiguration {
         @ConditionalOnMissingBean(name = "primarySecurityFilterChain")
         public SecurityFilterChain starterSecurityFilterChain(
                 HttpSecurity http,
-                HexacoreSecurityProperties properties) throws Exception {
+                SecurityStarterProperties properties) throws Exception {
             
             logger.info("🔧 [Layer 2] Configuring Starter SecurityFilterChain");
             
@@ -173,11 +173,11 @@ public class DualLayerSecurityConfiguration {
         private static final Logger logger = LoggerFactory.getLogger(JwtServletFilter.class);
         
         private final JwtAuthenticationFilter jwtFilter;
-        private final HexacoreSecurityProperties properties;
+        private final SecurityStarterProperties properties;
         private final List<String> excludePaths;
         
         public JwtServletFilter(JwtAuthenticationFilter jwtFilter, 
-                               HexacoreSecurityProperties properties) {
+                               SecurityStarterProperties properties) {
             this.jwtFilter = jwtFilter;
             this.properties = properties;
             this.excludePaths = List.of(properties.getFilter().getExcludePaths());

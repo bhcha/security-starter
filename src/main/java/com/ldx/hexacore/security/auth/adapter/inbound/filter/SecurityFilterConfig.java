@@ -1,7 +1,6 @@
 package com.ldx.hexacore.security.auth.adapter.inbound.filter;
-import com.ldx.hexacore.security.auth.adapter.inbound.config.SecurityProperties;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ldx.hexacore.security.logging.SecurityEventLogger;
 import com.ldx.hexacore.security.logging.SecurityRequestLogger;
@@ -32,9 +31,9 @@ import java.util.List;
  * Spring Boot Starter로 제공될 보안 필터 체인을 구성합니다.
  */
 @Configuration
-@EnableConfigurationProperties({SecurityProperties.class})
+@EnableConfigurationProperties({SecurityStarterProperties.class})
 @ConditionalOnProperty(
-    prefix = "hexacore.security",
+    prefix = "security-starter",
     name = "enabled",
     havingValue = "true",
     matchIfMissing = true
@@ -50,7 +49,7 @@ public class SecurityFilterConfig {
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "security.auth.jwt.exclude")
+    @ConfigurationProperties(prefix = "security-starter.filter.exclude")
     public JwtExcludeProperties jwtExcludeProperties() {
         return new JwtExcludeProperties();
     }
@@ -60,7 +59,7 @@ public class SecurityFilterConfig {
             TokenProvider tokenProvider,
             ObjectMapper objectMapper,
             JwtExcludeProperties excludeProperties,
-            SecurityProperties securityProperties,
+            SecurityStarterProperties securityProperties,
             SecurityRequestLogger requestLogger,
             SecurityEventLogger eventLogger) {
         
@@ -92,7 +91,7 @@ public class SecurityFilterConfig {
             JwtAuthenticationFilter jwtAuthenticationFilter,
             JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
             JwtExcludeProperties excludeProperties,
-            HexacoreSecurityProperties hexacoreProperties) throws Exception {
+            SecurityStarterProperties hexacoreProperties) throws Exception {
         
         logger.info("⚙️ SecurityFilterChain 구성 시작");
         logger.info("JwtAuthenticationFilter: {}", jwtAuthenticationFilter.getClass().getSimpleName());
@@ -150,7 +149,7 @@ public class SecurityFilterConfig {
      */
     private List<String> collectAllExcludePaths(
             JwtExcludeProperties excludeProperties, 
-            HexacoreSecurityProperties hexacoreProperties) {
+            SecurityStarterProperties hexacoreProperties) {
         
         List<String> allPaths = new ArrayList<>();
         

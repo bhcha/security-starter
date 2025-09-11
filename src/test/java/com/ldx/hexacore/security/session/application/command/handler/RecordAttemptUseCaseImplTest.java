@@ -10,7 +10,7 @@ import com.ldx.hexacore.security.session.domain.event.AccountLocked;
 import com.ldx.hexacore.security.session.domain.vo.ClientIp;
 import com.ldx.hexacore.security.session.domain.vo.RiskLevel;
 import com.ldx.hexacore.security.session.domain.vo.SessionId;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class RecordAttemptUseCaseImplTest {
     @BeforeEach
     void setUp() {
         // 실제 Properties 객체 사용
-        HexacoreSecurityProperties securityProperties = new HexacoreSecurityProperties();
+        SecurityStarterProperties securityProperties = new SecurityStarterProperties();
         useCase = new RecordAttemptUseCaseImpl(sessionRepository, eventPublisher, securityProperties);
     }
 

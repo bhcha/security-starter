@@ -39,7 +39,7 @@ public class SecurityStarterFailureAnalyzer extends AbstractFailureAnalyzer<NoSu
         if (message != null) {
             return message.contains("com.dx.hexacore.security") ||
                    message.contains("SecurityStarterFailureAnalyzer") ||
-                   message.contains("HexacoreSecurityProperties");
+                   message.contains("SecurityStarterProperties");
         }
         
         return false;

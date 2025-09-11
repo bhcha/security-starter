@@ -305,7 +305,7 @@
     - 조건부 활성화: `hexacore.security.enabled=true` (기본값)
     - 컴포넌트 스캔: auth, session 패키지 자동 스캔
     - 하위 Configuration 클래스 Import
-  - 통합 설정 프로퍼티 클래스: `HexacoreSecurityProperties`
+  - 통합 설정 프로퍼티 클래스: `SecurityStarterProperties`
     - `hexacore.security.*` prefix로 통합 설정 관리
     - TokenProvider, Filter, Session, Persistence, Cache 설정 포함
     - 기존 TokenProviderProperties와 통합 및 호환성 유지
@@ -325,7 +325,7 @@
 
 - 2025-01-30: **Starter Integration Phase 2 완료 - 코드 마이그레이션**
   - **Properties 클래스 통합 완료**
-    - `HexacoreSecurityProperties` 확장 및 통합: security-auth-starter의 모든 Properties 기능 통합
+    - `SecurityStarterProperties` 확장 및 통합: security-auth-starter의 모든 Properties 기능 통합
     - Jakarta Validation 적용: `@Valid`, `@NotNull`, `@NotBlank`, `@Min` 어노테이션 추가
     - Primitive type → Wrapper type 변경: `boolean` → `Boolean` 일관성 확보
     - RateLimitProperties: 고급 기능 추가 (strategy, distributed, per-IP/User/Endpoint limits)
@@ -360,7 +360,7 @@
     - TokenProviderAutoConfiguration 테스트: Provider별 조건부 Bean 등록 테스트
     - Properties 바인딩 테스트: 계층적 설정 구조 바인딩 검증
   - 통합된 Properties 바인딩 테스트 완료
-    - HexacoreSecurityProperties 전체 바인딩 검증
+    - SecurityStarterProperties 전체 바인딩 검증
     - JWT/Keycloak 설정 구분 처리 확인
     - 기본값 및 사용자 정의 설정 바인딩 모두 정상 동작
   - 간단한 통합 테스트 작성: Context 로딩 및 Bean 등록 검증

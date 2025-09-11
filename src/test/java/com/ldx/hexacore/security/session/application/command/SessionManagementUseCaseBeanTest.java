@@ -1,6 +1,6 @@
 package com.ldx.hexacore.security.session.application.command;
 
-import com.ldx.hexacore.security.config.HexacoreSecurityAutoConfiguration;
+import com.ldx.hexacore.security.config.SecurityStarterAutoConfiguration;
 import com.ldx.hexacore.security.session.application.command.port.in.SessionManagementUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {
-    HexacoreSecurityAutoConfiguration.class,
+    SecurityStarterAutoConfiguration.class,
     org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
     org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
     org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class,

@@ -1,6 +1,6 @@
 package com.ldx.hexacore.security;
 
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
 import com.ldx.hexacore.security.config.autoconfigure.TokenProviderAutoConfiguration;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class HexacoreSecurityApplicationTests {
     void contextLoads() {
         contextRunner.run(context -> {
             // 기본 자동 설정이 정상적으로 로딩되는지 확인
-            assertThat(context).hasSingleBean(HexacoreSecurityProperties.class);
+            assertThat(context).hasSingleBean(SecurityStarterProperties.class);
             assertThat(context).hasSingleBean(TokenProvider.class);
         });
     }

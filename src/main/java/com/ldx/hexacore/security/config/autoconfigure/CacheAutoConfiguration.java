@@ -1,6 +1,6 @@
 package com.ldx.hexacore.security.config.autoconfigure;
 
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.FilterType;
  * Caffeine 또는 Redis 캐시를 조건부로 활성화합니다.
  */
 @Configuration
-@EnableConfigurationProperties(HexacoreSecurityProperties.class)
+@EnableConfigurationProperties(SecurityStarterProperties.class)
 public class CacheAutoConfiguration {
     
     /**
@@ -24,20 +24,14 @@ public class CacheAutoConfiguration {
     @Configuration
     @ConditionalOnClass(Caffeine.class)
     @ConditionalOnProperty(
-        prefix = "hexacore.security.cache",
-        name = "type",
-        havingValue = "caffeine",
-        matchIfMissing = true
-    )
-    @ConditionalOnProperty(
-        prefix = "hexacore.security.cache",
+        prefix = "security-starter.cache",
         name = "enabled",
         havingValue = "true",
         matchIfMissing = true
     )
     @ComponentScan(
         basePackages = {
-            "com.dx.hexacore.security.session.adapter.outbound.cache"
+            "com.dx.security-starter.session.adapter.outbound.cache"
         },
         includeFilters = @ComponentScan.Filter(
             type = FilterType.REGEX,
@@ -53,14 +47,10 @@ public class CacheAutoConfiguration {
      */
     @Configuration
     @ConditionalOnProperty(
-        prefix = "hexacore.security.cache",
-        name = "type",
-        havingValue = "redis"
-    )
-    @ConditionalOnProperty(
-        prefix = "hexacore.security.cache",
+        prefix = "security-starter.cache.redis",
         name = "enabled",
-        havingValue = "true"
+        havingValue = "true",
+        matchIfMissing = false
     )
     public static class RedisCacheConfiguration {
         // Redis 지원 시 구현 예정

@@ -2,6 +2,7 @@ package com.ldx.hexacore.security.config;
 
 import com.ldx.hexacore.security.auth.adapter.inbound.filter.SecurityFilterConfig;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
+import com.ldx.hexacore.security.config.SecurityStarterAutoConfiguration;
 import com.ldx.hexacore.security.config.autoconfigure.TokenProviderAutoConfiguration;
 import com.ldx.hexacore.security.config.autoconfigure.SecurityFilterAutoConfiguration;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class SecurityFilterConfigTest {
             .withConfiguration(AutoConfigurations.of(
                     // SecurityAutoConfiguration.class, // 제외하여 충돌 방지
                     org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
-                    HexacoreSecurityAutoConfiguration.class, // ✅ 전체 설정 포함
+                    SecurityStarterAutoConfiguration.class, // ✅ 전체 설정 포함
                     TokenProviderAutoConfiguration.class,
                     SecurityFilterAutoConfiguration.class
             ))

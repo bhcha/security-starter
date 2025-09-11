@@ -6,7 +6,7 @@ import com.ldx.hexacore.security.auth.application.command.port.out.TokenValidati
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenValidationResult;
 import com.ldx.hexacore.security.auth.domain.vo.Credentials;
 import com.ldx.hexacore.security.auth.domain.vo.Token;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,8 +28,8 @@ class IndonesiaAllowListTest {
         System.out.println("==============================================");
         
         // Keycloak 설정
-        HexacoreSecurityProperties.TokenProvider.KeycloakProperties keycloakProps = 
-            new HexacoreSecurityProperties.TokenProvider.KeycloakProperties();
+        SecurityStarterProperties.TokenProvider.KeycloakProperties keycloakProps = 
+            new SecurityStarterProperties.TokenProvider.KeycloakProperties();
         keycloakProps.setEnabled(true);
         keycloakProps.setServerUrl("https://auth.daewoong.co.kr/keycloak/");
         keycloakProps.setRealm("backoffice-api");

@@ -10,13 +10,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 /**
  * Session Event Listener 자동 설정
  * 
- * hexacore.session.event.enabled 속성을 통해 활성화/비활성화 제어
+ * security-starter.session.event.enabled 속성을 통해 활성화/비활성화 제어
  * 기본값: true
  */
 @Configuration
 @EnableTransactionManagement
 @ConditionalOnProperty(
-    prefix = "hexacore.session.event",
+    prefix = "security-starter.session.event",
     name = "enabled",
     havingValue = "true",
     matchIfMissing = true // 기본값 true

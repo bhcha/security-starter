@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Bean;
 @AutoConfiguration
 @ConditionalOnClass(HealthIndicator.class)
 @ConditionalOnProperty(
-    prefix = "hexacore.security",
+    prefix = "security-starter",
     name = "enabled",
     havingValue = "true",
     matchIfMissing = true

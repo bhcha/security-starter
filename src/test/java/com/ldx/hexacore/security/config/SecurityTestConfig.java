@@ -23,7 +23,7 @@ import com.ldx.hexacore.security.session.adapter.outbound.persistence.repository
 import com.ldx.hexacore.security.logging.SecurityRequestLogger;
 import com.ldx.hexacore.security.logging.SecurityEventLogger;
 import com.ldx.hexacore.security.config.support.SecurityConfigurationValidator;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -188,20 +188,15 @@ public class SecurityTestConfig {
 
     @Bean
     @Primary
-    public SecurityConfigurationValidator securityConfigurationValidator(HexacoreSecurityProperties properties) {
+    public SecurityConfigurationValidator securityConfigurationValidator(SecurityStarterProperties properties) {
         return new SecurityConfigurationValidator(properties);
     }
 
-    @Bean("hexacoreSecurityAutoConfiguration")
-    @Primary
-    public HexacoreSecurityAutoConfiguration hexacoreSecurityAutoConfiguration() {
-        return new HexacoreSecurityAutoConfiguration();
-    }
 
     @Bean
     @Primary
-    public HexacoreSecurityProperties hexacoreSecurityProperties() {
-        return new HexacoreSecurityProperties();
+    public SecurityStarterProperties SecurityStarterProperties() {
+        return new SecurityStarterProperties();
     }
 
 }

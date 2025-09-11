@@ -1,5 +1,6 @@
 package com.ldx.hexacore.security.config;
 
+import com.ldx.hexacore.security.config.SecurityStarterAutoConfiguration;
 import com.ldx.hexacore.security.config.support.SecurityConfigurationValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * v1.0.4 확장된 설정 검증 시스템 테스트
  */
 @SpringBootTest(classes = {
-    HexacoreSecurityAutoConfiguration.class,
+    SecurityStarterAutoConfiguration.class,
     org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
     org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
 })

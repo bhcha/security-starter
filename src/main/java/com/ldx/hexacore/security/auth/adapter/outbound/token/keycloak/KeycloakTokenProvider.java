@@ -7,7 +7,7 @@ import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProviderType;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenValidationContext;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenValidationResult;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import com.ldx.hexacore.security.auth.domain.vo.Credentials;
 import com.ldx.hexacore.security.auth.domain.vo.Token;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class KeycloakTokenProvider implements TokenProvider {
     private final RestTemplate restTemplate;
     private final KeycloakAuthorizationService authorizationService;
     
-    public KeycloakTokenProvider(HexacoreSecurityProperties.TokenProvider.KeycloakProperties configProperties) {
+    public KeycloakTokenProvider(SecurityStarterProperties.TokenProvider.KeycloakProperties configProperties) {
         this.properties = convertToKeycloakProperties(configProperties);
         this.restTemplate = createRestTemplate();
         this.authorizationService = new KeycloakAuthorizationService(properties);
@@ -377,7 +377,7 @@ public class KeycloakTokenProvider implements TokenProvider {
      */
     
     
-    private KeycloakProperties convertToKeycloakProperties(HexacoreSecurityProperties.TokenProvider.KeycloakProperties configProperties) {
+    private KeycloakProperties convertToKeycloakProperties(SecurityStarterProperties.TokenProvider.KeycloakProperties configProperties) {
         KeycloakProperties properties = new KeycloakProperties();
         properties.setServerUrl(configProperties.getServerUrl());
         properties.setRealm(configProperties.getRealm());

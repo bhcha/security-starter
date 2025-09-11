@@ -17,20 +17,17 @@ import java.time.Duration;
  */
 @Configuration
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "security.auth.keycloak", name = "enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(prefix = "security-starter.token-provider.keycloak", name = "enabled", havingValue = "true", matchIfMissing = false)
 class KeycloakConfig {
     
     private final KeycloakProperties properties;
     
     @Bean(name = "keycloakRestTemplate")
     public RestTemplate keycloakRestTemplate(RestTemplateBuilder builder) {
-        // Spring Boot 3.x에서는 connectTimeout과 readTimeout을 
-        // requestFactorySettings로 설정합니다
+        // Spring Boot 3.2에서는 setConnectTimeout과 setReadTimeout 사용
         return builder
-                .requestFactorySettings(settings -> 
-                    settings.withConnectTimeout(Duration.ofMillis(properties.getConnectTimeout()))
-                            .withReadTimeout(Duration.ofMillis(properties.getReadTimeout()))
-                )
+                .setConnectTimeout(Duration.ofMillis(properties.getConnectTimeout()))
+                .setReadTimeout(Duration.ofMillis(properties.getReadTimeout()))
                 .build();
     }
 }

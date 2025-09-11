@@ -1,5 +1,6 @@
 package com.ldx.hexacore.security.config;
 
+import com.ldx.hexacore.security.config.SecurityStarterAutoConfiguration;
 import com.ldx.hexacore.security.session.application.command.port.in.SessionManagementUseCase;
 import com.ldx.hexacore.security.config.support.SecurityConfigurationValidator;
 import com.ldx.hexacore.security.config.support.SecurityStarterFailureAnalyzer;
@@ -17,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * v1.0.3에서 수정된 Bean들이 정상적으로 등록되는지 확인합니다.
  */
 @SpringBootTest(classes = {
-    HexacoreSecurityAutoConfiguration.class,
+    SecurityStarterAutoConfiguration.class,
     org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
     org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
     org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
@@ -62,15 +63,15 @@ class BeanRegistrationVerificationTest {
     }
     
     @Test
-    void hexacoreSecurityAutoConfiguration_빈이_정상_등록되어야_함() {
+    void securityStarterAutoConfiguration_빈이_정상_등록되어야_함() {
         // Given & When
         Object autoConfiguration = 
-            applicationContext.getBean("hexacoreSecurityAutoConfiguration");
+            applicationContext.getBean("securityStarterAutoConfiguration");
         
         // Then
         assertThat(autoConfiguration).isNotNull();
         assertThat(autoConfiguration.getClass().getName())
-            .contains("HexacoreSecurityAutoConfiguration");
+            .contains("SecurityStarterAutoConfiguration");
     }
     
     @Test
@@ -103,7 +104,7 @@ class BeanRegistrationVerificationTest {
         // 핵심 Bean들이 모두 존재하는지 확인
         boolean hasSessionUseCase = sessionBeans.length > 0;
         assertThat(hasSessionUseCase).isTrue();
-        assertThat(applicationContext.containsBean("hexacoreSecurityAutoConfiguration")).isTrue();
+        assertThat(applicationContext.containsBean("securityStarterAutoConfiguration")).isTrue();
         assertThat(applicationContext.getBean(SecurityConfigurationValidator.class)).isNotNull();
         
         System.out.println("✅ 모든 핵심 Bean이 정상적으로 등록되었습니다!");
@@ -113,7 +114,7 @@ class BeanRegistrationVerificationTest {
         }
         System.out.println("  - SecurityConfigurationValidator: " + 
             applicationContext.getBean(SecurityConfigurationValidator.class).getClass().getSimpleName());
-        System.out.println("  - HexacoreSecurityAutoConfiguration: " + 
-            applicationContext.getBean("hexacoreSecurityAutoConfiguration").getClass().getSimpleName());
+        System.out.println("  - SecurityStarterAutoConfiguration: " + 
+            applicationContext.getBean("securityStarterAutoConfiguration").getClass().getSimpleName());
     }
 }

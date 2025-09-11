@@ -25,7 +25,7 @@ import org.springframework.web.client.RestTemplate;
  * @since 1.0.0
  */
 @Slf4j
-@ConditionalOnProperty(prefix = "security.auth.keycloak", name = "enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(prefix = "security-starter.token-provider.keycloak", name = "enabled", havingValue = "true", matchIfMissing = false)
 class KeycloakAuthenticationAdapter implements ExternalAuthProvider {
     
     private static final String REFRESH_TOKEN_GRANT_TYPE = "refresh_token";

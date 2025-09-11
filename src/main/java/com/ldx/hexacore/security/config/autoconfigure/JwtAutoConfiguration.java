@@ -2,7 +2,7 @@ package com.ldx.hexacore.security.config.autoconfigure;
 
 import com.ldx.hexacore.security.auth.adapter.inbound.filter.JwtAuthenticationFilter;
 import com.ldx.hexacore.security.auth.adapter.inbound.filter.JwtAuthenticationEntryPoint;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -43,7 +43,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @AutoConfiguration(before = SecurityAutoConfiguration.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-@EnableConfigurationProperties(HexacoreSecurityProperties.class)
+@EnableConfigurationProperties(SecurityStarterProperties.class)
 public class JwtAutoConfiguration {
     
     private static final Logger logger = LoggerFactory.getLogger(JwtAutoConfiguration.class);
@@ -53,7 +53,7 @@ public class JwtAutoConfiguration {
      */
     @Configuration
     @ConditionalOnProperty(
-        prefix = "hexacore.security.jwt",
+        prefix = "security-starter.jwt",
         name = "strategy",
         havingValue = "servlet-filter"
     )
@@ -62,7 +62,7 @@ public class JwtAutoConfiguration {
         @Bean
         public FilterRegistrationBean<JwtAuthenticationFilter> jwtServletFilterRegistration(
                 JwtAuthenticationFilter jwtFilter,
-                HexacoreSecurityProperties properties) {
+                SecurityStarterProperties properties) {
             
             logger.info("🚀 JWT Strategy: ServletFilter (Spring Security 독립 실행)");
             
@@ -85,7 +85,7 @@ public class JwtAutoConfiguration {
      */
     @Configuration
     @ConditionalOnProperty(
-        prefix = "hexacore.security.jwt",
+        prefix = "security-starter.jwt",
         name = "strategy",
         havingValue = "security-integration",
         matchIfMissing = true  // 기본 전략
@@ -102,7 +102,7 @@ public class JwtAutoConfiguration {
                 HttpSecurity http,
                 JwtAuthenticationFilter jwtFilter,
                 JwtAuthenticationEntryPoint jwtEntryPoint,
-                HexacoreSecurityProperties properties) throws Exception {
+                SecurityStarterProperties properties) throws Exception {
             
             logger.info("🎯 JWT Strategy: Security Integration (Fallback SecurityFilterChain 생성)");
             logger.info("ℹ️ 부모 프로젝트에서 SecurityFilterChain을 정의하면 이 Bean은 생성되지 않습니다.");
@@ -135,7 +135,7 @@ public class JwtAutoConfiguration {
      */
     @Configuration
     @ConditionalOnProperty(
-        prefix = "hexacore.security.jwt",
+        prefix = "security-starter.jwt",
         name = "strategy",
         havingValue = "manual"
     )
@@ -157,7 +157,7 @@ public class JwtAutoConfiguration {
     public JwtSecurityHelper jwtSecurityHelper(
             JwtAuthenticationFilter jwtFilter,
             JwtAuthenticationEntryPoint jwtEntryPoint,
-            HexacoreSecurityProperties properties) {
+            SecurityStarterProperties properties) {
         return new JwtSecurityHelper(jwtFilter, jwtEntryPoint, properties);
     }
     
@@ -181,11 +181,11 @@ public class JwtAutoConfiguration {
         
         private final JwtAuthenticationFilter jwtFilter;
         private final JwtAuthenticationEntryPoint jwtEntryPoint;
-        private final HexacoreSecurityProperties properties;
+        private final SecurityStarterProperties properties;
         
         public JwtSecurityHelper(JwtAuthenticationFilter jwtFilter,
                                 JwtAuthenticationEntryPoint jwtEntryPoint,
-                                HexacoreSecurityProperties properties) {
+                                SecurityStarterProperties properties) {
             this.jwtFilter = jwtFilter;
             this.jwtEntryPoint = jwtEntryPoint;
             this.properties = properties;

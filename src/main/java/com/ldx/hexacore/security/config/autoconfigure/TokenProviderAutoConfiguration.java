@@ -4,7 +4,7 @@ import com.ldx.hexacore.security.auth.adapter.outbound.token.jwt.JwtProperties;
 import com.ldx.hexacore.security.auth.adapter.outbound.token.jwt.SpringJwtTokenProvider;
 import com.ldx.hexacore.security.auth.adapter.outbound.token.noop.NoOpTokenProvider;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties(HexacoreSecurityProperties.class)
+@EnableConfigurationProperties(SecurityStarterProperties.class)
 @ConditionalOnClass(TokenProvider.class)
 public class TokenProviderAutoConfiguration {
     
@@ -26,7 +26,7 @@ public class TokenProviderAutoConfiguration {
      */
     @Configuration
     @ConditionalOnProperty(
-        prefix = "hexacore.security.token-provider", 
+        prefix = "security-starter.token-provider", 
         name = "provider", 
         havingValue = "keycloak"
     )
@@ -35,18 +35,18 @@ public class TokenProviderAutoConfiguration {
         
         @Bean
         @ConditionalOnProperty(
-            prefix = "hexacore.security.token-provider.keycloak", 
+            prefix = "security-starter.token-provider.keycloak", 
             name = "enabled", 
             havingValue = "true", 
             matchIfMissing = false
         )
-        public TokenProvider keycloakTokenProvider(HexacoreSecurityProperties properties) {
-            HexacoreSecurityProperties.TokenProvider.KeycloakProperties keycloakConfig = 
+        public TokenProvider keycloakTokenProvider(SecurityStarterProperties properties) {
+            SecurityStarterProperties.TokenProvider.KeycloakProperties keycloakConfig = 
                 properties.getTokenProvider().getKeycloak();
             
             try {
                 Class<?> keycloakProviderClass = Class.forName("com.ldx.hexacore.security.auth.adapter.outbound.token.keycloak.KeycloakTokenProvider");
-                return (TokenProvider) keycloakProviderClass.getConstructor(HexacoreSecurityProperties.TokenProvider.KeycloakProperties.class)
+                return (TokenProvider) keycloakProviderClass.getConstructor(SecurityStarterProperties.TokenProvider.KeycloakProperties.class)
                     .newInstance(keycloakConfig);
             } catch (Exception e) {
                 throw new IllegalStateException("Failed to create KeycloakTokenProvider", e);
@@ -60,19 +60,13 @@ public class TokenProviderAutoConfiguration {
     @Bean(name = "springJwtTokenProvider")  // 명시적 Bean 이름 지정
     @ConditionalOnClass(name = "io.jsonwebtoken.JwtBuilder")  // JWT 라이브러리 체크
     @ConditionalOnProperty(
-        prefix = "hexacore.security.token-provider", 
-        name = "provider", 
-        havingValue = "jwt",
-        matchIfMissing = true  // 기본값으로 JWT 제공자 사용
-    )
-    @ConditionalOnProperty(
-        prefix = "hexacore.security.token-provider.jwt", 
+        prefix = "security-starter.token-provider.jwt", 
         name = "enabled", 
         havingValue = "true",
         matchIfMissing = true
     )
     @ConditionalOnMissingBean(TokenProvider.class)  // 다른 TokenProvider가 없을 때만
-    public TokenProvider springJwtTokenProvider(HexacoreSecurityProperties properties) {
+    public TokenProvider springJwtTokenProvider(SecurityStarterProperties properties) {
         
         // Keycloak 설정 충돌 체크
         String providerType = properties.getTokenProvider().getProvider();
@@ -105,7 +99,7 @@ public class TokenProviderAutoConfiguration {
     }
     
     private JwtProperties convertToJwtProperties(
-            HexacoreSecurityProperties.TokenProvider.JwtProperties configProperties) {
+            SecurityStarterProperties.TokenProvider.JwtProperties configProperties) {
         JwtProperties jwtProperties =
             new JwtProperties();
         jwtProperties.setSecret(configProperties.getSecret());

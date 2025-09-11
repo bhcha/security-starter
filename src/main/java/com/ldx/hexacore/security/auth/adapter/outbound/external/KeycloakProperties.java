@@ -6,13 +6,13 @@ import org.springframework.stereotype.Component;
 
 /**
  * Keycloak 연동을 위한 설정 프로퍼티.
- * application.yml에서 security.auth.keycloak 하위 설정을 매핑합니다.
+ * application.yml에서 security-starter.token-provider.keycloak 하위 설정을 매핑합니다.
  * 
  * @since 1.0.0
  */
 @Data
 @Component
-@ConfigurationProperties(prefix = "security.auth.keycloak")
+@ConfigurationProperties(prefix = "security-starter.token-provider.keycloak")
 public class KeycloakProperties {
     
     /**

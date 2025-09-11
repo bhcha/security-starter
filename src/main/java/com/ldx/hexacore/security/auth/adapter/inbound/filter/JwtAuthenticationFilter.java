@@ -3,7 +3,7 @@ package com.ldx.hexacore.security.auth.adapter.inbound.filter;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenValidationContext;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenValidationResult;
-import com.ldx.hexacore.security.auth.adapter.inbound.config.SecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import com.ldx.hexacore.security.logging.SecurityRequestLogger;
 import com.ldx.hexacore.security.logging.SecurityEventLogger;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
     private final AntPathMatcher pathMatcher;
     private final List<String> excludeUrlPatterns;
-    private final SecurityProperties securityProperties;
+    private final SecurityStarterProperties securityProperties;
     private final SecurityRequestLogger requestLogger;
     private final SecurityEventLogger eventLogger;
 
@@ -51,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             TokenProvider tokenProvider,
             ObjectMapper objectMapper,
             List<String> excludeUrlPatterns,
-            SecurityProperties securityProperties,
+            SecurityStarterProperties securityProperties,
             SecurityRequestLogger requestLogger,
             SecurityEventLogger eventLogger) {
         this.tokenProvider = tokenProvider;
@@ -153,7 +153,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             
             if (result.valid()) {
                 // 인증 성공 - SecurityContext에 인증 정보 설정
-                String defaultRole = securityProperties.getAuthentication().getDefaultRole();
+                String defaultRole = "ROLE_USER";
                 JwtAuthenticationToken authentication = new JwtAuthenticationToken(
                     token,
                     null,
@@ -206,8 +206,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * 요청으로부터 검증 컨텍스트를 구성합니다.
      */
     private TokenValidationContext buildValidationContext(HttpServletRequest request) {
-        // 설정에서 리소스 권한 체크 활성화 여부 확인
-        boolean checkResourcePermission = securityProperties.getAuthentication().isCheckResourcePermission();
+        // 리소스 권한 체크는 현재 비활성화 (향후 구현 예정)
+        boolean checkResourcePermission = false;
         
         TokenValidationContext.TokenValidationContextBuilder builder = TokenValidationContext.builder()
                 .requestUri(request.getRequestURI())
@@ -262,20 +262,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         
-        SecurityProperties.Authentication.ErrorResponse errorConfig = 
-            securityProperties.getAuthentication().getErrorResponse();
+        // Error response configuration - using defaults
         
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("success", false);
-        errorResponse.put("message", e.getMessage() != null ? e.getMessage() : errorConfig.getDefaultMessage());
+        errorResponse.put("message", e.getMessage() != null ? e.getMessage() : "Authentication failed");
         
-        if (errorConfig.isIncludeTimestamp()) {
-            errorResponse.put("timestamp", LocalDateTime.now().toString());
-        }
-        
-        if (errorConfig.isIncludeStatus()) {
-            errorResponse.put("status", HttpStatus.UNAUTHORIZED.value());
-        }
+        // Always include timestamp and status
+        errorResponse.put("timestamp", LocalDateTime.now().toString());
+        errorResponse.put("status", HttpStatus.UNAUTHORIZED.value());
         
         objectMapper.writeValue(response.getWriter(), errorResponse);
     }

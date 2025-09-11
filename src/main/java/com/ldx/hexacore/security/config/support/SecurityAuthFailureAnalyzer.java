@@ -51,11 +51,11 @@ public class SecurityAuthFailureAnalyzer extends AbstractFailureAnalyzer<Excepti
         return new FailureAnalysis(
             "Keycloak 설정에 문제가 있습니다: " + message,
             "다음 설정을 확인하세요:\n" +
-            "- hexacore.security.token-provider.keycloak.server-url\n" +
-            "- hexacore.security.token-provider.keycloak.realm\n" +
-            "- hexacore.security.token-provider.keycloak.client-id\n" +
-            "- hexacore.security.token-provider.keycloak.client-secret\n" +
-            "또는 hexacore.security.token-provider.provider=jwt로 변경하세요.",
+            "- security-starter.token-provider.keycloak.server-url\n" +
+            "- security-starter.token-provider.keycloak.realm\n" +
+            "- security-starter.token-provider.keycloak.client-id\n" +
+            "- security-starter.token-provider.keycloak.client-secret\n" +
+            "또는 security-starter.token-provider.provider=jwt로 변경하세요.",
             null
         );
     }
@@ -70,10 +70,10 @@ public class SecurityAuthFailureAnalyzer extends AbstractFailureAnalyzer<Excepti
         return new FailureAnalysis(
             "JWT 설정에 문제가 있습니다: " + message,
             "다음 설정을 확인하세요:\n" +
-            "- hexacore.security.token-provider.jwt.secret (256bit 이상 필요)\n" +
-            "- hexacore.security.token-provider.jwt.issuer\n" +
-            "- hexacore.security.token-provider.jwt.access-token-expiration\n" +
-            "- hexacore.security.token-provider.jwt.refresh-token-expiration",
+            "- security-starter.token-provider.jwt.secret (256bit 이상 필요)\n" +
+            "- security-starter.token-provider.jwt.issuer\n" +
+            "- security-starter.token-provider.jwt.access-token-expiration\n" +
+            "- security-starter.token-provider.jwt.refresh-token-expiration",
             null
         );
     }
@@ -88,8 +88,8 @@ public class SecurityAuthFailureAnalyzer extends AbstractFailureAnalyzer<Excepti
         return new FailureAnalysis(
             "캐시 설정에 문제가 있습니다: " + message,
             "다음 설정을 확인하세요:\n" +
-            "- hexacore.security.cache.type (caffeine 또는 redis)\n" +
-            "- hexacore.security.cache.enabled=true\n" +
+            "- security-starter.cache.type (caffeine 또는 redis)\n" +
+            "- security-starter.cache.enabled=true\n" +
             "Caffeine 의존성이 추가되었는지 확인하세요.",
             null
         );
@@ -98,16 +98,16 @@ public class SecurityAuthFailureAnalyzer extends AbstractFailureAnalyzer<Excepti
     private boolean isTokenProviderError(String message) {
         return message.contains("TokenProvider") ||
                message.contains("No qualifying bean of type") && 
-               message.contains("com.dx.hexacore.security.auth.application.command.port.out.TokenProvider");
+               message.contains("com.dx.security-starter.auth.application.command.port.out.TokenProvider");
     }
 
     private FailureAnalysis analyzeTokenProviderError(String message) {
         return new FailureAnalysis(
             "TokenProvider Bean을 찾을 수 없습니다: " + message,
             "다음 설정을 확인하세요:\n" +
-            "- hexacore.security.token-provider.provider (keycloak 또는 jwt)\n" +
-            "- Keycloak 선택 시: hexacore.security.token-provider.keycloak.enabled=true\n" +
-            "- JWT 선택 시: hexacore.security.token-provider.jwt.enabled=true\n" +
+            "- security-starter.token-provider.provider (keycloak 또는 jwt)\n" +
+            "- Keycloak 선택 시: security-starter.token-provider.keycloak.enabled=true\n" +
+            "- JWT 선택 시: security-starter.token-provider.jwt.enabled=true\n" +
             "적어도 하나의 TokenProvider가 활성화되어야 합니다.",
             null
         );

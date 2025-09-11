@@ -1,6 +1,6 @@
 package com.ldx.hexacore.security.config.support;
 
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -17,14 +17,14 @@ import java.util.List;
  * 애플리케이션 시작 시 설정을 검증하고 경고 및 오류를 출력합니다.
  */
 @Component
-@ConditionalOnProperty(prefix = "hexacore.security", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "security-starter", name = "enabled", havingValue = "true")
 public class SecurityConfigurationValidator implements ApplicationListener<ApplicationReadyEvent> {
     
     private static final Logger log = LoggerFactory.getLogger(SecurityConfigurationValidator.class);
     
-    private final HexacoreSecurityProperties properties;
+    private final SecurityStarterProperties properties;
     
-    public SecurityConfigurationValidator(HexacoreSecurityProperties properties) {
+    public SecurityConfigurationValidator(SecurityStarterProperties properties) {
         this.properties = properties;
     }
     
@@ -477,7 +477,7 @@ public class SecurityConfigurationValidator implements ApplicationListener<Appli
      */
     private boolean isTestEnvironment() {
         // 강제 프로덕션 모드 시스템 프로퍼티 확인 (테스트용)
-        if ("true".equals(System.getProperty("hexacore.security.force-production-validation"))) {
+        if ("true".equals(System.getProperty("security-starter.force-production-validation"))) {
             return false;
         }
         

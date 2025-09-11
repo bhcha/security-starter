@@ -9,7 +9,7 @@ import com.ldx.hexacore.security.session.domain.vo.ClientIp;
 import com.ldx.hexacore.security.session.domain.vo.RiskLevel;
 import com.ldx.hexacore.security.session.adapter.outbound.persistence.entity.AuthenticationAttemptJpaEntity;
 import com.ldx.hexacore.security.session.adapter.outbound.persistence.entity.SessionJpaEntity;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
 @Component
 public class SessionMapper {
     
-    private final HexacoreSecurityProperties securityProperties;
+    private final SecurityStarterProperties securityProperties;
     
-    public SessionMapper(HexacoreSecurityProperties securityProperties) {
+    public SessionMapper(SecurityStarterProperties securityProperties) {
         this.securityProperties = securityProperties;
     }
     

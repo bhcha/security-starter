@@ -1,7 +1,7 @@
 package com.ldx.hexacore.security.config.autoconfigure;
 
 import com.ldx.hexacore.security.auth.adapter.inbound.filter.JwtAuthenticationFilter;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,7 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnProperty(
-    prefix = "hexacore.security.jwt",
+    prefix = "security-starter.jwt",
     name = "enabled",
     havingValue = "true",
     matchIfMissing = true
@@ -40,14 +40,14 @@ public class JwtFilterRegistrationStrategy {
      */
     @Bean
     @ConditionalOnProperty(
-        prefix = "hexacore.security.jwt.registration",
+        prefix = "security-starter.jwt.registration",
         name = "strategy",
         havingValue = "servlet",
         matchIfMissing = false
     )
     public FilterRegistrationBean<JwtAuthenticationFilter> jwtFilterRegistration(
             JwtAuthenticationFilter jwtFilter,
-            HexacoreSecurityProperties properties) {
+            SecurityStarterProperties properties) {
         
         logger.info("🔧 Registering JWT filter via FilterRegistrationBean (Servlet Container)");
         
@@ -71,7 +71,7 @@ public class JwtFilterRegistrationStrategy {
      */
     @Configuration
     @ConditionalOnProperty(
-        prefix = "hexacore.security.jwt.registration",
+        prefix = "security-starter.jwt.registration",
         name = "strategy",
         havingValue = "auto-inject",
         matchIfMissing = true  // 기본 전략
@@ -94,7 +94,7 @@ public class JwtFilterRegistrationStrategy {
     @Bean
     public JwtSecurityConfigurer jwtSecurityConfigurer(
             JwtAuthenticationFilter jwtFilter,
-            HexacoreSecurityProperties properties) {
+            SecurityStarterProperties properties) {
         
         return new JwtSecurityConfigurer(jwtFilter, properties);
     }
@@ -105,10 +105,10 @@ public class JwtFilterRegistrationStrategy {
     public static class JwtSecurityConfigurer extends AbstractHttpConfigurer<JwtSecurityConfigurer, HttpSecurity> {
         
         private final JwtAuthenticationFilter jwtFilter;
-        private final HexacoreSecurityProperties properties;
+        private final SecurityStarterProperties properties;
         
         public JwtSecurityConfigurer(JwtAuthenticationFilter jwtFilter, 
-                                    HexacoreSecurityProperties properties) {
+                                    SecurityStarterProperties properties) {
             this.jwtFilter = jwtFilter;
             this.properties = properties;
         }
@@ -134,7 +134,7 @@ public class JwtFilterRegistrationStrategy {
          */
         public static void applyJwt(HttpSecurity http, 
                                    JwtAuthenticationFilter jwtFilter,
-                                   HexacoreSecurityProperties properties) throws Exception {
+                                   SecurityStarterProperties properties) throws Exception {
             http.apply(new JwtSecurityConfigurer(jwtFilter, properties));
         }
     }

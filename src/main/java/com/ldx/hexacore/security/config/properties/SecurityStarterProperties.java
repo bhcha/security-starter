@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Hexacore Security의 메인 설정 프로퍼티입니다.
+ * Security Starter의 메인 설정 프로퍼티입니다.
  * 
- * <p>application.yml에서 hexacore.security.* 설정을 관리합니다.
+ * <p>application.yml에서 security-starter.* 설정을 관리합니다.
  * Spring Boot Starter 표준 아키텍처 가이드라인을 준수합니다.
  * 
  * <p>핵심 기능:
@@ -30,13 +30,13 @@ import java.util.List;
  * - Zero Configuration 원칙 준수
  * - 기존 설정과의 완전한 호환성
  * 
- * @author hexacore-security
- * @since 1.0.0
+ * @author security-starter
+ * @since 1.9.0
  */
 @Data
-@ConfigurationProperties(prefix = "hexacore.security")
+@ConfigurationProperties(prefix = "security-starter")
 @Validated
-public class HexacoreSecurityProperties {
+public class SecurityStarterProperties {
     
     /**
      * 전체 스타터 활성화 여부
@@ -423,6 +423,30 @@ public class HexacoreSecurityProperties {
          * JWT 설정
          */
         private JwtProperties jwt = new JwtProperties();
+        
+        public String getProvider() {
+            return provider;
+        }
+        
+        public void setProvider(String provider) {
+            this.provider = provider;
+        }
+        
+        public KeycloakProperties getKeycloak() {
+            return keycloak;
+        }
+        
+        public void setKeycloak(KeycloakProperties keycloak) {
+            this.keycloak = keycloak;
+        }
+        
+        public JwtProperties getJwt() {
+            return jwt;
+        }
+        
+        public void setJwt(JwtProperties jwt) {
+            this.jwt = jwt;
+        }
         
         @Data
         @Validated
@@ -1005,6 +1029,69 @@ public class HexacoreSecurityProperties {
         return persistence.getTypeAsString();
     }
     
+    /**
+     * Keycloak 기능 활성화 여부
+     */
+    public boolean isKeycloakEnabled() {
+        return enabled && tokenProvider.getKeycloak().getEnabled();
+    }
+    
+    /**
+     * 세션 관리 기능 활성화 여부 (별칭)
+     */
+    public boolean isSessionManagementEnabled() {
+        return isSessionEnabled();
+    }
+    
+    /**
+     * 보안 헤더 기능 활성화 여부 (별칭)
+     */
+    public boolean isSecurityHeadersEnabled() {
+        return isHeadersEnabled();
+    }
+    
+    // === Getter 메서드들 ===
+    
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    
+    public Mode getMode() {
+        return mode;
+    }
+    
+    public TokenProvider getTokenProvider() {
+        return tokenProvider;
+    }
+    
+    public AuthFilterProperties getFilter() {
+        return filter;
+    }
+    
+    public SessionProperties getSession() {
+        return session;
+    }
+    
+    public PersistenceProperties getPersistence() {
+        return persistence;
+    }
+    
+    public CacheProperties getCache() {
+        return cache;
+    }
+    
+    public HeadersProperties getHeaders() {
+        return headers;
+    }
+    
+    public FeatureToggle getRateLimit() {
+        return rateLimitToggle;
+    }
+    
+    public FeatureToggle getIpRestriction() {
+        return ipRestrictionToggle;
+    }
+    
     // === 내부 클래스 정의 ===
     
     /**
@@ -1048,6 +1135,30 @@ public class HexacoreSecurityProperties {
          */
         public FeatureToggle(boolean defaultEnabled) {
             this.enabled = defaultEnabled;
+        }
+        
+        /**
+         * 활성화 여부 반환
+         * @return 활성화 여부
+         */
+        public boolean isEnabled() {
+            return enabled;
+        }
+        
+        /**
+         * 활성화 여부 반환 (getEnabled 형식)
+         * @return 활성화 여부
+         */
+        public Boolean getEnabled() {
+            return enabled;
+        }
+        
+        /**
+         * 활성화 여부 설정
+         * @param enabled 활성화 여부
+         */
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
         
         @Override

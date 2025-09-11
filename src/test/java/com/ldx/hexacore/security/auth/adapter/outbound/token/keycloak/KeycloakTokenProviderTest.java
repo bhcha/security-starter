@@ -5,7 +5,7 @@ import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProviderType;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenValidationResult;
 import com.ldx.hexacore.security.auth.domain.vo.Credentials;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,11 +16,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class KeycloakTokenProviderTest {
 
     private KeycloakTokenProvider keycloakTokenProvider;
-    private HexacoreSecurityProperties.TokenProvider.KeycloakProperties properties;
+    private SecurityStarterProperties.TokenProvider.KeycloakProperties properties;
 
     @BeforeEach
     void setUp() {
-        properties = new HexacoreSecurityProperties.TokenProvider.KeycloakProperties();
+        properties = new SecurityStarterProperties.TokenProvider.KeycloakProperties();
         properties.setServerUrl("https://keycloak.example.com");
         properties.setRealm("test-realm");
         properties.setClientId("test-client");
@@ -91,8 +91,8 @@ class KeycloakTokenProviderTest {
     @DisplayName("서버 URL에 trailing slash가 있어도 정상적인 endpoint URL 생성")
     void shouldHandleTrailingSlashInServerUrl() throws Exception {
         // Given
-        HexacoreSecurityProperties.TokenProvider.KeycloakProperties propertiesWithSlash = 
-            new HexacoreSecurityProperties.TokenProvider.KeycloakProperties();
+        SecurityStarterProperties.TokenProvider.KeycloakProperties propertiesWithSlash = 
+            new SecurityStarterProperties.TokenProvider.KeycloakProperties();
         propertiesWithSlash.setServerUrl("https://authdev.daewoong.co.kr/");
         propertiesWithSlash.setRealm("backoffice-api");
         propertiesWithSlash.setClientId("test-client");
@@ -152,8 +152,8 @@ class KeycloakTokenProviderTest {
     @DisplayName("잘못된 설정으로 KeycloakTokenProvider 생성 시 예외 발생")
     void shouldThrowExceptionWhenInvalidConfiguration() {
         // Given
-        HexacoreSecurityProperties.TokenProvider.KeycloakProperties invalidProperties = 
-            new HexacoreSecurityProperties.TokenProvider.KeycloakProperties();
+        SecurityStarterProperties.TokenProvider.KeycloakProperties invalidProperties = 
+            new SecurityStarterProperties.TokenProvider.KeycloakProperties();
         // serverUrl, realm, clientId, clientSecret를 설정하지 않음
         
         // When & Then

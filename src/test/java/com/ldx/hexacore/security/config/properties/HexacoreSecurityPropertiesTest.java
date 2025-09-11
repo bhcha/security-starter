@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class HexacoreSecurityPropertiesTest {
+class SecurityStarterPropertiesTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withUserConfiguration(TestConfiguration.class);
@@ -15,7 +15,7 @@ class HexacoreSecurityPropertiesTest {
     @Test
     void shouldBindDefaultValues() {
         contextRunner.run(context -> {
-            HexacoreSecurityProperties properties = context.getBean(HexacoreSecurityProperties.class);
+            SecurityStarterProperties properties = context.getBean(SecurityStarterProperties.class);
             
             assertThat(properties.getEnabled()).isTrue(); // Zero Configuration - 기본값 true
             
@@ -40,7 +40,7 @@ class HexacoreSecurityPropertiesTest {
                         "hexacore.security.tokenProvider.jwt.refreshTokenExpiration=604800"
                 )
                 .run(context -> {
-                    HexacoreSecurityProperties properties = context.getBean(HexacoreSecurityProperties.class);
+                    SecurityStarterProperties properties = context.getBean(SecurityStarterProperties.class);
                     
                     assertThat(properties.getEnabled()).isTrue();
                     
@@ -56,7 +56,7 @@ class HexacoreSecurityPropertiesTest {
     }
 
     @Configuration
-    @EnableConfigurationProperties(HexacoreSecurityProperties.class)
+    @EnableConfigurationProperties(SecurityStarterProperties.class)
     static class TestConfiguration {
     }
 }

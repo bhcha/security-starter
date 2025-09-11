@@ -1,8 +1,7 @@
 package com.ldx.hexacore.security.logging;
 
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
-import com.ldx.hexacore.security.auth.adapter.inbound.config.SecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +33,8 @@ public class SecurityStartupLogger implements CommandLineRunner {
     private Environment env;
     
     @Autowired(required = false)
-    private HexacoreSecurityProperties hexacoreProperties;
+    private SecurityStarterProperties hexacoreProperties;
     
-    @Autowired(required = false)
-    private SecurityProperties securityProperties;
     
     @Override
     public void run(String... args) {
@@ -65,8 +62,8 @@ public class SecurityStartupLogger implements CommandLineRunner {
     private void logSecurityMode() {
         logger.info("┌─── 🎯 Security Mode ───────────────────────────────────────────────┐");
         
-        boolean securityEnabled = env.getProperty("hexacore.security.enabled", Boolean.class, true);
-        String provider = env.getProperty("hexacore.security.token-provider.provider", "jwt");
+        boolean securityEnabled = env.getProperty("security-starter.enabled", Boolean.class, true);
+        String provider = env.getProperty("security-starter.token-provider.provider", "jwt");
         
         logger.info("│ Security Enabled: {}", securityEnabled ? "✅ YES" : "❌ NO");
         logger.info("│ Token Provider: {} {}", 
@@ -100,32 +97,22 @@ public class SecurityStartupLogger implements CommandLineRunner {
     private void logAuthenticationSettings() {
         logger.info("┌─── 🛡️  Authentication Settings ────────────────────────────────────┐");
         
-        if (securityProperties != null && securityProperties.getAuthentication() != null) {
-            var auth = securityProperties.getAuthentication();
+        if (hexacoreProperties != null) {
+            logger.info("│ Authentication: {}", hexacoreProperties.isAuthenticationEnabled() ? "✅ ENABLED" : "❌ DISABLED");
+            logger.info("│ JWT: {}", hexacoreProperties.isJwtEnabled() ? "✅ ENABLED" : "❌ DISABLED");
+            logger.info("│ Session Management: {}", hexacoreProperties.isSessionEnabled() ? "✅ ENABLED" : "❌ DISABLED");
             
-            // 이것이 핵심! 리소스 권한 체크 설정
-            boolean resourceCheck = auth.isCheckResourcePermission();
-            logger.info("│ 🎯 Resource Permission Check: {} {}", 
-                resourceCheck ? "ENABLED" : "DISABLED",
-                resourceCheck ? "✅" : "❌");
+            // Token provider info
+            String provider = hexacoreProperties.getTokenProvider().getProvider();
+            logger.info("│ Token Provider: {}", provider.toUpperCase());
             
-            if (resourceCheck) {
-                logger.info("│    └─ Keycloak UMA 2.0 authorization is ACTIVE");
-                logger.info("│    └─ Each request will be validated against Keycloak resources");
-            } else {
-                logger.info("│    └─ Only basic token validation (no resource check)");
+            if ("keycloak".equalsIgnoreCase(provider)) {
+                logger.info("│    └─ Keycloak integration active");
+            } else if ("jwt".equalsIgnoreCase(provider)) {
+                logger.info("│    └─ JWT token validation active");
             }
-            
-            logger.info("│ Default Role: {}", auth.getDefaultRole());
-            
-            var errorResponse = auth.getErrorResponse();
-            logger.info("│ Error Response Config:");
-            logger.info("│    ├─ Include Timestamp: {}", errorResponse.isIncludeTimestamp());
-            logger.info("│    ├─ Include Status: {}", errorResponse.isIncludeStatus());
-            logger.info("│    └─ Default Message: {}", errorResponse.getDefaultMessage());
         } else {
             logger.warn("│ ⚠️  SecurityProperties not configured!");
-            logger.warn("│     Resource permission check will be DISABLED");
         }
         
         logger.info("└────────────────────────────────────────────────────────────────────┘");
@@ -134,7 +121,7 @@ public class SecurityStartupLogger implements CommandLineRunner {
     private void logFilterConfiguration() {
         logger.info("┌─── 🔍 Filter Configuration ────────────────────────────────────────┐");
         
-        boolean filterEnabled = env.getProperty("hexacore.security.filter.enabled", Boolean.class, true);
+        boolean filterEnabled = env.getProperty("security-starter.filter.enabled", Boolean.class, true);
         logger.info("│ JWT Filter: {}", filterEnabled ? "✅ ENABLED" : "❌ DISABLED");
         
         if (hexacoreProperties != null) {
@@ -153,28 +140,34 @@ public class SecurityStartupLogger implements CommandLineRunner {
     private void logEndpointProtection() {
         logger.info("┌─── 🚦 Endpoint Protection Status ──────────────────────────────────┐");
         
-        boolean resourceCheck = securityProperties != null && 
-            securityProperties.getAuthentication() != null &&
-            securityProperties.getAuthentication().isCheckResourcePermission();
-        
-        if (resourceCheck) {
-            logger.info("│ ✅ Keycloak Resource-based Authorization ACTIVE");
-            logger.info("│");
-            logger.info("│ Protected Endpoints:");
-            logger.info("│    ├─ /api/employees/group/indonesia → Only 'indonesia' resource");
-            logger.info("│    ├─ /api/users → Requires 'users' resource");
-            logger.info("│    ├─ /api/admin → Requires 'admin' resource");
-            logger.info("│    └─ All others → Denied by default");
+        if (hexacoreProperties != null) {
+            String provider = hexacoreProperties.getTokenProvider().getProvider();
+            
+            if ("keycloak".equalsIgnoreCase(provider)) {
+                logger.info("│ 🔑 Keycloak Token Validation Active");
+                logger.info("│    └─ Token validation via Keycloak introspection endpoint");
+            } else if ("jwt".equalsIgnoreCase(provider)) {
+                logger.info("│ 🎫 JWT Token Validation Active");
+                logger.info("│    └─ Local JWT signature validation");
+            }
+            
+            // Show excluded paths
+            String[] excludePaths = hexacoreProperties.getFilter().getExcludePaths();
+            if (excludePaths != null && excludePaths.length > 0) {
+                logger.info("│ Excluded Paths (no authentication):");
+                for (String path : excludePaths) {
+                    logger.info("│    ├─ {}", path);
+                }
+            }
         } else {
-            logger.info("│ ⚠️  Basic Token Validation Only (No Resource Check)");
-            logger.info("│    └─ All authenticated users can access any endpoint");
+            logger.info("│ ⚠️  No Security Configuration Found");
         }
         
         logger.info("└────────────────────────────────────────────────────────────────────┘");
     }
     
     private void logKeycloakConfiguration() {
-        String provider = env.getProperty("hexacore.security.token-provider.provider");
+        String provider = env.getProperty("security-starter.token-provider.provider");
         if (!"keycloak".equals(provider)) {
             return;
         }
@@ -231,23 +224,23 @@ public class SecurityStartupLogger implements CommandLineRunner {
         allGood &= hasTokenProvider;
         
         // Check SecurityProperties
-        boolean hasSecurityProps = securityProperties != null;
+        boolean hasSecurityProps = hexacoreProperties != null;
         logger.info("│ SecurityProperties: {}", hasSecurityProps ? "✅ OK" : "❌ MISSING");
         allGood &= hasSecurityProps;
         
-        // Check Resource Permission
-        boolean resourceCheckEnabled = hasSecurityProps && 
-            securityProperties.getAuthentication() != null &&
-            securityProperties.getAuthentication().isCheckResourcePermission();
-        logger.info("│ Resource Permission Check: {}", 
-            resourceCheckEnabled ? "✅ ENABLED" : "⚠️  DISABLED");
+        // Check token provider configuration
+        boolean tokenProviderConfigured = hasSecurityProps && 
+            hexacoreProperties.getTokenProvider() != null &&
+            hexacoreProperties.getTokenProvider().getProvider() != null;
+        logger.info("│ Token Provider Config: {}", 
+            tokenProviderConfigured ? "✅ CONFIGURED" : "⚠️  NOT CONFIGURED");
         
         // Overall status
         logger.info("│");
-        if (allGood && resourceCheckEnabled) {
+        if (allGood && tokenProviderConfigured) {
             logger.info("│ 🎉 Overall Status: FULLY OPERATIONAL");
         } else if (allGood) {
-            logger.info("│ ⚠️  Overall Status: BASIC MODE (No Resource Check)");
+            logger.info("│ ⚠️  Overall Status: BASIC MODE");
         } else {
             logger.info("│ ❌ Overall Status: CONFIGURATION ISSUES DETECTED");
         }

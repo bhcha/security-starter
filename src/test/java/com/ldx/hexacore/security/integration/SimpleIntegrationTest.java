@@ -1,6 +1,6 @@
 package com.ldx.hexacore.security.integration;
 
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
 import com.ldx.hexacore.security.config.autoconfigure.TokenProviderAutoConfiguration;
 import org.junit.jupiter.api.Test;
@@ -28,12 +28,12 @@ class SimpleIntegrationTest {
     }
 
     @Test
-    void shouldHaveHexacoreSecurityPropertiesBean() {
+    void shouldHaveSecurityStarterPropertiesBean() {
         contextRunner.run(context -> {
-            // HexacoreSecurityProperties 빈이 타입으로 존재하는지 확인
-            assertThat(context).hasSingleBean(HexacoreSecurityProperties.class);
+            // SecurityStarterProperties 빈이 타입으로 존재하는지 확인
+            assertThat(context).hasSingleBean(SecurityStarterProperties.class);
             
-            HexacoreSecurityProperties properties = context.getBean(HexacoreSecurityProperties.class);
+            SecurityStarterProperties properties = context.getBean(SecurityStarterProperties.class);
             assertThat(properties.getEnabled()).isTrue();
             assertThat(properties.getTokenProvider().getProvider()).isEqualTo("jwt");
         });

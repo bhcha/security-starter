@@ -1,28 +1,27 @@
-hexacore:
-  security:
-    session:
-      time-window-minutes: 15
-      timeout-hours: 24
-      max-failed-attempts: 5
-    token:
-      min-expires-in: 1
-      max-expires-in: 86400
-    validation:
-      min-username-length: 3
-      max-username-length: 50
-      min-password-length: 8
-      min-jwt-secret-length: 32
-      recommended-jwt-secret-length: 64
-    logging:
-      suspicious-activity-threshold: 5
-      suspicious-activity-time-window-minutes: 5
-      max-log-message-length: 50
-      top-stats-limit: 5
+security-starter:
+  session:
+    time-window-minutes: 15
+    timeout-hours: 24
+    max-failed-attempts: 5
+  token:
+    min-expires-in: 1
+    max-expires-in: 86400
+  validation:
+    min-username-length: 3
+    max-username-length: 50
+    min-password-length: 8
+    min-jwt-secret-length: 32
+    recommended-jwt-secret-length: 64
+  logging:
+    suspicious-activity-threshold: 5
+    suspicious-activity-time-window-minutes: 5
+    max-log-message-length: 50
+    top-stats-limit: 5
 
 # 기본 Spring Boot 설정
 spring:
   application:
-    name: hexacore-security-starter
+    name: security-starter
     
   # JPA 설정 (테스트용)
   jpa:

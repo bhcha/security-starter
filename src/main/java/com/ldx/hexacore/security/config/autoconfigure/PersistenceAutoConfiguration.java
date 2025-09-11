@@ -1,6 +1,6 @@
 package com.ldx.hexacore.security.config.autoconfigure;
 
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import com.ldx.hexacore.security.auth.adapter.outbound.event.AuthenticationEventConfiguration;
 import com.ldx.hexacore.security.auth.adapter.outbound.memory.InMemoryAuthenticationConfiguration;
 import com.ldx.hexacore.security.auth.adapter.outbound.persistence.AuthenticationPersistenceConfiguration;
@@ -27,7 +27,7 @@ import jakarta.persistence.EntityManager;
  * JPA가 있으면 JPA 어댑터를, 없으면 InMemory 어댑터를 활성화합니다.
  */
 @Configuration
-@EnableConfigurationProperties(HexacoreSecurityProperties.class)
+@EnableConfigurationProperties(SecurityStarterProperties.class)
 public class PersistenceAutoConfiguration {
     
     /**
@@ -37,25 +37,25 @@ public class PersistenceAutoConfiguration {
     @Order(1)  // JPA 설정이 먼저 로드되도록 함
     @ConditionalOnClass(EntityManager.class)
     @ConditionalOnProperty(
-        prefix = "hexacore.security.persistence",
+        prefix = "security-starter.persistence",
         name = "type",
         havingValue = "JPA",
         matchIfMissing = false
     )
     @EntityScan(basePackages = {
-        "com.dx.hexacore.security.auth.adapter.outbound.persistence.entity",
-        "com.dx.hexacore.security.session.adapter.outbound.persistence.entity"
+        "com.dx.security-starter.auth.adapter.outbound.persistence.entity",
+        "com.dx.security-starter.session.adapter.outbound.persistence.entity"
     })
     @EnableJpaRepositories(
         basePackages = {
-            "com.dx.hexacore.security.auth.adapter.outbound.persistence.repository",
-            "com.dx.hexacore.security.session.adapter.outbound.persistence.repository"
+            "com.dx.security-starter.auth.adapter.outbound.persistence.repository",
+            "com.dx.security-starter.session.adapter.outbound.persistence.repository"
         }
     )
     @ComponentScan(
         basePackages = {
-            "com.dx.hexacore.security.auth.adapter.outbound.persistence",
-            "com.dx.hexacore.security.session.adapter.outbound.persistence"
+            "com.dx.security-starter.auth.adapter.outbound.persistence",
+            "com.dx.security-starter.session.adapter.outbound.persistence"
         },
         includeFilters = @ComponentScan.Filter(
             type = FilterType.REGEX,
@@ -101,7 +101,7 @@ public class PersistenceAutoConfiguration {
     @Configuration
     @Order(2)  // MEMORY 타입을 기본으로 사용
     @ConditionalOnProperty(
-        prefix = "hexacore.security.persistence",
+        prefix = "security-starter.persistence",
         name = "type",
         havingValue = "MEMORY",
         matchIfMissing = true
@@ -121,7 +121,7 @@ public class PersistenceAutoConfiguration {
      */
     @Configuration
     @ConditionalOnProperty(
-        prefix = "hexacore.security.persistence",
+        prefix = "security-starter.persistence",
         name = "mongo-enabled",
         havingValue = "true"
     )

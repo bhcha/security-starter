@@ -1,6 +1,6 @@
 package com.ldx.hexacore.security.config.support;
 
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,11 +20,11 @@ class SecurityConfigurationValidatorTest {
     private ApplicationReadyEvent applicationReadyEvent;
 
     private SecurityConfigurationValidator validator;
-    private HexacoreSecurityProperties properties;
+    private SecurityStarterProperties properties;
 
     @BeforeEach
     void setUp() {
-        properties = new HexacoreSecurityProperties();
+        properties = new SecurityStarterProperties();
         validator = new SecurityConfigurationValidator(properties);
     }
 

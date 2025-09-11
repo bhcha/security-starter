@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 간단한 Bean 등록 검증 테스트
  */
 @SpringBootTest(classes = {
-    HexacoreSecurityAutoConfiguration.class,
+    SecurityStarterAutoConfiguration.class,
     org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
     org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
     org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class,
@@ -43,11 +43,11 @@ class SimpleBeanRegistrationTest {
         // Given & When & Then
         assertThat(applicationContext).isNotNull();
         
-        // HexacoreSecurityAutoConfiguration Bean이 등록되었는지 확인
-        boolean hasSecurityConfig = applicationContext.containsBean("hexacoreSecurityAutoConfiguration");
+        // SecurityStarterAutoConfiguration Bean이 등록되었는지 확인
+        boolean hasSecurityConfig = applicationContext.containsBean("securityStarterAutoConfiguration");
         
         System.out.println("🔍 Bean 등록 상태:");
-        System.out.println("  - hexacoreSecurityAutoConfiguration: " + hasSecurityConfig);
+        System.out.println("  - securityStarterAutoConfiguration: " + hasSecurityConfig);
         
         // 등록된 모든 Bean 이름 출력 (security 관련만)
         String[] beanNames = applicationContext.getBeanDefinitionNames();

@@ -20,11 +20,11 @@ import java.util.List;
  * 세션 캐시 설정
  * 
  * 캐시 어댑터를 활성화하고 Caffeine 기반 캐시를 설정합니다.
- * hexacore.session.cache.enabled=true 일 때만 활성화됩니다.
+ * security-starter.session.cache.enabled=true 일 때만 활성화됩니다.
  */
 @Configuration
 @ConditionalOnProperty(
-    prefix = "hexacore.session.cache",
+    prefix = "security-starter.session.cache",
     name = "enabled",
     havingValue = "true",
     matchIfMissing = false
@@ -34,7 +34,7 @@ import java.util.List;
 class SessionCacheConfiguration {
     
     @Bean
-    @ConditionalOnProperty(prefix = "hexacore.session.cache", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "security-starter.session.cache", name = "enabled", havingValue = "true")
     public SessionCache<String, SessionStatusProjection> sessionStatusCache(CacheProperties properties) {
         return new CaffeineSessionCache<>(
             "sessionStatus",
@@ -44,7 +44,7 @@ class SessionCacheConfiguration {
     }
     
     @Bean
-    @ConditionalOnProperty(prefix = "hexacore.session.cache", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "security-starter.session.cache", name = "enabled", havingValue = "true")
     public SessionCache<String, List<FailedAttemptProjection>> failedAttemptsCache(CacheProperties properties) {
         return new CaffeineSessionCache<>(
             "failedAttempts",
@@ -55,7 +55,7 @@ class SessionCacheConfiguration {
     
     @Bean("sessionCacheAdapter")
     @Primary
-    @ConditionalOnProperty(prefix = "hexacore.session.cache", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "security-starter.session.cache", name = "enabled", havingValue = "true")
     public SessionCacheAdapter sessionCacheAdapter(
             @Qualifier("sessionJpaQueryAdapter") LoadSessionStatusQueryPort delegate,
             @Qualifier("sessionJpaFailedAttemptsAdapter") LoadFailedAttemptsQueryPort failedAttemptsDelegate,
@@ -66,14 +66,14 @@ class SessionCacheConfiguration {
     
     @Bean
     @Primary
-    @ConditionalOnProperty(prefix = "hexacore.session.cache", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "security-starter.session.cache", name = "enabled", havingValue = "true")
     public LoadSessionStatusQueryPort loadSessionStatusQueryPort(SessionCacheAdapter adapter) {
         return adapter;
     }
     
     @Bean
     @Primary
-    @ConditionalOnProperty(prefix = "hexacore.session.cache", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "security-starter.session.cache", name = "enabled", havingValue = "true")
     public LoadFailedAttemptsQueryPort loadFailedAttemptsQueryPort(SessionCacheAdapter adapter) {
         return adapter;
     }
@@ -84,7 +84,7 @@ class SessionCacheConfiguration {
     /**
      * 캐시 설정 프로퍼티
      */
-    @ConfigurationProperties(prefix = "hexacore.session.cache")
+    @ConfigurationProperties(prefix = "security-starter.session.cache")
     public static class CacheProperties {
         
         private boolean enabled = false;

@@ -12,8 +12,8 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  */
 public class OnKeycloakEnabledCondition extends SpringBootCondition {
 
-    private static final String PROVIDER_PROPERTY = "hexacore.security.token-provider.provider";
-    private static final String KEYCLOAK_ENABLED_PROPERTY = "hexacore.security.token-provider.keycloak.enabled";
+    private static final String PROVIDER_PROPERTY = "security-starter.token-provider.provider";
+    private static final String KEYCLOAK_ENABLED_PROPERTY = "security-starter.token-provider.keycloak.enabled";
 
     @Override
     public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {

@@ -1,7 +1,7 @@
 package com.ldx.hexacore.security.config.autoconfigure;
 
 import com.ldx.hexacore.security.auth.adapter.inbound.filter.SecurityFilterConfig;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @AutoConfiguration(after = {SecurityAutoConfiguration.class, PersistenceAutoConfiguration.class, TokenProviderAutoConfiguration.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnProperty(
-    prefix = "hexacore.security.filter",
+    prefix = "security-starter.filter",
     name = "enabled",
     havingValue = "true",
     matchIfMissing = true
@@ -40,16 +40,16 @@ import org.springframework.security.web.SecurityFilterChain;
     "org.springframework.security.web.SecurityFilterChain",
         "com.ldx.hexacore.security.auth.adapter.inbound.filter.JwtAuthenticationFilter"
 })
-@EnableConfigurationProperties(HexacoreSecurityProperties.class)
+@EnableConfigurationProperties(SecurityStarterProperties.class)
 @EnableWebSecurity
 @Import(SecurityFilterConfig.class)
 public class SecurityFilterAutoConfiguration {
     
     private static final Logger logger = LoggerFactory.getLogger(SecurityFilterAutoConfiguration.class);
     
-    private final HexacoreSecurityProperties properties;
+    private final SecurityStarterProperties properties;
     
-    public SecurityFilterAutoConfiguration(HexacoreSecurityProperties properties) {
+    public SecurityFilterAutoConfiguration(SecurityStarterProperties properties) {
         this.properties = properties;
     }
     
@@ -182,7 +182,7 @@ public class SecurityFilterAutoConfiguration {
      */
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnProperty(
-        prefix = "hexacore.security.token-provider.jwt",
+        prefix = "security-starter.token-provider.jwt",
         name = "enabled",
         havingValue = "true"
     )
@@ -207,7 +207,7 @@ public class SecurityFilterAutoConfiguration {
      */
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnProperty(
-        prefix = "hexacore.security.rate-limit",
+        prefix = "security-starter.rate-limit",
         name = "enabled",
         havingValue = "true"
     )
@@ -232,7 +232,7 @@ public class SecurityFilterAutoConfiguration {
      */
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnProperty(
-        prefix = "hexacore.security.ip-restriction",
+        prefix = "security-starter.ip-restriction",
         name = "enabled",
         havingValue = "true"
     )

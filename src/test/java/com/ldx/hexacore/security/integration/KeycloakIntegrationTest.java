@@ -3,7 +3,7 @@ package com.ldx.hexacore.security.integration;
 import com.ldx.hexacore.security.auth.adapter.outbound.token.keycloak.KeycloakTokenProvider;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProviderType;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import com.ldx.hexacore.security.config.autoconfigure.TokenProviderAutoConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,8 +55,8 @@ class KeycloakIntegrationTest {
     @DisplayName("Keycloak 설정 프로퍼티가 올바르게 바인딩되는지 확인")
     void shouldBindKeycloakPropertiesCorrectly() {
         contextRunner.run(context -> {
-            HexacoreSecurityProperties properties = context.getBean(HexacoreSecurityProperties.class);
-            HexacoreSecurityProperties.TokenProvider.KeycloakProperties keycloakProps = 
+            SecurityStarterProperties properties = context.getBean(SecurityStarterProperties.class);
+            SecurityStarterProperties.TokenProvider.KeycloakProperties keycloakProps = 
                 properties.getTokenProvider().getKeycloak();
             
             assertThat(keycloakProps.getEnabled()).isTrue();
@@ -88,8 +88,8 @@ class KeycloakIntegrationTest {
                 );
 
         runnerWithDefaults.run(context -> {
-            HexacoreSecurityProperties properties = context.getBean(HexacoreSecurityProperties.class);
-            HexacoreSecurityProperties.TokenProvider.KeycloakProperties keycloakProps = 
+            SecurityStarterProperties properties = context.getBean(SecurityStarterProperties.class);
+            SecurityStarterProperties.TokenProvider.KeycloakProperties keycloakProps = 
                 properties.getTokenProvider().getKeycloak();
             
             // 기본값으로 openid profile email이 설정되어야 함
@@ -116,8 +116,8 @@ class KeycloakIntegrationTest {
                 );
 
         runnerWithCustomScopes.run(context -> {
-            HexacoreSecurityProperties properties = context.getBean(HexacoreSecurityProperties.class);
-            HexacoreSecurityProperties.TokenProvider.KeycloakProperties keycloakProps = 
+            SecurityStarterProperties properties = context.getBean(SecurityStarterProperties.class);
+            SecurityStarterProperties.TokenProvider.KeycloakProperties keycloakProps = 
                 properties.getTokenProvider().getKeycloak();
             
             // 커스텀 scope가 설정되어야 함

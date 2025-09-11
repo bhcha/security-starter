@@ -20,7 +20,7 @@ import java.lang.reflect.Proxy;
  */
 @Component
 @ConditionalOnProperty(
-    prefix = "hexacore.security.jwt.auto-inject",
+    prefix = "security-starter.jwt.auto-inject",
     name = "enabled",
     havingValue = "true",
     matchIfMissing = false  // 기본적으로 비활성화 (명시적 활성화 필요)

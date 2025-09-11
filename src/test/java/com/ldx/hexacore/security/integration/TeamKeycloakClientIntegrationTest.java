@@ -2,7 +2,7 @@ package com.ldx.hexacore.security.integration;
 
 import com.ldx.hexacore.security.auth.adapter.outbound.token.keycloak.KeycloakAuthorizationService;
 import com.ldx.hexacore.security.auth.adapter.outbound.token.keycloak.KeycloakTokenProvider;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +35,8 @@ class TeamKeycloakClientIntegrationTest {
         System.out.println("==============================================\\n");
         
         // Keycloak 설정 (테스트용)
-        HexacoreSecurityProperties.TokenProvider.KeycloakProperties keycloakProps = 
-            new HexacoreSecurityProperties.TokenProvider.KeycloakProperties();
+        SecurityStarterProperties.TokenProvider.KeycloakProperties keycloakProps = 
+            new SecurityStarterProperties.TokenProvider.KeycloakProperties();
         keycloakProps.setEnabled(true);
         keycloakProps.setServerUrl("https://auth.daewoong.co.kr/keycloak");
         keycloakProps.setRealm("backoffice-api");

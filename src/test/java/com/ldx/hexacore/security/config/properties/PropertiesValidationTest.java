@@ -9,11 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Properties Validation 테스트")
 class PropertiesValidationTest {
 
-    private HexacoreSecurityProperties properties;
+    private SecurityStarterProperties properties;
 
     @BeforeEach
     void setUp() {
-        properties = new HexacoreSecurityProperties();
+        properties = new SecurityStarterProperties();
     }
 
     @Test

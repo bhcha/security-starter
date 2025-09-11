@@ -85,20 +85,20 @@ public class SecurityStartupValidator {
             
             // Hexacore Security 속성
             Boolean hexacoreEnabled = applicationContext.getEnvironment()
-                .getProperty("hexacore.security.enabled", Boolean.class, true);
-            logger.info("  - hexacore.security.enabled: {}", hexacoreEnabled);
+                .getProperty("security-starter.enabled", Boolean.class, true);
+            logger.info("  - security-starter.enabled: {}", hexacoreEnabled);
             
             Boolean filterEnabled = applicationContext.getEnvironment()
-                .getProperty("hexacore.security.filter.enabled", Boolean.class, true);
-            logger.info("  - hexacore.security.filter.enabled: {}", filterEnabled);
+                .getProperty("security-starter.filter.enabled", Boolean.class, true);
+            logger.info("  - security-starter.filter.enabled: {}", filterEnabled);
             
             String tokenProvider = applicationContext.getEnvironment()
-                .getProperty("hexacore.security.token-provider.provider", "jwt");
-            logger.info("  - hexacore.security.token-provider.provider: {}", tokenProvider);
+                .getProperty("security-starter.token-provider.provider", "jwt");
+            logger.info("  - security-starter.token-provider.provider: {}", tokenProvider);
             
             Boolean jwtEnabled = applicationContext.getEnvironment()
-                .getProperty("hexacore.security.token-provider.jwt.enabled", Boolean.class, true);
-            logger.info("  - hexacore.security.token-provider.jwt.enabled: {}", jwtEnabled);
+                .getProperty("security-starter.token-provider.jwt.enabled", Boolean.class, true);
+            logger.info("  - security-starter.token-provider.jwt.enabled: {}", jwtEnabled);
             
             // Legacy 속성 (호환성)
             Boolean authJwtEnabled = applicationContext.getEnvironment()

@@ -1,7 +1,7 @@
 package com.ldx.hexacore.security.config.autoconfigure;
 
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
@@ -111,7 +111,7 @@ class TokenProviderAutoConfigurationTest {
                         "hexacore.security.token-provider.jwt.refresh-token-expiration=1209600"
                 )
                 .run(context -> {
-                    HexacoreSecurityProperties properties = context.getBean(HexacoreSecurityProperties.class);
+                    SecurityStarterProperties properties = context.getBean(SecurityStarterProperties.class);
                     var jwt = properties.getTokenProvider().getJwt();
                     
                     assertThat(jwt.getEnabled()).isTrue();

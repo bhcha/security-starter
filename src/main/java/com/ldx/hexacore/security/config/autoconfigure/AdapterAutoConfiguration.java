@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
  */
 @AutoConfiguration
 @ConditionalOnProperty(
-    prefix = "hexacore.security",
+    prefix = "security-starter",
     name = "enabled",
     havingValue = "true",
     matchIfMissing = true

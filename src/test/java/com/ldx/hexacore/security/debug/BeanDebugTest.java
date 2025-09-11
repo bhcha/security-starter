@@ -1,6 +1,6 @@
 package com.ldx.hexacore.security.debug;
 
-import com.ldx.hexacore.security.config.HexacoreSecurityAutoConfiguration;
+import com.ldx.hexacore.security.config.SecurityStarterAutoConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
@@ -13,7 +13,7 @@ import java.util.Arrays;
  * Bean loading debug test
  */
 @SpringBootTest(classes = {
-    HexacoreSecurityAutoConfiguration.class,
+    SecurityStarterAutoConfiguration.class,
     org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
     org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
     org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class

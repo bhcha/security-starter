@@ -16,13 +16,13 @@ import java.util.Map;
  * 
  * 다음 조건들을 검사합니다:
  * 1. 필요한 캐시 구현 클래스가 클래스패스에 존재하는지
- * 2. hexacore.security.cache.type 속성값이 일치하는지
+ * 2. security-starter.cache.type 속성값이 일치하는지
  * 3. 캐시가 활성화되어 있는지
  */
 public class OnCacheTypeCondition extends SpringBootCondition {
     
-    private static final String CACHE_TYPE_PROPERTY = "hexacore.security.cache.type";
-    private static final String CACHE_ENABLED_PROPERTY = "hexacore.security.cache.enabled";
+    private static final String CACHE_TYPE_PROPERTY = "security-starter.cache.type";
+    private static final String CACHE_ENABLED_PROPERTY = "security-starter.cache.enabled";
     private static final String DEFAULT_CACHE_TYPE = "caffeine";
     private static final Map<String, String> CACHE_TYPE_CLASSES = new HashMap<>();
     
@@ -67,7 +67,7 @@ public class OnCacheTypeCondition extends SpringBootCondition {
         String configuredCacheType = context.getEnvironment().getProperty(CACHE_TYPE_PROPERTY, DEFAULT_CACHE_TYPE);
         if (!expectedCacheType.equalsIgnoreCase(configuredCacheType)) {
             return ConditionOutcome.noMatch(
-                message.because("hexacore.security.cache.type is '" + configuredCacheType + 
+                message.because("security-starter.cache.type is '" + configuredCacheType + 
                               "' but condition requires '" + expectedCacheType + "'")
             );
         }
@@ -76,7 +76,7 @@ public class OnCacheTypeCondition extends SpringBootCondition {
         boolean cacheEnabled = context.getEnvironment().getProperty(CACHE_ENABLED_PROPERTY, Boolean.class, true);
         if (!cacheEnabled) {
             return ConditionOutcome.noMatch(
-                message.because("hexacore.security.cache.enabled is false")
+                message.because("security-starter.cache.enabled is false")
             );
         }
         

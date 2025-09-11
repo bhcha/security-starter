@@ -1,6 +1,6 @@
 package com.ldx.hexacore.security.config.support;
 
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class SecurityAuthHealthIndicator implements HealthIndicator {
 
-    private final HexacoreSecurityProperties properties;
+    private final SecurityStarterProperties properties;
 
     public SecurityAuthHealthIndicator() {
         this.properties = null; // Optional dependency
     }
 
     @Autowired(required = false)
-    public void setProperties(HexacoreSecurityProperties properties) {
+    public void setProperties(SecurityStarterProperties properties) {
         // Properties injection for detailed health info
     }
 

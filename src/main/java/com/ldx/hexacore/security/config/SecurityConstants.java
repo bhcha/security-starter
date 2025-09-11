@@ -14,7 +14,7 @@ import java.time.Duration;
  * @author Claude Code Assistant
  */
 @Data
-@ConfigurationProperties(prefix = "hexacore.security")
+@ConfigurationProperties(prefix = "security-starter.constants")
 public class SecurityConstants {
 
     private Session session = new Session();

@@ -1,6 +1,6 @@
 package com.ldx.hexacore.security.config.autoconfigure;
 
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -22,9 +22,9 @@ class MinimalAutoConfigurationTest {
                 .run(context -> {
                     System.out.println("Context started successfully");
                     // Only check if properties are bound correctly
-                    assertThat(context).hasSingleBean(HexacoreSecurityProperties.class);
+                    assertThat(context).hasSingleBean(SecurityStarterProperties.class);
                     
-                    HexacoreSecurityProperties properties = context.getBean(HexacoreSecurityProperties.class);
+                    SecurityStarterProperties properties = context.getBean(SecurityStarterProperties.class);
                     assertThat(properties.getEnabled()).isTrue();
                 });
     }
@@ -35,13 +35,13 @@ class MinimalAutoConfigurationTest {
                 .withPropertyValues("hexacore.security.enabled=false")
                 .run(context -> {
                     // Just verify the properties are set correctly
-                    HexacoreSecurityProperties properties = context.getBean(HexacoreSecurityProperties.class);
+                    SecurityStarterProperties properties = context.getBean(SecurityStarterProperties.class);
                     assertThat(properties.getEnabled()).isFalse();
                 });
     }
     
     @Configuration
-    @EnableConfigurationProperties(HexacoreSecurityProperties.class)
+    @EnableConfigurationProperties(SecurityStarterProperties.class)
     static class TestConfiguration {
     }
 }

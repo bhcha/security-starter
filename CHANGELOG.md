@@ -5,7 +5,7 @@
 ### Changed
 - **BREAKING CHANGE**: AuthenticationSession 정책 상수들을 설정값으로 교체
   - `MAX_FAILED_ATTEMPTS`와 `LOCKOUT_DURATION_MINUTES` 하드코딩 제거
-  - HexacoreSecurityProperties를 통한 동적 설정 지원
+  - SecurityStarterProperties를 통한 동적 설정 지원
   - `hexacore.security.session.lockout.max-attempts`와 `hexacore.security.session.lockout.lockout-duration-minutes` 설정 사용
 
 ### Fixed

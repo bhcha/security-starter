@@ -14,9 +14,9 @@ import java.util.Map;
  * 사용자가 다양한 프로퍼티 경로를 사용할 수 있도록 aliases를 제공합니다.
  * 
  * 지원하는 alias 경로:
- * - hexa.security.auth.provider -> hexacore.security.token-provider.provider
- * - hexa.security.token.provider -> hexacore.security.token-provider.provider
- * - security.auth.provider -> hexacore.security.token-provider.provider
+ * - hexa.security.auth.provider -> security-starter.token-provider.provider
+ * - hexa.security.token.provider -> security-starter.token-provider.provider
+ * - security.auth.provider -> security-starter.token-provider.provider
  */
 public class SecurityConfigurationPropertiesPostProcessor implements EnvironmentPostProcessor {
     
@@ -53,7 +53,7 @@ public class SecurityConfigurationPropertiesPostProcessor implements Environment
         for (String alias : providerAliases) {
             String value = environment.getProperty(alias);
             if (value != null) {
-                aliasProperties.put("hexacore.security.token-provider.provider", value);
+                aliasProperties.put("security-starter.token-provider.provider", value);
                 break; // 첫 번째로 찾은 값 사용
             }
         }
@@ -63,42 +63,42 @@ public class SecurityConfigurationPropertiesPostProcessor implements Environment
         // JWT 설정 aliases
         addPropertyAlias(environment, aliasProperties, 
             new String[]{"hexa.security.jwt.secret", "security.jwt.secret"},
-            "hexacore.security.token-provider.jwt.secret");
+            "security-starter.token-provider.jwt.secret");
             
         addPropertyAlias(environment, aliasProperties,
             new String[]{"hexa.security.jwt.enabled", "security.jwt.enabled"},
-            "hexacore.security.token-provider.jwt.enabled");
+            "security-starter.token-provider.jwt.enabled");
             
         addPropertyAlias(environment, aliasProperties,
             new String[]{"hexa.security.jwt.access-token-expiration", "security.jwt.access-token-expiration"},
-            "hexacore.security.token-provider.jwt.access-token-expiration");
+            "security-starter.token-provider.jwt.access-token-expiration");
             
         addPropertyAlias(environment, aliasProperties,
             new String[]{"hexa.security.jwt.refresh-token-expiration", "security.jwt.refresh-token-expiration"},
-            "hexacore.security.token-provider.jwt.refresh-token-expiration");
+            "security-starter.token-provider.jwt.refresh-token-expiration");
     }
     
     private void addKeycloakAliases(ConfigurableEnvironment environment, Map<String, Object> aliasProperties) {
         // Keycloak 설정 aliases
         addPropertyAlias(environment, aliasProperties,
             new String[]{"hexa.security.keycloak.server-url", "security.keycloak.server-url"},
-            "hexacore.security.token-provider.keycloak.server-url");
+            "security-starter.token-provider.keycloak.server-url");
             
         addPropertyAlias(environment, aliasProperties,
             new String[]{"hexa.security.keycloak.realm", "security.keycloak.realm"},
-            "hexacore.security.token-provider.keycloak.realm");
+            "security-starter.token-provider.keycloak.realm");
             
         addPropertyAlias(environment, aliasProperties,
             new String[]{"hexa.security.keycloak.client-id", "security.keycloak.client-id"},
-            "hexacore.security.token-provider.keycloak.client-id");
+            "security-starter.token-provider.keycloak.client-id");
             
         addPropertyAlias(environment, aliasProperties,
             new String[]{"hexa.security.keycloak.client-secret", "security.keycloak.client-secret"},
-            "hexacore.security.token-provider.keycloak.client-secret");
+            "security-starter.token-provider.keycloak.client-secret");
             
         addPropertyAlias(environment, aliasProperties,
             new String[]{"hexa.security.keycloak.enabled", "security.keycloak.enabled"},
-            "hexacore.security.token-provider.keycloak.enabled");
+            "security-starter.token-provider.keycloak.enabled");
     }
     
     private void addPropertyAlias(ConfigurableEnvironment environment, Map<String, Object> aliasProperties,

@@ -1,7 +1,7 @@
 package com.ldx.hexacore.security.config.autoconfigure;
 
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
-import com.ldx.hexacore.security.config.properties.HexacoreSecurityProperties;
+import com.ldx.hexacore.security.config.properties.SecurityStarterProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -107,7 +107,7 @@ class TokenProviderBeanDuplicationTest {
         // 현재 동작을 디버그해보기
         contextRunner
                 .run(context -> {
-                    HexacoreSecurityProperties properties = context.getBean(HexacoreSecurityProperties.class);
+                    SecurityStarterProperties properties = context.getBean(SecurityStarterProperties.class);
                     System.out.println("=== Current Configuration ===");
                     System.out.println("Provider: " + properties.getTokenProvider().getProvider());
                     System.out.println("JWT enabled: " + properties.getTokenProvider().getJwt().getEnabled());
