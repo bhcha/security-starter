@@ -37,7 +37,7 @@ public class SecurityStarterFailureAnalyzer extends AbstractFailureAnalyzer<NoSu
         }
         
         if (message != null) {
-            return message.contains("com.dx.hexacore.security") ||
+            return message.contains("com.ldx.hexacore.security") ||
                    message.contains("SecurityStarterFailureAnalyzer") ||
                    message.contains("SecurityStarterProperties");
         }
@@ -172,7 +172,7 @@ public class SecurityStarterFailureAnalyzer extends AbstractFailureAnalyzer<NoSu
                 "   ```\n\n" +
                 "3️⃣ 의존성 확인\n" +
                 "   ```gradle\n" +
-                "   implementation 'com.dx:security-starter:1.0.1'\n" +
+                "   implementation 'com.ldx:security-starter:1.0.1'\n" +
                 "   ```\n\n" +
                 "📖 관련 문서: https://docs.security-starter.com/authentication";
                 
@@ -249,7 +249,7 @@ public class SecurityStarterFailureAnalyzer extends AbstractFailureAnalyzer<NoSu
                 "1️⃣ 의존성 확인\n" +
                 "   ```gradle\n" +
                 "   dependencies {\n" +
-                "       implementation 'com.dx:security-starter:1.0.1'\n" +
+                "       implementation 'com.ldx:security-starter:1.0.1'\n" +
                 "   }\n" +
                 "   ```\n\n" +
                 "2️⃣ Spring Boot 버전 확인\n" +
@@ -279,7 +279,7 @@ public class SecurityStarterFailureAnalyzer extends AbstractFailureAnalyzer<NoSu
                         "   ```\n\n" +
                         "2️⃣ 의존성 확인\n" +
                         "   ```gradle\n" +
-                        "   implementation 'com.dx:security-starter:1.0.1'\n" +
+                        "   implementation 'com.ldx:security-starter:1.0.1'\n" +
                         "   ```\n\n" +
                         "3️⃣ 애플리케이션 로그 확인\n" +
                         "   시작 로그에서 Security-Starter 관련 오류 메시지를 찾아보세요.\n\n" +

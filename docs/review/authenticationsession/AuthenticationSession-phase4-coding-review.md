@@ -7,7 +7,7 @@
 - [x] **메서드명**: Camel Case 적용 (`eventType()`, `aggregateId()`)
 - [x] **변수명**: Camel Case 적용 (`sessionId`, `userId`, `clientIp`)
 - [x] **상수명**: 해당 없음
-- [x] **패키지명**: 소문자, 의미 있는 구조 (`com.dx.hexacore.security.domain.session.event`)
+- [x] **패키지명**: 소문자, 의미 있는 구조 (`com.ldx.hexacore.security.domain.session.event`)
 
 ### 1.2 코드 구조 (95% 준수)
 - [x] **클래스 구조**: 필드 → 생성자 → 팩토리 메서드 → 비즈니스 메서드 → getter 순서

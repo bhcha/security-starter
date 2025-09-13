@@ -1,5 +1,4 @@
 com.ldx.hexacore.security.config.SecurityStarterAutoConfiguration
-com.ldx.hexacore.security.config.autoconfigure.PersistenceAutoConfiguration
 com.ldx.hexacore.security.config.autoconfigure.ApplicationLayerAutoConfiguration
 com.ldx.hexacore.security.config.autoconfigure.TokenProviderAutoConfiguration
 com.ldx.hexacore.security.config.autoconfigure.JwtAutoConfiguration

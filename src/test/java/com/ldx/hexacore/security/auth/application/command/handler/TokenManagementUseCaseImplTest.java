@@ -4,12 +4,8 @@ import com.ldx.hexacore.security.auth.application.command.port.in.RefreshTokenCo
 import com.ldx.hexacore.security.auth.application.command.port.in.TokenRefreshException;
 import com.ldx.hexacore.security.auth.application.command.port.in.TokenValidationResult;
 import com.ldx.hexacore.security.auth.application.command.port.in.ValidateTokenCommand;
-import com.ldx.hexacore.security.auth.application.command.port.out.AuthenticationRepository;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProviderException;
-import com.ldx.hexacore.security.auth.domain.Authentication;
-import com.ldx.hexacore.security.auth.domain.service.JwtPolicy;
-import com.ldx.hexacore.security.auth.domain.service.SessionPolicy;
 import com.ldx.hexacore.security.auth.domain.vo.Token;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Optional;
+import java.time.Instant;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -27,28 +24,14 @@ import static org.mockito.Mockito.*;
 class TokenManagementUseCaseImplTest {
 
     @Mock
-    private AuthenticationRepository authenticationRepository;
-    
-    @Mock
     private TokenProvider tokenProvider;
-    
-    @Mock
-    private JwtPolicy jwtPolicy;
-    
-    @Mock
-    private SessionPolicy sessionPolicy;
 
     private TokenManagementUseCaseImpl tokenManagementUseCase;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        tokenManagementUseCase = new TokenManagementUseCaseImpl(
-            authenticationRepository,
-            tokenProvider,
-            jwtPolicy,
-            sessionPolicy
-        );
+        tokenManagementUseCase = new TokenManagementUseCaseImpl(tokenProvider);
     }
 
     @Test
@@ -57,15 +40,16 @@ class TokenManagementUseCaseImplTest {
         // given
         String accessToken = "valid.access.token";
         ValidateTokenCommand command = new ValidateTokenCommand(accessToken);
-        
-        Authentication auth = mock(Authentication.class);
-        Token token = Token.of(accessToken, "refresh.token", 3600);
-        
-        when(authenticationRepository.findByAccessToken(accessToken)).thenReturn(Optional.of(auth));
-        when(auth.getToken()).thenReturn(token);
-        when(auth.isTokenValid()).thenReturn(true);
-        when(jwtPolicy.validate(token)).thenReturn(true);
-        when(sessionPolicy.validateSession(auth)).thenReturn(true);
+
+        com.ldx.hexacore.security.auth.application.command.port.out.TokenValidationResult providerResult =
+            com.ldx.hexacore.security.auth.application.command.port.out.TokenValidationResult.valid(
+                "user123",
+                "testuser",
+                Set.of("USER"),
+                Instant.now().plusSeconds(3600)
+            );
+
+        when(tokenProvider.validateToken(accessToken)).thenReturn(providerResult);
 
         // when
         TokenValidationResult result = tokenManagementUseCase.validateToken(command);
@@ -74,20 +58,21 @@ class TokenManagementUseCaseImplTest {
         assertThat(result.isValid()).isTrue();
         assertThat(result.getAccessToken()).isEqualTo(accessToken);
         assertThat(result.getInvalidReason()).isEmpty();
-        
-        verify(authenticationRepository).findByAccessToken(accessToken);
-        verify(jwtPolicy).validate(token);
-        verify(sessionPolicy).validateSession(auth);
+
+        verify(tokenProvider).validateToken(accessToken);
     }
 
     @Test
-    @DisplayName("존재하지 않는 토큰은 무효로 판정한다")
-    void shouldInvalidateNonExistentToken() {
+    @DisplayName("만료된 토큰은 무효로 판정한다")
+    void shouldInvalidateExpiredToken() {
         // given
-        String accessToken = "non.existent.token";
+        String accessToken = "expired.token";
         ValidateTokenCommand command = new ValidateTokenCommand(accessToken);
-        
-        when(authenticationRepository.findByAccessToken(accessToken)).thenReturn(Optional.empty());
+
+        com.ldx.hexacore.security.auth.application.command.port.out.TokenValidationResult providerResult =
+            com.ldx.hexacore.security.auth.application.command.port.out.TokenValidationResult.invalid("Token expired");
+
+        when(tokenProvider.validateToken(accessToken)).thenReturn(providerResult);
 
         // when
         TokenValidationResult result = tokenManagementUseCase.validateToken(command);
@@ -96,25 +81,20 @@ class TokenManagementUseCaseImplTest {
         assertThat(result.isInvalid()).isTrue();
         assertThat(result.getAccessToken()).isEqualTo(accessToken);
         assertThat(result.getInvalidReason()).isPresent();
-        assertThat(result.getInvalidReason().get()).isEqualTo("Token not found");
-        
-        verify(authenticationRepository).findByAccessToken(accessToken);
-        verifyNoInteractions(jwtPolicy, sessionPolicy);
+        assertThat(result.getInvalidReason().get()).contains("Token expired");
+
+        verify(tokenProvider).validateToken(accessToken);
     }
 
     @Test
-    @DisplayName("만료된 토큰은 무효로 판정한다")
-    void shouldInvalidateExpiredToken() {
+    @DisplayName("TokenProvider 예외 발생 시 무효로 처리한다")
+    void shouldHandleTokenProviderException() {
         // given
-        String accessToken = "expired.access.token";
+        String accessToken = "problematic.token";
         ValidateTokenCommand command = new ValidateTokenCommand(accessToken);
-        
-        Authentication auth = mock(Authentication.class);
-        Token token = Token.of(accessToken, "refresh.token", 3600);
-        
-        when(authenticationRepository.findByAccessToken(accessToken)).thenReturn(Optional.of(auth));
-        when(auth.getToken()).thenReturn(token);
-        when(auth.isTokenValid()).thenReturn(false);
+
+        when(tokenProvider.validateToken(accessToken))
+            .thenThrow(TokenProviderException.tokenValidationFailed("test-provider", new RuntimeException("Validation error")));
 
         // when
         TokenValidationResult result = tokenManagementUseCase.validateToken(command);
@@ -122,175 +102,91 @@ class TokenManagementUseCaseImplTest {
         // then
         assertThat(result.isInvalid()).isTrue();
         assertThat(result.getInvalidReason()).isPresent();
-        assertThat(result.getInvalidReason().get()).isEqualTo("Token expired");
-        
-        verify(authenticationRepository).findByAccessToken(accessToken);
-        verify(auth).isTokenValid();
-        verifyNoInteractions(jwtPolicy, sessionPolicy);
+        assertThat(result.getInvalidReason().get()).contains("Token validation failed");
+
+        verify(tokenProvider).validateToken(accessToken);
     }
 
     @Test
-    @DisplayName("JWT 정책 위반 토큰은 무효로 판정한다")
-    void shouldInvalidateTokenViolatingJwtPolicy() {
-        // given
-        String accessToken = "policy.violating.token";
-        ValidateTokenCommand command = new ValidateTokenCommand(accessToken);
-        
-        Authentication auth = mock(Authentication.class);
-        Token token = Token.of(accessToken, "refresh.token", 3600);
-        
-        when(authenticationRepository.findByAccessToken(accessToken)).thenReturn(Optional.of(auth));
-        when(auth.getToken()).thenReturn(token);
-        when(auth.isTokenValid()).thenReturn(true);
-        when(jwtPolicy.validate(token)).thenReturn(false);
-
-        // when
-        TokenValidationResult result = tokenManagementUseCase.validateToken(command);
-
-        // then
-        assertThat(result.isInvalid()).isTrue();
-        assertThat(result.getInvalidReason()).isPresent();
-        assertThat(result.getInvalidReason().get()).isEqualTo("JWT policy violation");
-        
-        verify(jwtPolicy).validate(token);
-        verifyNoInteractions(sessionPolicy);
-    }
-
-    @Test
-    @DisplayName("세션 정책 위반 토큰은 무효로 판정한다")
-    void shouldInvalidateTokenViolatingSessionPolicy() {
-        // given
-        String accessToken = "session.violating.token";
-        ValidateTokenCommand command = new ValidateTokenCommand(accessToken);
-        
-        Authentication auth = mock(Authentication.class);
-        Token token = Token.of(accessToken, "refresh.token", 3600);
-        
-        when(authenticationRepository.findByAccessToken(accessToken)).thenReturn(Optional.of(auth));
-        when(auth.getToken()).thenReturn(token);
-        when(auth.isTokenValid()).thenReturn(true);
-        when(jwtPolicy.validate(token)).thenReturn(true);
-        when(sessionPolicy.validateSession(auth)).thenReturn(false);
-
-        // when
-        TokenValidationResult result = tokenManagementUseCase.validateToken(command);
-
-        // then
-        assertThat(result.isInvalid()).isTrue();
-        assertThat(result.getInvalidReason()).isPresent();
-        assertThat(result.getInvalidReason().get()).isEqualTo("Session policy violation");
-        
-        verify(sessionPolicy).validateSession(auth);
-    }
-
-    @Test
-    @DisplayName("유효한 리프레시 토큰으로 새 토큰을 발급한다")
+    @DisplayName("리프레시 토큰으로 새로운 토큰을 발급한다")
     void shouldRefreshTokenSuccessfully() {
         // given
         String refreshToken = "valid.refresh.token";
         RefreshTokenCommand command = new RefreshTokenCommand(refreshToken);
-        
-        Authentication auth = mock(Authentication.class);
+
         Token newToken = Token.of("new.access.token", "new.refresh.token", 3600);
-        
-        when(authenticationRepository.findByRefreshToken(refreshToken)).thenReturn(Optional.of(auth));
-        when(auth.isTokenValid()).thenReturn(true);
+
         when(tokenProvider.refreshToken(refreshToken)).thenReturn(newToken);
-        when(authenticationRepository.save(auth)).thenReturn(auth);
 
         // when
         Token result = tokenManagementUseCase.refreshToken(command);
 
         // then
-        assertThat(result).isEqualTo(newToken);
-        
-        verify(authenticationRepository).findByRefreshToken(refreshToken);
+        assertThat(result).isNotNull();
+        assertThat(result.getAccessToken()).isEqualTo("new.access.token");
+        assertThat(result.getRefreshToken()).isEqualTo("new.refresh.token");
+
         verify(tokenProvider).refreshToken(refreshToken);
-        verify(authenticationRepository).save(auth);
     }
 
     @Test
-    @DisplayName("존재하지 않는 리프레시 토큰으로 갱신 시 예외가 발생한다")
-    void shouldThrowExceptionWhenRefreshTokenNotFound() {
+    @DisplayName("유효하지 않은 리프레시 토큰으로 갱신 시 예외가 발생한다")
+    void shouldThrowExceptionWhenRefreshTokenIsInvalid() {
         // given
-        String refreshToken = "non.existent.refresh.token";
+        String refreshToken = "invalid.refresh.token";
         RefreshTokenCommand command = new RefreshTokenCommand(refreshToken);
-        
-        when(authenticationRepository.findByRefreshToken(refreshToken)).thenReturn(Optional.empty());
 
-        // when & then
-        assertThatThrownBy(() -> tokenManagementUseCase.refreshToken(command))
-            .isInstanceOf(TokenRefreshException.class)
-            .hasMessage("Refresh token not found");
-        
-        verify(authenticationRepository).findByRefreshToken(refreshToken);
-        verifyNoInteractions(tokenProvider);
-    }
-
-    @Test
-    @DisplayName("만료된 리프레시 토큰으로 갱신 시 예외가 발생한다")
-    void shouldThrowExceptionWhenRefreshTokenExpired() {
-        // given
-        String refreshToken = "expired.refresh.token";
-        RefreshTokenCommand command = new RefreshTokenCommand(refreshToken);
-        
-        Authentication auth = mock(Authentication.class);
-        
-        when(authenticationRepository.findByRefreshToken(refreshToken)).thenReturn(Optional.of(auth));
-        when(auth.isTokenValid()).thenReturn(false);
-
-        // when & then
-        assertThatThrownBy(() -> tokenManagementUseCase.refreshToken(command))
-            .isInstanceOf(TokenRefreshException.class)
-            .hasMessage("Refresh token expired");
-        
-        verify(authenticationRepository).findByRefreshToken(refreshToken);
-        verifyNoInteractions(tokenProvider);
-    }
-
-    @Test
-    @DisplayName("외부 제공자 토큰 갱신 실패 시 예외가 발생한다")
-    void shouldThrowExceptionWhenExternalProviderRefreshFails() {
-        // given
-        String refreshToken = "valid.refresh.token";
-        RefreshTokenCommand command = new RefreshTokenCommand(refreshToken);
-        
-        Authentication auth = mock(Authentication.class);
-        
-        when(authenticationRepository.findByRefreshToken(refreshToken)).thenReturn(Optional.of(auth));
-        when(auth.isTokenValid()).thenReturn(true);
         when(tokenProvider.refreshToken(refreshToken))
-            .thenThrow(TokenProviderException.tokenExpired("test-provider"));
+            .thenThrow(TokenProviderException.tokenRefreshFailed("test-provider", new RuntimeException("Invalid refresh token")));
 
         // when & then
         assertThatThrownBy(() -> tokenManagementUseCase.refreshToken(command))
             .isInstanceOf(TokenRefreshException.class)
-            .hasMessage("Failed to refresh token")
-            .hasCauseInstanceOf(TokenProviderException.class);
-        
+            .hasMessageContaining("Failed to refresh token");
+
         verify(tokenProvider).refreshToken(refreshToken);
-        verify(authenticationRepository, never()).save(any());
     }
 
     @Test
-    @DisplayName("null command로 호출 시 예외가 발생한다")
-    void shouldThrowExceptionWhenValidateTokenCommandIsNull() {
+    @DisplayName("null ValidateTokenCommand로 호출 시 예외가 발생한다")
+    void shouldThrowExceptionWhenValidateCommandIsNull() {
         // when & then
         assertThatThrownBy(() -> tokenManagementUseCase.validateToken(null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("command cannot be null");
-        
-        verifyNoInteractions(authenticationRepository, jwtPolicy, sessionPolicy);
+
+        verifyNoInteractions(tokenProvider);
     }
 
     @Test
-    @DisplayName("null command로 토큰 갱신 호출 시 예외가 발생한다")
-    void shouldThrowExceptionWhenRefreshTokenCommandIsNull() {
+    @DisplayName("null RefreshTokenCommand로 호출 시 예외가 발생한다")
+    void shouldThrowExceptionWhenRefreshCommandIsNull() {
         // when & then
         assertThatThrownBy(() -> tokenManagementUseCase.refreshToken(null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("command cannot be null");
-        
-        verifyNoInteractions(authenticationRepository, tokenProvider);
+
+        verifyNoInteractions(tokenProvider);
+    }
+
+    @Test
+    @DisplayName("토큰 제공자가 사용 불가능할 때 적절한 처리를 한다")
+    void shouldHandleProviderUnavailable() {
+        // given
+        String accessToken = "some.token";
+        ValidateTokenCommand command = new ValidateTokenCommand(accessToken);
+
+        when(tokenProvider.validateToken(accessToken))
+            .thenThrow(TokenProviderException.providerUnavailable("test-provider", new RuntimeException("Service down")));
+
+        // when
+        TokenValidationResult result = tokenManagementUseCase.validateToken(command);
+
+        // then
+        assertThat(result.isInvalid()).isTrue();
+        assertThat(result.getInvalidReason()).isPresent();
+        assertThat(result.getInvalidReason().get()).contains("Token validation failed");
+
+        verify(tokenProvider).validateToken(accessToken);
     }
 }

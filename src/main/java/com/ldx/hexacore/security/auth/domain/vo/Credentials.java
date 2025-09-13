@@ -1,7 +1,6 @@
 package com.ldx.hexacore.security.auth.domain.vo;
 
 import com.ldx.hexacore.security.util.ValidationUtils;
-import jakarta.persistence.Embeddable;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -18,7 +17,6 @@ import java.util.regex.Pattern;
  * 
  * @since 1.0.0
  */
-@Embeddable
 public final class Credentials {
     
     private static final Pattern VALID_USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
@@ -26,13 +24,7 @@ public final class Credentials {
     
     private final String username;
     private final String password;
-    
-    // JPA를 위한 protected 기본 생성자
-    protected Credentials() {
-        this.username = null;
-        this.password = null;
-    }
-    
+
     // private 생성자 - 상수 주입 버전
     private Credentials(String username, String password, 
                        int minUsernameLength, int maxUsernameLength, int minPasswordLength) {

@@ -17,7 +17,7 @@
 
 ### 2. 코드 구조 및 아키텍처 (95/100)
 ✅ **패키지 구조**: DDD 계층 구조 준수
-- `com.dx.hexacore.security.domain.session`
+- `com.ldx.hexacore.security.domain.session`
 
 ✅ **의존성 방향**: 도메인 레이어가 외부에 의존하지 않음
 - 순수 Java 및 도메인 로직만 사용

@@ -71,13 +71,6 @@ public class ModeValidator {
             warnings.add("Session이 활성화되었지만 Authentication이 비활성화됨. 세션 관리가 제한될 수 있습니다.");
         }
         
-        // Persistence 설정 체크
-        if (properties.getPersistence() != null) {
-            String persistenceType = properties.getPersistence().getTypeAsString();
-            if ("mongodb".equalsIgnoreCase(persistenceType)) {
-                warnings.add("Traditional 모드에서 MongoDB 사용 중. JPA가 더 적합할 수 있습니다.");
-            }
-        }
     }
     
     /**
@@ -104,13 +97,7 @@ public class ModeValidator {
         
         // 아키텍처 일관성 체크
         validateLayerSeparation(warnings, errors);
-        
-        // Persistence 설정 체크
-        if (properties.getPersistence() == null || 
-            "memory".equalsIgnoreCase(properties.getPersistence().getTypeAsString())) {
-            warnings.add("Hexagonal 모드에서는 실제 Persistence 구현 권장 (현재: memory)");
-        }
-        
+
         // 외부 인증 제공자 설정 체크
         if (properties.getTokenProvider() != null && 
             properties.getTokenProvider().getProvider() == null) {
@@ -189,16 +176,6 @@ public class ModeValidator {
      * Adapter Layer 검증
      */
     private void validateAdapterLayer(List<String> warnings) {
-        // Adapter 구현 체크
-        if (properties.getPersistence() != null) {
-            String persistenceType = properties.getPersistence().getTypeAsString();
-            
-            if ("jpa".equalsIgnoreCase(persistenceType)) {
-                checkAdapterExists("authenticationJpaAdapter", warnings);
-                checkAdapterExists("sessionJpaAdapter", warnings);
-            }
-        }
-        
         // Event Publisher Adapter 체크
         checkAdapterExists("springEventPublisher", warnings);
     }

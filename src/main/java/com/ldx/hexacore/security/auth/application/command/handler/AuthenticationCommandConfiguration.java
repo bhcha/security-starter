@@ -2,7 +2,6 @@ package com.ldx.hexacore.security.auth.application.command.handler;
 
 import com.ldx.hexacore.security.auth.application.command.port.in.AuthenticationUseCase;
 import com.ldx.hexacore.security.auth.application.command.port.in.TokenManagementUseCase;
-import com.ldx.hexacore.security.auth.application.command.port.out.AuthenticationRepository;
 import com.ldx.hexacore.security.auth.application.command.port.out.EventPublisher;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
 import com.ldx.hexacore.security.auth.domain.service.AuthenticationDomainService;
@@ -42,11 +41,9 @@ public class AuthenticationCommandConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public AuthenticationUseCase authenticationUseCase(
-            AuthenticationRepository authenticationRepository,
             TokenProvider tokenProvider,
             EventPublisher eventPublisher) {
         return new AuthenticateUseCaseImpl(
-                authenticationRepository,
                 tokenProvider,
                 eventPublisher
         );
@@ -54,16 +51,7 @@ public class AuthenticationCommandConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public TokenManagementUseCase tokenManagementUseCase(
-            AuthenticationRepository authenticationRepository,
-            TokenProvider tokenProvider,
-            JwtPolicy jwtPolicy,
-            SessionPolicy sessionPolicy) {
-        return new TokenManagementUseCaseImpl(
-                authenticationRepository,
-                tokenProvider,
-                jwtPolicy,
-                sessionPolicy
-        );
+    public TokenManagementUseCase tokenManagementUseCase(TokenProvider tokenProvider) {
+        return new TokenManagementUseCaseImpl(tokenProvider);
     }
 }

@@ -111,7 +111,7 @@ public interface SessionEventPublisher {
 
 ## 5. 패키지 구조
 ```
-com.dx.hexacore.security.application.session/
+com.ldx.hexacore.security.application.session/
 ├── command/
 │   ├── RecordAuthenticationAttemptCommand.java
 │   └── UnlockAccountCommand.java

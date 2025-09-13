@@ -8,7 +8,7 @@ AuthenticationSession 애그리거트의 Adapter Layer는 외부 시스템과의
 ### SessionEventListener
 **목적**: Authentication 애그리거트 이벤트 수신 및 처리
 
-**패키지**: `com.dx.hexacore.security.session.adapter.inbound.event`
+**패키지**: `com.ldx.hexacore.security.session.adapter.inbound.event`
 
 **주요 기능**:
 - Authentication 도메인 이벤트 수신
@@ -58,7 +58,7 @@ public void handle(AccountLocked event) {
 #### SessionJpaAdapter
 **목적**: 세션 데이터의 영속성 관리
 
-**패키지**: `com.dx.hexacore.security.session.adapter.outbound.persistence`
+**패키지**: `com.ldx.hexacore.security.session.adapter.outbound.persistence`
 
 **구현 포트**:
 - `AuthenticationSessionRepository`
@@ -143,7 +143,7 @@ public class SessionMapper {
 #### SessionCacheAdapter
 **목적**: 세션 데이터 캐싱을 통한 성능 최적화
 
-**패키지**: `com.dx.hexacore.security.session.adapter.outbound.cache`
+**패키지**: `com.ldx.hexacore.security.session.adapter.outbound.cache`
 
 **캐시 전략**:
 - **세션 상태**: 15분 TTL, 10,000개 최대 크기

@@ -21,8 +21,8 @@ class SimplifiedConditionsTest {
     void testAuthenticationFeatureToggle() {
         contextRunner
                 .withPropertyValues(
-                        "hexacore.security.enabled=true",
-                        "hexacore.security.authenticationToggle.enabled=true"
+                        "security-starter.enabled=true",
+                        "security-starter.authentication-toggle.enabled=true"
                 )
                 .run(context -> {
                     assertThat(context).hasBean("authenticationTestBean");
@@ -30,8 +30,8 @@ class SimplifiedConditionsTest {
         
         contextRunner
                 .withPropertyValues(
-                        "hexacore.security.enabled=true",
-                        "hexacore.security.authenticationToggle.enabled=false"
+                        "security-starter.enabled=true",
+                        "security-starter.authentication-toggle.enabled=false"
                 )
                 .run(context -> {
                     assertThat(context).doesNotHaveBean("authenticationTestBean");
@@ -42,8 +42,8 @@ class SimplifiedConditionsTest {
     void testJwtFeatureToggle() {
         contextRunner
                 .withPropertyValues(
-                        "hexacore.security.enabled=true",
-                        "hexacore.security.jwtToggle.enabled=true"
+                        "security-starter.enabled=true",
+                        "security-starter.jwt-toggle.enabled=true"
                 )
                 .run(context -> {
                     assertThat(context).hasBean("jwtTestBean");
@@ -51,8 +51,8 @@ class SimplifiedConditionsTest {
         
         contextRunner
                 .withPropertyValues(
-                        "hexacore.security.enabled=true",
-                        "hexacore.security.jwtToggle.enabled=false"
+                        "security-starter.enabled=true",
+                        "security-starter.jwt-toggle.enabled=false"
                 )
                 .run(context -> {
                     assertThat(context).doesNotHaveBean("jwtTestBean");
@@ -63,7 +63,7 @@ class SimplifiedConditionsTest {
     void testModeConditions() {
         // Traditional Mode (기본값)
         contextRunner
-                .withPropertyValues("hexacore.security.enabled=true")
+                .withPropertyValues("security-starter.enabled=true")
                 .run(context -> {
                     assertThat(context).hasBean("traditionalTestBean");
                     assertThat(context).doesNotHaveBean("hexagonalTestBean");
@@ -72,8 +72,8 @@ class SimplifiedConditionsTest {
         // Hexagonal Mode
         contextRunner
                 .withPropertyValues(
-                        "hexacore.security.enabled=true",
-                        "hexacore.security.mode=HEXAGONAL"
+                        "security-starter.enabled=true",
+                        "security-starter.mode=HEXAGONAL"
                 )
                 .run(context -> {
                     assertThat(context).doesNotHaveBean("traditionalTestBean");
@@ -81,38 +81,14 @@ class SimplifiedConditionsTest {
                 });
     }
     
-    @Test
-    void testPersistenceConditions() {
-        // JPA Persistence
-        contextRunner
-                .withPropertyValues(
-                        "hexacore.security.enabled=true",
-                        "hexacore.security.persistence.type=jpa"
-                )
-                .run(context -> {
-                    assertThat(context).hasBean("jpaTestBean");
-                    assertThat(context).doesNotHaveBean("mongoTestBean");
-                });
-        
-        // MongoDB Persistence
-        contextRunner
-                .withPropertyValues(
-                        "hexacore.security.enabled=true",
-                        "hexacore.security.persistence.type=mongodb"
-                )
-                .run(context -> {
-                    assertThat(context).doesNotHaveBean("jpaTestBean");
-                    assertThat(context).hasBean("mongoTestBean");
-                });
-    }
     
     @Test
     void testProviderConditions() {
         // Keycloak Provider
         contextRunner
                 .withPropertyValues(
-                        "hexacore.security.enabled=true",
-                        "hexacore.security.tokenProvider.provider=keycloak"
+                        "security-starter.enabled=true",
+                        "security-starter.tokenProvider.provider=keycloak"
                 )
                 .run(context -> {
                     assertThat(context).hasBean("keycloakTestBean");
@@ -122,8 +98,8 @@ class SimplifiedConditionsTest {
         // Spring JWT Provider
         contextRunner
                 .withPropertyValues(
-                        "hexacore.security.enabled=true",
-                        "hexacore.security.tokenProvider.provider=spring_jwt"
+                        "security-starter.enabled=true",
+                        "security-starter.tokenProvider.provider=spring_jwt"
                 )
                 .run(context -> {
                     assertThat(context).doesNotHaveBean("keycloakTestBean");
@@ -135,7 +111,7 @@ class SimplifiedConditionsTest {
     void testDisabledStarter() {
         // 전체 스타터가 비활성화되면 모든 Feature가 비활성화
         contextRunner
-                .withPropertyValues("hexacore.security.enabled=false")
+                .withPropertyValues("security-starter.enabled=false")
                 .run(context -> {
                     assertThat(context).doesNotHaveBean("authenticationTestBean");
                     assertThat(context).doesNotHaveBean("jwtTestBean");
@@ -174,17 +150,6 @@ class SimplifiedConditionsTest {
             return "hexagonal";
         }
         
-        @Bean
-        @SimplifiedConditions.ConditionalOnJpaPersistence
-        public String jpaTestBean() {
-            return "jpa";
-        }
-        
-        @Bean
-        @SimplifiedConditions.ConditionalOnMongoDbPersistence
-        public String mongoTestBean() {
-            return "mongo";
-        }
         
         @Bean
         @SimplifiedConditions.ConditionalOnKeycloakProvider

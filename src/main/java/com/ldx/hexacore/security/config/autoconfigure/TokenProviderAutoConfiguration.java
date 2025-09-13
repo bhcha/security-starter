@@ -63,7 +63,7 @@ public class TokenProviderAutoConfiguration {
         prefix = "security-starter.token-provider.jwt", 
         name = "enabled", 
         havingValue = "true",
-        matchIfMissing = true
+        matchIfMissing = false  // 명시적으로 활성화해야 생성
     )
     @ConditionalOnMissingBean(TokenProvider.class)  // 다른 TokenProvider가 없을 때만
     public TokenProvider springJwtTokenProvider(SecurityStarterProperties properties) {

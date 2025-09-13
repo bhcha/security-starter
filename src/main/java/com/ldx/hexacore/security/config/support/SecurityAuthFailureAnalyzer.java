@@ -98,7 +98,7 @@ public class SecurityAuthFailureAnalyzer extends AbstractFailureAnalyzer<Excepti
     private boolean isTokenProviderError(String message) {
         return message.contains("TokenProvider") ||
                message.contains("No qualifying bean of type") && 
-               message.contains("com.dx.security-starter.auth.application.command.port.out.TokenProvider");
+               message.contains("com.ldx.security-starter.auth.application.command.port.out.TokenProvider");
     }
 
     private FailureAnalysis analyzeTokenProviderError(String message) {

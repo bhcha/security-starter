@@ -2,24 +2,9 @@ package com.ldx.hexacore.security.config;
 
 import com.ldx.hexacore.security.auth.application.command.port.in.AuthenticationUseCase;
 import com.ldx.hexacore.security.auth.application.command.port.in.TokenManagementUseCase;
-import com.ldx.hexacore.security.auth.application.command.port.out.AuthenticationRepository;
 import com.ldx.hexacore.security.auth.application.command.port.out.EventPublisher;
 import com.ldx.hexacore.security.auth.application.command.port.out.ExternalAuthProvider;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
-import com.ldx.hexacore.security.auth.application.query.port.in.GetAuthenticationUseCase;
-import com.ldx.hexacore.security.auth.application.query.port.in.GetTokenInfoUseCase;
-import com.ldx.hexacore.security.auth.application.query.port.out.LoadAuthenticationQueryPort;
-import com.ldx.hexacore.security.auth.application.query.port.out.LoadTokenInfoQueryPort;
-import com.ldx.hexacore.security.auth.adapter.outbound.persistence.repository.AuthenticationJpaRepository;
-import com.ldx.hexacore.security.session.application.command.port.in.CheckLockoutUseCase;
-import com.ldx.hexacore.security.session.application.command.port.in.RecordAttemptUseCase;
-import com.ldx.hexacore.security.session.application.command.port.in.SessionManagementUseCase;
-import com.ldx.hexacore.security.session.application.command.port.in.UnlockAccountUseCase;
-import com.ldx.hexacore.security.session.application.command.port.out.AuthenticationSessionRepository;
-import com.ldx.hexacore.security.session.application.command.port.out.SessionEventPublisher;
-import com.ldx.hexacore.security.session.application.query.port.out.LoadFailedAttemptsQueryPort;
-import com.ldx.hexacore.security.session.application.query.port.out.LoadSessionStatusQueryPort;
-import com.ldx.hexacore.security.session.adapter.outbound.persistence.repository.SessionJpaRepository;
 import com.ldx.hexacore.security.logging.SecurityRequestLogger;
 import com.ldx.hexacore.security.logging.SecurityEventLogger;
 import com.ldx.hexacore.security.config.support.SecurityConfigurationValidator;
@@ -34,7 +19,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 /**
  * 테스트용 Spring Bean 설정.
  * 실제 구현체 대신 Mock을 제공하여 테스트 컨텍스트 로딩 문제를 해결합니다.
- * 
+ *
  * @since 1.0.0
  */
 @TestConfiguration
@@ -54,51 +39,7 @@ public class SecurityTestConfig {
         return Mockito.mock(TokenManagementUseCase.class);
     }
 
-    // Authentication Aggregate - Query Side
-    @Bean
-    @Primary
-    public GetAuthenticationUseCase mockGetAuthenticationUseCase() {
-        return Mockito.mock(GetAuthenticationUseCase.class);
-    }
-
-    @Bean
-    @Primary
-    public GetTokenInfoUseCase mockGetTokenInfoUseCase() {
-        return Mockito.mock(GetTokenInfoUseCase.class);
-    }
-
-    // AuthenticationSession Aggregate - Command Side
-    @Bean
-    @Primary
-    public CheckLockoutUseCase mockCheckLockoutUseCase() {
-        return Mockito.mock(CheckLockoutUseCase.class);
-    }
-
-    @Bean
-    @Primary
-    public RecordAttemptUseCase mockRecordAttemptUseCase() {
-        return Mockito.mock(RecordAttemptUseCase.class);
-    }
-
-    @Bean
-    @Primary
-    public UnlockAccountUseCase mockUnlockAccountUseCase() {
-        return Mockito.mock(UnlockAccountUseCase.class);
-    }
-
-    @Bean
-    @Primary
-    public SessionManagementUseCase mockSessionManagementUseCase() {
-        return Mockito.mock(SessionManagementUseCase.class);
-    }
-
     // Authentication Aggregate - Outbound Ports
-    @Bean
-    @Primary
-    public AuthenticationRepository mockAuthenticationRepository() {
-        return Mockito.mock(AuthenticationRepository.class);
-    }
-
     @Bean
     @Primary
     public EventPublisher mockEventPublisher() {
@@ -117,69 +58,19 @@ public class SecurityTestConfig {
         return Mockito.mock(TokenProvider.class);
     }
 
-    @Bean
-    @Primary
-    public LoadAuthenticationQueryPort mockLoadAuthenticationQueryPort() {
-        return Mockito.mock(LoadAuthenticationQueryPort.class);
-    }
-
-    @Bean
-    @Primary
-    public LoadTokenInfoQueryPort mockLoadTokenInfoQueryPort() {
-        return Mockito.mock(LoadTokenInfoQueryPort.class);
-    }
-
-    // AuthenticationSession Aggregate - Outbound Ports
-    @Bean
-    @Primary
-    public AuthenticationSessionRepository mockAuthenticationSessionRepository() {
-        return Mockito.mock(AuthenticationSessionRepository.class);
-    }
-
-    @Bean
-    @Primary
-    public SessionEventPublisher mockSessionEventPublisher() {
-        return Mockito.mock(SessionEventPublisher.class);
-    }
-
-    @Bean
-    @Primary
-    public LoadSessionStatusQueryPort mockLoadSessionStatusQueryPort() {
-        return Mockito.mock(LoadSessionStatusQueryPort.class);
-    }
-
-    @Bean
-    @Primary
-    public LoadFailedAttemptsQueryPort mockLoadFailedAttemptsQueryPort() {
-        return Mockito.mock(LoadFailedAttemptsQueryPort.class);
-    }
-
-    // JPA Repositories (Adapter Layer - if needed)
-    @Bean
-    @Primary
-    public AuthenticationJpaRepository mockAuthenticationJpaRepository() {
-        return Mockito.mock(AuthenticationJpaRepository.class);
-    }
-
-    @Bean
-    @Primary
-    public SessionJpaRepository mockSessionJpaRepository() {
-        return Mockito.mock(SessionJpaRepository.class);
-    }
-
     // Additional beans for test infrastructure
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
-    
+
     @Bean
     @Primary
     public SecurityRequestLogger mockSecurityRequestLogger() {
         return Mockito.mock(SecurityRequestLogger.class);
     }
-    
+
     @Bean
     @Primary
     public SecurityEventLogger mockSecurityEventLogger() {
@@ -192,11 +83,9 @@ public class SecurityTestConfig {
         return new SecurityConfigurationValidator(properties);
     }
 
-
     @Bean
     @Primary
     public SecurityStarterProperties SecurityStarterProperties() {
         return new SecurityStarterProperties();
     }
-
 }

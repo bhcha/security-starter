@@ -3,7 +3,7 @@
 ## 코딩 표준 체크리스트
 
 ### Java 코딩 표준 ✅
-- [x] 패키지 명명 규칙: `com.dx.hexacore.security.domain.auth.{event|service}`
+- [x] 패키지 명명 규칙: `com.ldx.hexacore.security.domain.auth.{event|service}`
 - [x] 클래스 명명 규칙: PascalCase 적용
 - [x] 메서드 명명 규칙: camelCase 적용
 - [x] 상수 명명 규칙: UPPER_SNAKE_CASE 적용

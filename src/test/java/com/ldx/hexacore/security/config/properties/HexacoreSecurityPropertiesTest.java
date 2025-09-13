@@ -31,13 +31,13 @@ class SecurityStarterPropertiesTest {
     void shouldBindCompleteConfiguration() {
         contextRunner
                 .withPropertyValues(
-                        "hexacore.security.enabled=true",
-                        "hexacore.security.tokenProvider.provider=spring-jwt",
-                        "hexacore.security.tokenProvider.jwt.enabled=true",
-                        "hexacore.security.tokenProvider.jwt.secret=my-super-secret-key-that-is-long-enough-for-256-bits",
-                        "hexacore.security.tokenProvider.jwt.issuer=test-issuer",
-                        "hexacore.security.tokenProvider.jwt.accessTokenExpiration=7200",
-                        "hexacore.security.tokenProvider.jwt.refreshTokenExpiration=604800"
+                        "security-starter.enabled=true",
+                        "security-starter.token-provider.provider=spring_jwt",
+                        "security-starter.token-provider.jwt.enabled=true",
+                        "security-starter.token-provider.jwt.secret=my-super-secret-key-that-is-long-enough-for-256-bits",
+                        "security-starter.token-provider.jwt.issuer=test-issuer",
+                        "security-starter.token-provider.jwt.access-token-expiration=7200",
+                        "security-starter.token-provider.jwt.refresh-token-expiration=604800"
                 )
                 .run(context -> {
                     SecurityStarterProperties properties = context.getBean(SecurityStarterProperties.class);
@@ -46,7 +46,7 @@ class SecurityStarterPropertiesTest {
                     
                     // TokenProvider
                     var tokenProvider = properties.getTokenProvider();
-                    assertThat(tokenProvider.getProvider()).isEqualTo("spring-jwt");
+                    assertThat(tokenProvider.getProvider()).isEqualTo("spring_jwt");
                     assertThat(tokenProvider.getJwt().getEnabled()).isTrue();
                     assertThat(tokenProvider.getJwt().getSecret()).isEqualTo("my-super-secret-key-that-is-long-enough-for-256-bits");
                     assertThat(tokenProvider.getJwt().getIssuer()).isEqualTo("test-issuer");

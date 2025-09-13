@@ -293,10 +293,10 @@
 
 - 2025-01-30: **Starter Integration Phase 1 완료 - 구조 준비**
   - config 패키지 구조 생성 완료
-    - `com.dx.hexacore.security.config.autoconfigure`: 자동 설정 클래스
-    - `com.dx.hexacore.security.config.properties`: 설정 프로퍼티 클래스
-    - `com.dx.hexacore.security.config.condition`: 조건부 설정 클래스 (예정)
-    - `com.dx.hexacore.security.config.support`: 지원 클래스 (예정)
+    - `com.ldx.hexacore.security.config.autoconfigure`: 자동 설정 클래스
+    - `com.ldx.hexacore.security.config.properties`: 설정 프로퍼티 클래스
+    - `com.ldx.hexacore.security.config.condition`: 조건부 설정 클래스 (예정)
+    - `com.ldx.hexacore.security.config.support`: 지원 클래스 (예정)
   - build.gradle 의존성 추가 완료
     - Spring Boot Auto-configuration: `spring-boot-autoconfigure`
     - Configuration Processor: `spring-boot-configuration-processor`

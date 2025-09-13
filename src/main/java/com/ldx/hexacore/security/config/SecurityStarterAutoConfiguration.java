@@ -47,7 +47,6 @@ import org.springframework.context.annotation.Import;
     HexagonalModeConfiguration.class,
     // 기능별 AutoConfiguration
     TokenProviderAutoConfiguration.class,
-    PersistenceAutoConfiguration.class,
     SecurityFilterAutoConfiguration.class,
     ApplicationLayerAutoConfiguration.class,
     SupportBeansAutoConfiguration.class,

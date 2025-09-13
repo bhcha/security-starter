@@ -6,16 +6,14 @@ import com.ldx.hexacore.security.util.ValidationMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Component;
 
 /**
  * Spring의 ApplicationEventPublisher를 사용하는 이벤트 발행 어댑터.
  * 도메인 이벤트를 Spring 이벤트 시스템으로 전파합니다.
- * 
+ *
  * @since 1.0.0
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 class SpringEventPublisher implements EventPublisher {
     

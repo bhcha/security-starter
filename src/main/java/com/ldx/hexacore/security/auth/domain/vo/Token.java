@@ -1,7 +1,6 @@
 package com.ldx.hexacore.security.auth.domain.vo;
 
 import com.ldx.hexacore.security.util.ValidationUtils;
-import jakarta.persistence.Embeddable;
 import java.util.Objects;
 
 /**
@@ -18,7 +17,6 @@ import java.util.Objects;
  * 
  * @since 1.0.0
  */
-@Embeddable
 public final class Token {
     
     // 상수는 SecurityConstants에서 주입받도록 변경
@@ -27,15 +25,7 @@ public final class Token {
     private final String refreshToken;
     private final long expiresIn;
     private final boolean expired;
-    
-    // JPA를 위한 protected 기본 생성자
-    protected Token() {
-        this.accessToken = null;
-        this.refreshToken = null;
-        this.expiresIn = 0L;
-        this.expired = false;
-    }
-    
+
     // private 생성자 - 상수 주입 버전
     private Token(String accessToken, String refreshToken, long expiresIn, 
                   long minExpiresIn, long maxExpiresIn) {

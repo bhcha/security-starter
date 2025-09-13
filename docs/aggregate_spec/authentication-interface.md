@@ -4,7 +4,7 @@
 - **Bounded Context**: Security Context
 - **Aggregate Root**: Authentication
 - **핵심 책임**: 사용자 인증 및 세션 관리
-- **패키지 구조**: com.dx.hexacore.security
+- **패키지 구조**: com.ldx.hexacore.security
 
 ## 2. Public Domain Interface
 

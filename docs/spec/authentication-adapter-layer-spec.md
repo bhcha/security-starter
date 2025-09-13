@@ -6,7 +6,7 @@ Authentication Aggregate의 Adapter 레이어는 Application 레이어의 Port �
 ## Inbound Adapters
 
 ### Event Listener
-**위치**: `com.dx.hexacore.security.auth.adapter.inbound.event`
+**위치**: `com.ldx.hexacore.security.auth.adapter.inbound.event`
 
 #### AuthenticationEventListener
 - **책임**: 인증 관련 이벤트 수신 및 처리
@@ -15,7 +15,7 @@ Authentication Aggregate의 Adapter 레이어는 Application 레이어의 Port �
 ## Outbound Adapters
 
 ### JPA Persistence Adapter
-**위치**: `com.dx.hexacore.security.auth.adapter.outbound.persistence`
+**위치**: `com.ldx.hexacore.security.auth.adapter.outbound.persistence`
 
 #### AuthenticationJpaAdapter
 - **구현 Port**: AuthenticationRepository, LoadAuthenticationQueryPort, LoadTokenInfoQueryPort
@@ -42,7 +42,7 @@ public class AuthenticationJpaEntity {
 ```
 
 ### Event Publisher
-**위치**: `com.dx.hexacore.security.auth.adapter.outbound.event`
+**위치**: `com.ldx.hexacore.security.auth.adapter.outbound.event`
 
 #### SpringEventPublisher
 - **구현 Port**: EventPublisher
@@ -56,7 +56,7 @@ public class AuthenticationJpaEntity {
 - SessionTerminated
 
 ### External Authentication Provider
-**위치**: `com.dx.hexacore.security.auth.adapter.outbound.external`
+**위치**: `com.ldx.hexacore.security.auth.adapter.outbound.external`
 
 #### KeycloakAuthenticationAdapter
 - **구현 Port**: ExternalAuthProvider

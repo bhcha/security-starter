@@ -27,12 +27,11 @@ class SecurityFilterConfigTest {
                     SecurityFilterAutoConfiguration.class
             ))
             .withPropertyValues(
-                    "hexacore.security.enabled=true",
-                    "hexacore.security.filter.enabled=true",
-                    "security.auth.jwt.enabled=true",
-                    "hexacore.security.token-provider.provider=jwt",
-                    "hexacore.security.token-provider.jwt.enabled=true",
-                    "hexacore.security.token-provider.jwt.secret=my-super-secret-key-that-is-long-enough-for-256-bits"
+                    "security-starter.enabled=true",
+                    "security-starter.filter.enabled=true",
+                    "security-starter.token-provider.provider=spring_jwt",
+                    "security-starter.token-provider.jwt.enabled=true",
+                    "security-starter.token-provider.jwt.secret=my-super-secret-key-that-is-long-enough-for-256-bits"
             );
 
     @Test
@@ -97,9 +96,8 @@ class SecurityFilterConfigTest {
                         // TokenProviderAutoConfiguration 제외
                 ))
                 .withPropertyValues(
-                        "hexacore.security.enabled=true",
-                        "hexacore.security.filter.enabled=true",
-                        "security.auth.jwt.enabled=true"
+                        "security-starter.enabled=true",
+                        "security-starter.filter.enabled=true"
                 )
                 .run(context -> {
                     System.out.println("=== No TokenProvider Test ===");

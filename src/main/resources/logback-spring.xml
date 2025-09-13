@@ -38,7 +38,7 @@
     </logger>
 
     <!-- Hexacore Security Package -->
-    <logger name="com.dx.hexacore.security" level="INFO"/>
+    <logger name="com.ldx.hexacore.security" level="INFO"/>
 
     <!-- Root Logger -->
     <root level="INFO">

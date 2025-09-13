@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class OnFeatureEnabledCondition extends SpringBootCondition {
     
-    private static final String PROPERTY_PREFIX = "hexacore.security";
+    private static final String PROPERTY_PREFIX = "security-starter";
     
     @Override
     public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
@@ -115,6 +115,10 @@ public class OnFeatureEnabledCondition extends SpringBootCondition {
      * Feature에 대한 프로퍼티 경로 생성
      */
     private String getPropertyPath(ConditionalOnFeatureEnabled.Feature feature) {
-        return PROPERTY_PREFIX + "." + feature.getPropertyName() + "Toggle.enabled";
+        // propertyName을 kebab-case로 변환
+        String kebabCase = feature.getPropertyName()
+            .replaceAll("([a-z])([A-Z])", "$1-$2")
+            .toLowerCase();
+        return PROPERTY_PREFIX + "." + kebabCase + "-toggle.enabled";
     }
 }

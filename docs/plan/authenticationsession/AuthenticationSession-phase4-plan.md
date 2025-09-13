@@ -10,7 +10,7 @@ AuthenticationSession 애그리거트의 Domain Events와 Domain Services를 구
 ## 3. 컴포넌트 목록
 ### Domain Events
 - [x] **AccountLocked**: 계정 잠금 시 발생하는 도메인 이벤트
-  - 이미 구현 완료: `event.com.dx.hexacore.security.session.domain.AccountLocked`
+  - 이미 구현 완료: `event.com.ldx.hexacore.security.session.domain.AccountLocked`
   - 속성: sessionId, userId, clientIp, lockedUntil, failedAttemptCount
   - 검증 규칙: 모든 필수 필드 검증, 시간 순서 검증
 

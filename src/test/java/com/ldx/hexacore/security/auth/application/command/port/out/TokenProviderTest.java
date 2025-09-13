@@ -93,7 +93,7 @@ class TokenProviderTest {
         Package pkg = TokenProvider.class.getPackage();
         
         // then
-        assertThat(pkg.getName()).isEqualTo("com.dx.hexacore.security.auth.application.command.port.out");
+        assertThat(pkg.getName()).isEqualTo("com.ldx.hexacore.security.auth.application.command.port.out");
     }
 
     @Test

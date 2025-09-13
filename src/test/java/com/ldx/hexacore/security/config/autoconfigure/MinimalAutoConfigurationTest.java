@@ -17,7 +17,7 @@ class MinimalAutoConfigurationTest {
     void shouldLoadPropertiesOnly() {
         contextRunner
                 .withPropertyValues(
-                        "hexacore.security.enabled=true"
+                        "security-starter.enabled=true"
                 )
                 .run(context -> {
                     System.out.println("Context started successfully");
@@ -32,7 +32,7 @@ class MinimalAutoConfigurationTest {
     @Test
     void shouldNotLoadWhenDisabled() {
         contextRunner
-                .withPropertyValues("hexacore.security.enabled=false")
+                .withPropertyValues("security-starter.enabled=false")
                 .run(context -> {
                     // Just verify the properties are set correctly
                     SecurityStarterProperties properties = context.getBean(SecurityStarterProperties.class);

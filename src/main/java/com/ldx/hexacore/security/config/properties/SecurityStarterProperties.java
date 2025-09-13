@@ -120,12 +120,6 @@ public class SecurityStarterProperties {
     @NestedConfigurationProperty
     private SessionProperties session = new SessionProperties();
     
-    /**
-     * 영속성 설정
-     */
-    @Valid
-    @NestedConfigurationProperty
-    private PersistenceProperties persistence = new PersistenceProperties();
     
     /**
      * 캐시 설정
@@ -211,163 +205,7 @@ public class SecurityStarterProperties {
             private int attemptWindowMinutes = 15;
         }
     }
-    
-    @Data
-    public static class PersistenceProperties {
-        /**
-         * Persistence type.
-         * Options: memory, jpa, mongodb, redis
-         * Default is memory (for easy development/testing).
-         */
-        @NotNull
-        private PersistenceType type = PersistenceType.MEMORY;
-        
-        /**
-         * Command database name (for CQRS write side).
-         * Default is "security_write".
-         */
-        @NotBlank
-        private String commandDb = "security_write";
-        
-        /**
-         * Query database name (for CQRS read side).
-         * Default is "security_read".
-         */
-        @NotBlank
-        private String queryDb = "security_read";
-        
-        /**
-         * Enable JPA repositories.
-         * Default is true when type is JPA.
-         */
-        @NotNull
-        private Boolean jpaEnabled = true;
-        
-        /**
-         * Enable MongoDB repositories.
-         * Default is true when type is MONGODB.
-         */
-        @NotNull
-        private Boolean mongoEnabled = false;
-        
-        /**
-         * Enable Redis for caching.
-         * Default is false.
-         */
-        @NotNull
-        private Boolean redisEnabled = false;
-        
-        /**
-         * Enable local cache (Caffeine).
-         * Default is true.
-         */
-        @NotNull
-        private Boolean localCacheEnabled = true;
-        
-        /**
-         * Schema generation strategy for JPA.
-         * Options: none, create, create-drop, update, validate
-         * Default is validate.
-         */
-        @NotNull
-        private String schemaGeneration = "validate";
-        
-        /**
-         * Show SQL queries in logs.
-         * Default is false.
-         */
-        @NotNull
-        private Boolean showSql = false;
-        
-        /**
-         * Format SQL queries in logs.
-         * Default is false.
-         */
-        @NotNull
-        private Boolean formatSql = false;
-        
-        /**
-         * External authentication provider configuration.
-         */
-        private ExternalAuthProperties external = new ExternalAuthProperties();
-        
-        /**
-         * Cache expiry time in minutes.
-         * Default is 30 minutes.
-         */
-        private Integer cacheExpiryMinutes = 30;
-        
-        /**
-         * Maximum cache size.
-         * Default is 10000 entries.
-         */
-        private Long cacheMaxSize = 10000L;
-        
-        /**
-         * Persistence type enum.
-         */
-        public enum PersistenceType {
-            MEMORY,  // In-memory implementation for development/testing
-            JPA,
-            MONGODB,
-            REDIS
-        }
-        
-        /**
-         * Get persistence type as lowercase string.
-         * 
-         * @return persistence type as lowercase string
-         */
-        public String getTypeAsString() {
-            return type.name().toLowerCase();
-        }
-        
-        /**
-         * External authentication provider properties.
-         */
-        @Data
-        public static class ExternalAuthProperties {
-            
-            /**
-             * External auth provider type.
-             * Options: none, keycloak, auth0, okta
-             * Default is none.
-             */
-            @NotNull
-            private ExternalAuthType type = ExternalAuthType.NONE;
-            
-            /**
-             * External auth provider server URL.
-             */
-            private String serverUrl;
-            
-            /**
-             * Realm name (for Keycloak).
-             */
-            private String realm;
-            
-            /**
-             * Client ID.
-             */
-            private String clientId;
-            
-            /**
-             * Client secret.
-             */
-            private String clientSecret;
-            
-            /**
-             * External auth type enum.
-             */
-            public enum ExternalAuthType {
-                NONE,
-                KEYCLOAK,
-                AUTH0,
-                OKTA
-            }
-        }
-    }
-    
+
     @Data
     public static class CacheProperties {
         /**
@@ -1022,12 +860,6 @@ public class SecurityStarterProperties {
         return enabled && cache.getEnabled();
     }
     
-    /**
-     * 영속성 타입 확인 (기존 호환성)
-     */
-    public String getPersistenceType() {
-        return persistence.getTypeAsString();
-    }
     
     /**
      * Keycloak 기능 활성화 여부
@@ -1072,9 +904,6 @@ public class SecurityStarterProperties {
         return session;
     }
     
-    public PersistenceProperties getPersistence() {
-        return persistence;
-    }
     
     public CacheProperties getCache() {
         return cache;

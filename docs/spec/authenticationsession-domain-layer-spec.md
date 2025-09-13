@@ -6,7 +6,7 @@ AuthenticationSession 애그리거트의 도메인 레이어 구현 명세서입
 ## 2. Value Objects
 
 ### 2.1 SessionId
-**패키지**: `com.dx.hexacore.security.session.domain.vo`
+**패키지**: `com.ldx.hexacore.security.session.domain.vo`
 
 ```java
 public class SessionId {
@@ -27,7 +27,7 @@ public class SessionId {
 - UUID 형식을 따라야 함 (36자리, 하이픈 포함)
 
 ### 2.2 ClientIp
-**패키지**: `com.dx.hexacore.security.session.domain.vo`
+**패키지**: `com.ldx.hexacore.security.session.domain.vo`
 
 ```java
 public class ClientIp {
@@ -49,7 +49,7 @@ public class ClientIp {
 - 유효한 IPv4 또는 IPv6 형식이어야 함
 
 ### 2.3 RiskLevel
-**패키지**: `com.dx.hexacore.security.session.domain.vo`
+**패키지**: `com.ldx.hexacore.security.session.domain.vo`
 
 ```java
 public class RiskLevel {
@@ -75,7 +75,7 @@ public class RiskLevel {
 - 이유(reason)는 null이거나 빈 문자열일 수 없음
 
 ### 2.4 IpType (Enum)
-**패키지**: `com.dx.hexacore.security.session.domain.vo`
+**패키지**: `com.ldx.hexacore.security.session.domain.vo`
 
 ```java
 public enum IpType {
@@ -85,7 +85,7 @@ public enum IpType {
 ```
 
 ### 2.5 RiskCategory (Enum)
-**패키지**: `com.dx.hexacore.security.session.domain.vo`
+**패키지**: `com.ldx.hexacore.security.session.domain.vo`
 
 ```java
 public enum RiskCategory {
@@ -99,7 +99,7 @@ public enum RiskCategory {
 ## 3. Entities
 
 ### 3.1 AuthenticationAttempt
-**패키지**: `com.dx.hexacore.security.session.domain`
+**패키지**: `com.ldx.hexacore.security.session.domain`
 
 ```java
 public class AuthenticationAttempt {
@@ -127,7 +127,7 @@ public class AuthenticationAttempt {
 ## 4. Aggregate Root
 
 ### 4.1 AuthenticationSession
-**패키지**: `com.dx.hexacore.security.session.domain`
+**패키지**: `com.ldx.hexacore.security.session.domain`
 
 ```java
 public class AuthenticationSession extends AggregateRoot {
@@ -166,7 +166,7 @@ public class AuthenticationSession extends AggregateRoot {
 ## 5. Domain Events
 
 ### 5.1 AccountLocked
-**패키지**: `com.dx.hexacore.security.session.domain.event`
+**패키지**: `com.ldx.hexacore.security.session.domain.event`
 
 ```java
 public class AccountLocked extends DomainEvent {
@@ -205,7 +205,7 @@ public class AccountLocked extends DomainEvent {
 
 ## 7. 패키지 구조
 ```
-com.dx.hexacore.security.session.domain/
+com.ldx.hexacore.security.session.domain/
 ├── AuthenticationSession.java          # Aggregate Root
 ├── AuthenticationAttempt.java          # Entity
 ├── vo/
@@ -219,7 +219,7 @@ com.dx.hexacore.security.session.domain/
 ```
 
 ## 8. 의존성 관계
-- **상위 의존성**: `event.com.dx.hexacore.security.auth.domain.DomainEvent`
+- **상위 의존성**: `event.com.ldx.hexacore.security.auth.domain.DomainEvent`
 - **외부 라이브러리**: Jackson (JSON 직렬화), Jakarta Validation
 - **내부 의존성**: 없음 (다른 애그리거트에 의존하지 않음)
 

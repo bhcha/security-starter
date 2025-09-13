@@ -44,9 +44,9 @@ class SecurityConfigurationValidatorTest {
     void onApplicationEvent_WithInvalidTokenExpiration_ShouldThrowException() {
         // Given - 프로덕션 환경 시뮬레이션
         String originalProfile = System.getProperty("spring.profiles.active");
-        String originalForceProduction = System.getProperty("hexacore.security.force-production-validation");
+        String originalForceProduction = System.getProperty("security-starter.force-production-validation");
         System.setProperty("spring.profiles.active", "prod");
-        System.setProperty("hexacore.security.force-production-validation", "true");
+        System.setProperty("security-starter.force-production-validation", "true");
         
         try {
             properties.setEnabled(true);
@@ -67,9 +67,9 @@ class SecurityConfigurationValidatorTest {
                 System.clearProperty("spring.profiles.active");
             }
             if (originalForceProduction != null) {
-                System.setProperty("hexacore.security.force-production-validation", originalForceProduction);
+                System.setProperty("security-starter.force-production-validation", originalForceProduction);
             } else {
-                System.clearProperty("hexacore.security.force-production-validation");
+                System.clearProperty("security-starter.force-production-validation");
             }
         }
     }
@@ -79,9 +79,9 @@ class SecurityConfigurationValidatorTest {
     void onApplicationEvent_WithKeycloakMissingConfiguration_ShouldThrowException() {
         // Given - 프로덕션 환경 시뮬레이션
         String originalProfile = System.getProperty("spring.profiles.active");
-        String originalForceProduction = System.getProperty("hexacore.security.force-production-validation");
+        String originalForceProduction = System.getProperty("security-starter.force-production-validation");
         System.setProperty("spring.profiles.active", "prod");
-        System.setProperty("hexacore.security.force-production-validation", "true");
+        System.setProperty("security-starter.force-production-validation", "true");
         
         try {
             properties.setEnabled(true);
@@ -101,9 +101,9 @@ class SecurityConfigurationValidatorTest {
                 System.clearProperty("spring.profiles.active");
             }
             if (originalForceProduction != null) {
-                System.setProperty("hexacore.security.force-production-validation", originalForceProduction);
+                System.setProperty("security-starter.force-production-validation", originalForceProduction);
             } else {
-                System.clearProperty("hexacore.security.force-production-validation");
+                System.clearProperty("security-starter.force-production-validation");
             }
         }
     }

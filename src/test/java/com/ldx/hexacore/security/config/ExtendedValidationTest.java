@@ -17,24 +17,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @SpringBootTest(classes = {
     SecurityStarterAutoConfiguration.class,
-    org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
-    org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
+    org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class
 })
 @TestPropertySource(properties = {
-    "spring.datasource.url=jdbc:h2:mem:validationtest",
-    "spring.datasource.driver-class-name=org.h2.Driver",
-    "spring.jpa.hibernate.ddl-auto=create-drop",
-    "hexacore.security.enabled=true",
-    "hexacore.security.session.enabled=false",
-    "hexacore.security.token-provider.provider=jwt",
-    "hexacore.security.token-provider.jwt.enabled=true",
-    "hexacore.security.token-provider.jwt.secret=extended-validation-test-secret-key-with-good-entropy",
-    "hexacore.security.persistence.type=MEMORY",
-    "hexacore.security.persistence.jpa.enabled=false",
-    "hexacore.security.persistence.memory.enabled=true",
-    "hexacore.session.cache.enabled=false",
-    "hexacore.security.cache.enabled=false",
-    "hexacore.security.headers.enabled=true",
+    "security-starter.enabled=true",
+    "security-starter.session-toggle.enabled=false",
+    "security-starter.token-provider.provider=spring_jwt",
+    "security-starter.token-provider.jwt.enabled=true",
+    "security-starter.token-provider.jwt.secret=extended-validation-test-secret-key-with-good-entropy",
+    "security-starter.cache.enabled=false",
+    "security-starter.headers-toggle.enabled=true",
     "spring.main.allow-bean-definition-overriding=true"
 })
 class ExtendedValidationTest {
@@ -73,9 +65,9 @@ class ExtendedValidationTest {
     
     @SpringBootApplication
     @ComponentScan(basePackages = {
-        "com.dx.hexacore.security.auth",
-        "com.dx.hexacore.security.session",
-        "com.dx.hexacore.security.config"
+        "com.ldx.hexacore.security.auth",
+        "com.ldx.hexacore.security.session",
+        "com.ldx.hexacore.security.config"
     })
     static class TestApp {
         // 확장된 검증 시스템 테스트 앱

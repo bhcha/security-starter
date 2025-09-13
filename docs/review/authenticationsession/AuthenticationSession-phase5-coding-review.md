@@ -14,7 +14,7 @@ AuthenticationSession 애그리거트 Phase 5 Command Side 구현에 대한 코�
 
 ### 2. 패키지 구조 ✅
 ```
-com.dx.hexacore.security.application.session/
+com.ldx.hexacore.security.application.session/
 ├── command/                    # Command 객체
 ├── usecase/                   # UseCase 인터페이스 및 구현
 ├── result/                    # Result 객체

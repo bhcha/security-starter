@@ -2,11 +2,9 @@ package com.ldx.hexacore.security.auth.application.command.handler;
 
 import com.ldx.hexacore.security.auth.application.command.port.in.AuthenticateCommand;
 import com.ldx.hexacore.security.auth.application.command.port.in.AuthenticationResult;
-import com.ldx.hexacore.security.auth.application.command.port.out.AuthenticationRepository;
 import com.ldx.hexacore.security.auth.application.command.port.out.EventPublisher;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProvider;
 import com.ldx.hexacore.security.auth.application.command.port.out.TokenProviderException;
-import com.ldx.hexacore.security.auth.domain.Authentication;
 import com.ldx.hexacore.security.auth.domain.event.DomainEvent;
 import com.ldx.hexacore.security.auth.domain.vo.Credentials;
 import com.ldx.hexacore.security.auth.domain.vo.Token;
@@ -19,17 +17,13 @@ import org.mockito.MockitoAnnotations;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.atLeast;
 
 @DisplayName("AuthenticateUseCaseImpl 테스트")
 class AuthenticateUseCaseImplTest {
 
     @Mock
-    private AuthenticationRepository authenticationRepository;
-    
-    @Mock
     private TokenProvider tokenProvider;
-    
+
     @Mock
     private EventPublisher eventPublisher;
 
@@ -39,7 +33,6 @@ class AuthenticateUseCaseImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         authenticateUseCase = new AuthenticateUseCaseImpl(
-            authenticationRepository,
             tokenProvider,
             eventPublisher
         );
@@ -52,12 +45,10 @@ class AuthenticateUseCaseImplTest {
         String username = "testuser";
         String password = "testpassword123";
         AuthenticateCommand command = new AuthenticateCommand(username, password);
-        
+
         Token expectedToken = Token.of("access.token", "refresh.token", 3600);
-        Authentication savedAuth = mock(Authentication.class);
-        
+
         when(tokenProvider.issueToken(any(Credentials.class))).thenReturn(expectedToken);
-        when(authenticationRepository.save(any(Authentication.class))).thenReturn(savedAuth);
 
         // when
         AuthenticationResult result = authenticateUseCase.authenticate(command);
@@ -67,10 +58,9 @@ class AuthenticateUseCaseImplTest {
         assertThat(result.getUsername()).isEqualTo(username);
         assertThat(result.getToken()).isPresent();
         assertThat(result.getToken().get()).isEqualTo(expectedToken);
-        
+
         verify(tokenProvider).issueToken(any(Credentials.class));
-        verify(authenticationRepository).save(any(Authentication.class));
-        verify(eventPublisher, atLeast(1)).publish(any(DomainEvent.class)); // 도메인 이벤트들
+        verify(eventPublisher, times(2)).publish(any(DomainEvent.class)); // AuthenticationAttempted + AuthenticationSucceeded
     }
 
     @Test
@@ -80,7 +70,7 @@ class AuthenticateUseCaseImplTest {
         String username = "testuser";
         String password = "wrongpassword";
         AuthenticateCommand command = new AuthenticateCommand(username, password);
-        
+
         when(tokenProvider.issueToken(any(Credentials.class)))
             .thenThrow(TokenProviderException.invalidCredentials("test-provider"));
 
@@ -93,10 +83,9 @@ class AuthenticateUseCaseImplTest {
         assertThat(result.getToken()).isEmpty();
         assertThat(result.getFailureReason()).isPresent();
         assertThat(result.getFailureReason().get()).contains("Invalid credentials");
-        
+
         verify(tokenProvider).issueToken(any(Credentials.class));
-        verify(authenticationRepository).save(any(Authentication.class));
-        verify(eventPublisher, atLeast(1)).publish(any(DomainEvent.class)); // 도메인 이벤트들
+        verify(eventPublisher, times(2)).publish(any(DomainEvent.class)); // AuthenticationAttempted + AuthenticationFailed
     }
 
     @Test
@@ -104,7 +93,7 @@ class AuthenticateUseCaseImplTest {
     void shouldFailAuthenticationWhenExternalProviderFails() {
         // given
         AuthenticateCommand command = new AuthenticateCommand("testuser", "testpassword123");
-        
+
         when(tokenProvider.issueToken(any(Credentials.class)))
             .thenThrow(TokenProviderException.providerUnavailable("test-provider", new RuntimeException("Provider unavailable")));
 
@@ -115,31 +104,9 @@ class AuthenticateUseCaseImplTest {
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getFailureReason()).isPresent();
         assertThat(result.getFailureReason().get()).contains("Token provider is unavailable");
-        
-        verify(tokenProvider).issueToken(any(Credentials.class));
-        verify(authenticationRepository).save(any(Authentication.class));
-        verify(eventPublisher, atLeast(1)).publish(any(DomainEvent.class)); // 도메인 이벤트들
-    }
 
-    @Test
-    @DisplayName("저장소 저장 실패 시 적절한 예외가 발생한다")
-    void shouldHandleRepositorySaveFailure() {
-        // given
-        AuthenticateCommand command = new AuthenticateCommand("testuser", "testpassword123");
-        Token token = Token.of("access.token", "refresh.token", 3600);
-        
-        when(tokenProvider.issueToken(any(Credentials.class))).thenReturn(token);
-        when(authenticationRepository.save(any(Authentication.class)))
-            .thenThrow(new RuntimeException("Database connection failed"));
-
-        // when & then
-        assertThatThrownBy(() -> authenticateUseCase.authenticate(command))
-            .isInstanceOf(RuntimeException.class)
-            .hasMessageContaining("Database connection failed");
-        
         verify(tokenProvider).issueToken(any(Credentials.class));
-        verify(authenticationRepository).save(any(Authentication.class));
-        verify(eventPublisher, atLeast(1)).publish(any(DomainEvent.class)); // 최소한 시도 이벤트
+        verify(eventPublisher, times(2)).publish(any(DomainEvent.class)); // AuthenticationAttempted + AuthenticationFailed
     }
 
     @Test
@@ -149,8 +116,8 @@ class AuthenticateUseCaseImplTest {
         assertThatThrownBy(() -> authenticateUseCase.authenticate(null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("command cannot be null");
-        
-        verifyNoInteractions(tokenProvider, authenticationRepository, eventPublisher);
+
+        verifyNoInteractions(tokenProvider, eventPublisher);
     }
 
     @Test
@@ -159,16 +126,14 @@ class AuthenticateUseCaseImplTest {
         // given
         AuthenticateCommand command = new AuthenticateCommand("testuser", "testpassword123");
         Token token = Token.of("access.token", "refresh.token", 3600);
-        Authentication savedAuth = mock(Authentication.class);
-        
+
         when(tokenProvider.issueToken(any(Credentials.class))).thenReturn(token);
-        when(authenticationRepository.save(any(Authentication.class))).thenReturn(savedAuth);
 
         // when
         authenticateUseCase.authenticate(command);
 
         // then
-        verify(eventPublisher, atLeast(1)).publish(any(DomainEvent.class)); // 도메인 이벤트들 발행됨
+        verify(eventPublisher, times(2)).publish(any(DomainEvent.class)); // AuthenticationAttempted + AuthenticationSucceeded
     }
 
     @Test
@@ -176,7 +141,7 @@ class AuthenticateUseCaseImplTest {
     void shouldPublishFailureEventOnFailedAuthentication() {
         // given
         AuthenticateCommand command = new AuthenticateCommand("testuser", "wrongpassword");
-        
+
         when(tokenProvider.issueToken(any(Credentials.class)))
             .thenThrow(TokenProviderException.invalidCredentials("test-provider"));
 
@@ -184,6 +149,23 @@ class AuthenticateUseCaseImplTest {
         authenticateUseCase.authenticate(command);
 
         // then
-        verify(eventPublisher, atLeast(1)).publish(any(DomainEvent.class)); // 도메인 이벤트들 발행됨
+        verify(eventPublisher, times(2)).publish(any(DomainEvent.class)); // AuthenticationAttempted + AuthenticationFailed
+    }
+
+    @Test
+    @DisplayName("토큰 발급 실패 시에도 이벤트를 정상적으로 발행한다")
+    void shouldPublishEventsEvenWhenTokenIssueFails() {
+        // given
+        AuthenticateCommand command = new AuthenticateCommand("testuser", "testpassword123");
+
+        when(tokenProvider.issueToken(any(Credentials.class)))
+            .thenThrow(TokenProviderException.tokenIssueFailed("test-provider", new RuntimeException("Issue failed")));
+
+        // when
+        AuthenticationResult result = authenticateUseCase.authenticate(command);
+
+        // then
+        assertThat(result.isFailure()).isTrue();
+        verify(eventPublisher, times(2)).publish(any(DomainEvent.class)); // AuthenticationAttempted + AuthenticationFailed
     }
 }

@@ -3,7 +3,7 @@
 ## 코딩 표준 체크리스트
 
 ### ✅ 패키지 구조 및 명명 규칙
-- **패키지 구조**: `com.dx.hexacore.security.application.session.*` - 헥사고날 아키텍처 구조 준수
+- **패키지 구조**: `com.ldx.hexacore.security.application.session.*` - 헥사고날 아키텍처 구조 준수
 - **클래스명**: PascalCase 적용 (GetSessionStatusQuery, SessionQueryHandler)
 - **메서드명**: camelCase 적용 (loadSessionStatus, toResponse)
 - **상수명**: UPPER_SNAKE_CASE (해당 없음)

@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Import;
     matchIfMissing = true
 )
 @Import({
-    PersistenceAutoConfiguration.class,
     CacheAutoConfiguration.class,
     SecurityFilterAutoConfiguration.class
 })

@@ -109,7 +109,7 @@ permission=/api/users/123#GET
 ```yaml
 logging:
   level:
-    com.dx.hexacore.security.auth: DEBUG
+    com.ldx.hexacore.security.auth: DEBUG
 ```
 
 ### 주요 로그 메시지

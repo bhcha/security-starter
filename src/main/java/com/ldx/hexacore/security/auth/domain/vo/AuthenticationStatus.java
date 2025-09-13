@@ -1,7 +1,6 @@
 package com.ldx.hexacore.security.auth.domain.vo;
 
 import com.ldx.hexacore.security.util.ValidationMessages;
-import jakarta.persistence.Embeddable;
 import java.util.Objects;
 
 /**
@@ -18,7 +17,6 @@ import java.util.Objects;
  * 
  * @since 1.0.0
  */
-@Embeddable
 public final class AuthenticationStatus {
     
     public enum Status {
@@ -26,12 +24,7 @@ public final class AuthenticationStatus {
     }
     
     private final Status status;
-    
-    // JPA를 위한 protected 기본 생성자
-    protected AuthenticationStatus() {
-        this.status = null;
-    }
-    
+
     // private 생성자
     private AuthenticationStatus(Status status) {
         validateStatus(status);

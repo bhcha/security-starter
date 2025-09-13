@@ -4,7 +4,7 @@
 - **Bounded Context**: Security Management
 - **Aggregate Root**: AuthenticationSession
 - **핵심 책임**: 인증 시도 추적, 계정 잠금 정책 적용, 세션 관리
-- **패키지 구조**: com.dx.hexacore.security.domain.session
+- **패키지 구조**: com.ldx.hexacore.security.domain.session
 
 ## 2. Public Domain Interface
 

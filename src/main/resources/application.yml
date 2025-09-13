@@ -21,32 +21,13 @@ security-starter:
 # 기본 Spring Boot 설정
 spring:
   application:
-    name: security-starter
-    
-  # JPA 설정 (테스트용)
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.H2Dialect
-
-  # H2 데이터베이스 설정 (테스트용)  
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: 
+    name: security-starter 
 
 # 로깅 설정
 logging:
   level:
-    com.dx.hexacore.security: DEBUG
+    com.ldx.hexacore.security: DEBUG
     org.springframework.security: WARN
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

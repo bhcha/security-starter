@@ -2,10 +2,12 @@ package com.ldx.hexacore.security.debug;
 
 import com.ldx.hexacore.security.config.SecurityStarterAutoConfiguration;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 
@@ -14,21 +16,14 @@ import java.util.Arrays;
  */
 @SpringBootTest(classes = {
     SecurityStarterAutoConfiguration.class,
-    org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class,
-    org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
-    org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
+    BeanDebugTest.TestConfig.class,
+    org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class
 })
 @TestPropertySource(properties = {
-    "hexacore.security.enabled=true",
-    "hexacore.security.session.enabled=true",
-    "hexacore.security.token-provider.provider=jwt",
-    "hexacore.security.token-provider.jwt.enabled=true",
-    "hexacore.security.token-provider.jwt.secret=test-secret-key-for-verification-purpose-only",
-    "hexacore.security.persistence.type=JPA",
-    "hexacore.security.persistence.jpa.enabled=true",
-    "hexacore.security.persistence.memory.enabled=false",
-    "spring.datasource.url=jdbc:h2:mem:testdb",
-    "spring.jpa.hibernate.ddl-auto=create-drop"
+    "security-starter.enabled=true",
+    "security-starter.token-provider.provider=jwt",
+    "security-starter.token-provider.jwt.enabled=true",
+    "security-starter.token-provider.jwt.secret=test-secret-key-for-verification-purpose-only-32chars"
 })
 class BeanDebugTest {
     
@@ -46,9 +41,9 @@ class BeanDebugTest {
         
         System.out.println("\n=== Security Related Beans ===");
         for (String beanName : beanNames) {
-            if (beanName.toLowerCase().contains("security") || 
-                beanName.toLowerCase().contains("session") ||
-                beanName.toLowerCase().contains("authentication")) {
+            if (beanName.toLowerCase().contains("security") ||
+                beanName.toLowerCase().contains("authentication") ||
+                beanName.toLowerCase().contains("token")) {
                 try {
                     Object bean = applicationContext.getBean(beanName);
                     System.out.println(beanName + " : " + bean.getClass().getName());
@@ -57,17 +52,10 @@ class BeanDebugTest {
                 }
             }
         }
-        
-        System.out.println("\n=== Repository Beans ===");
-        for (String beanName : beanNames) {
-            if (beanName.toLowerCase().contains("repository")) {
-                try {
-                    Object bean = applicationContext.getBean(beanName);
-                    System.out.println(beanName + " : " + bean.getClass().getName());
-                } catch (Exception e) {
-                    System.out.println(beanName + " : ERROR - " + e.getMessage());
-                }
-            }
-        }
+    }
+
+    @Configuration
+    @EnableAutoConfiguration
+    static class TestConfig {
     }
 }

@@ -82,7 +82,7 @@ class SecurityStarterFailureAnalyzerTest {
     void analyze_WithNullBeanNameButSecurityMessage_ShouldReturnAnalysis() {
         // Given
         NoSuchBeanDefinitionException exception = new NoSuchBeanDefinitionException(
-            "No qualifying bean of type 'com.dx.hexacore.security.auth.application.command.port.in.AuthenticationUseCase' available"
+            "No qualifying bean of type 'com.ldx.hexacore.security.auth.application.command.port.in.AuthenticationUseCase' available"
         );
 
         // When

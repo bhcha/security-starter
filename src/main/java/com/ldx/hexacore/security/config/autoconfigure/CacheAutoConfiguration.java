@@ -31,7 +31,7 @@ public class CacheAutoConfiguration {
     )
     @ComponentScan(
         basePackages = {
-            "com.dx.security-starter.session.adapter.outbound.cache"
+            "com.ldx.security-starter.session.adapter.outbound.cache"
         },
         includeFilters = @ComponentScan.Filter(
             type = FilterType.REGEX,

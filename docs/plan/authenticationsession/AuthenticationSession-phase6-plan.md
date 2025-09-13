@@ -143,7 +143,7 @@ public interface LoadFailedAttemptsQueryPort {
 
 ## 5. 패키지 구조
 ```
-com.dx.hexacore.security.application.session/
+com.ldx.hexacore.security.application.session/
 ├── query/
 │   ├── GetSessionStatusQuery.java
 │   └── GetFailedAttemptsQuery.java

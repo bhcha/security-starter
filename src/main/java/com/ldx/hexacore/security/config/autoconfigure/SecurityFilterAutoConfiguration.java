@@ -28,7 +28,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * security-auth-starter의 모든 기능을 통합하여 제공합니다.
  * 실제 구현은 SecurityFilterConfig에 위임하고, 추가 설정을 제공합니다.
  */
-@AutoConfiguration(after = {SecurityAutoConfiguration.class, PersistenceAutoConfiguration.class, TokenProviderAutoConfiguration.class})
+@AutoConfiguration(after = {SecurityAutoConfiguration.class, TokenProviderAutoConfiguration.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnProperty(
     prefix = "security-starter.filter",

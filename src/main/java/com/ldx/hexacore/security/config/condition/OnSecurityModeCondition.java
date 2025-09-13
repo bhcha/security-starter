@@ -21,13 +21,20 @@ import java.util.Map;
  */
 public class OnSecurityModeCondition extends SpringBootCondition {
     
-    private static final String PROPERTY_PREFIX = "hexacore.security";
+    private static final String PROPERTY_PREFIX = "security-starter";
     private static final String MODE_PROPERTY = "security-starter.mode";
     
     @Override
     public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
         Environment environment = context.getEnvironment();
         ConditionMessage.Builder message = ConditionMessage.forCondition("@ConditionalOnSecurityMode");
+        
+        // 전체 스타터가 비활성화된 경우 체크
+        if (!isStarterEnabled(environment)) {
+            return ConditionOutcome.noMatch(
+                message.because("Security Starter is disabled (security-starter.enabled=false)")
+            );
+        }
         
         // 어노테이션에서 요구되는 Mode 추출
         Map<String, Object> attributes = metadata.getAnnotationAttributes(ConditionalOnSecurityMode.class.getName());
@@ -61,5 +68,13 @@ public class OnSecurityModeCondition extends SpringBootCondition {
                 message.because("current mode " + currentMode + " does not match required mode " + requiredMode)
             );
         }
+    }
+    
+    /**
+     * 스타터 전체 활성화 여부 확인
+     */
+    private boolean isStarterEnabled(Environment environment) {
+        String enabled = environment.getProperty(PROPERTY_PREFIX + ".enabled", "true");
+        return Boolean.parseBoolean(enabled);
     }
 }

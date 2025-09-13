@@ -9,7 +9,7 @@
 - ✅ **메서드명**: camelCase 준수 (getAuthentication, mapToAuthenticationResponse)
 - ✅ **변수명**: camelCase 준수 (authenticationId, loadAuthenticationQueryPort)
 - ✅ **상수명**: UPPER_SNAKE_CASE 준수 (해당 없음)
-- ✅ **패키지명**: 소문자, 점 구분 (com.dx.hexacore.security.application.query)
+- ✅ **패키지명**: 소문자, 점 구분 (com.ldx.hexacore.security.application.query)
 
 #### 2. 코드 구조 및 포매팅
 - ✅ **들여쓰기**: 4칸 공백 일관 사용
