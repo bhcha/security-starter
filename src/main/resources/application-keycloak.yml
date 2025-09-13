@@ -4,10 +4,10 @@ hexacore:
     token-provider:
       keycloak:
         enabled: true
-        server-url: ${KEYCLOAK_AUTH_SERVER_URL:https://authdev.daewoong.co.kr/}
-        realm: ${KEYCLOAK_REALM:backoffice-api}
-        client-id: ${KEYCLOAK_CLIENT:identity-api}
-        client-secret: ${KEYCLOAK_CLIENT_SECRET:jLWxxq2YCLIaowgTU1kaTjqRiWJ3dFQ0}
+        server-url: ${KEYCLOAK_AUTH_SERVER_URL}
+        realm: ${KEYCLOAK_REALM}
+        client-id: ${KEYCLOAK_CLIENT}
+        client-secret: ${KEYCLOAK_CLIENT_SECRET}
         grant-type: password
         scopes: "openid profile email"  # OAuth2 scopes for userinfo endpoint access
 

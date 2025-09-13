@@ -93,8 +93,8 @@ class KeycloakTokenProviderTest {
         // Given
         SecurityStarterProperties.TokenProvider.KeycloakProperties propertiesWithSlash = 
             new SecurityStarterProperties.TokenProvider.KeycloakProperties();
-        propertiesWithSlash.setServerUrl("https://authdev.daewoong.co.kr/");
-        propertiesWithSlash.setRealm("backoffice-api");
+        propertiesWithSlash.setServerUrl("https://keycloak.example.com/");
+        propertiesWithSlash.setRealm("test-realm");
         propertiesWithSlash.setClientId("test-client");
         propertiesWithSlash.setClientSecret("test-secret");
         
@@ -110,9 +110,9 @@ class KeycloakTokenProviderTest {
         String userInfoEndpoint = internalProperties.getUserInfoEndpoint();
         
         // Then
-        assertThat(tokenEndpoint).isEqualTo("https://authdev.daewoong.co.kr/realms/backoffice-api/protocol/openid-connect/token");
-        assertThat(introspectionEndpoint).isEqualTo("https://authdev.daewoong.co.kr/realms/backoffice-api/protocol/openid-connect/token/introspect");
-        assertThat(userInfoEndpoint).isEqualTo("https://authdev.daewoong.co.kr/realms/backoffice-api/protocol/openid-connect/userinfo");
+        assertThat(tokenEndpoint).isEqualTo("https://keycloak.example.com/realms/test-realm/protocol/openid-connect/token");
+        assertThat(introspectionEndpoint).isEqualTo("https://keycloak.example.com/realms/test-realm/protocol/openid-connect/token/introspect");
+        assertThat(userInfoEndpoint).isEqualTo("https://keycloak.example.com/realms/test-realm/protocol/openid-connect/userinfo");
     }
 
     @Test
